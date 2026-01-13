@@ -269,20 +269,29 @@ function createRepoCard(result) {
     // Show top findings only
     if (result.findings.length > 0) {
         const topFindings = result.findings.slice(0, 3);
-        const findingsList = document.createElement('ul');
+        const findingsList = document.createElement('div');
         findingsList.className = 'findings-summary';
         
         topFindings.forEach(finding => {
-            const li = document.createElement('li');
+            const findingItem = document.createElement('div');
+            findingItem.className = 'finding-item';
+            
+            const findingText = document.createElement('div');
+            findingText.className = 'finding-text';
+            findingText.innerHTML = `<strong>${finding.title}</strong>: ${finding.recommendation}`;
+            
             const actionLink = getActionLink(finding, result.repository);
             
-            li.innerHTML = `<strong>${finding.title}</strong>: ${finding.recommendation}`;
+            findingItem.appendChild(findingText);
             
             if (actionLink) {
-                li.innerHTML += `<br>${actionLink}`;
+                const actionDiv = document.createElement('div');
+                actionDiv.className = 'finding-action';
+                actionDiv.innerHTML = actionLink;
+                findingItem.appendChild(actionDiv);
             }
             
-            findingsList.appendChild(li);
+            findingsList.appendChild(findingItem);
         });
         
         card.appendChild(findingsList);
@@ -344,20 +353,23 @@ function getActionLink(finding, repoUrl) {
     
     switch(finding.title) {
         case 'Missing LICENSE':
-            return `<a href="https://github.com/${owner}/${repo}/community/license/new?branch=main" target="_blank" class="action-link">📄 Add LICENSE</a>`;
+            return `<a href="https://github.com/${owner}/${repo}/community/license/new?branch=main" target="_blank" class="action-btn" rel="noopener">📄 Add License Now</a>`;
         
         case 'Missing CODE_OF_CONDUCT.md':
-            return `<a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-link">📜 Get Code of Conduct Template</a>`;
+            return `<a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-btn" rel="noopener">📜 Get Template</a>`;
         
         case 'Missing SECURITY.md':
             const securityPrompt = `Create a SECURITY.md file for ${repoUrl} that includes:\n- Supported versions\n- How to report vulnerabilities\n- Security update process\n- Contact information`;
-            return `<button class="action-link" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}')">📋 Copy Security.md Prompt</button>`;
+            return `<button class="action-btn" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt</button>`;
         
         case 'Missing CONTRIBUTING.md':
-            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-link">📝 Add CONTRIBUTING.md</a>`;
+            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📝 Create File</a>`;
         
         case 'Missing README.md':
-            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-link">📘 Add README.md</a>`;
+            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README</a>`;
+        
+        case 'Missing CHANGELOG.md':
+            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CHANGELOG.md" target="_blank" class="action-btn" rel="noopener">📋 Create Changelog</a>`;
         
         default:
             return null;
