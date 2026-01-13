@@ -50,9 +50,12 @@ async function handleAnalyze(e) {
         return;
     }
     
+    // Debug: Log token status
+    console.log('Token status:', token ? `Present (${token.substring(0, 4)}...)` : 'Not present');
+    
     // Show rate limit warning if no token provided
     if (!token) {
-        showInfo('Analyzing public repositories only. Without a GitHub token, you\'re limited to 60 API requests/hour. <a href="https://github.com/settings/tokens" target="_blank">Add a token</a> in config.js for higher rate limits (5,000/hour) and private repo access.');
+        showInfo('Analyzing public repositories only. Without a GitHub token, you\'re limited to 60 API requests/hour. <a href="https://github.com/settings/tokens" target="_blank">Add a token</a> in .env or config.js for higher rate limits (5,000/hour) and private repo access.');
     }
     
     // Reset UI
@@ -157,8 +160,14 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         if (skipForks) {
             const originalCount = repos.length;
             repos = repos.filter(repo => !repo.fork);
-            if (originalCount > repos.length) {
-                showInfo(`Skipped ${originalCount - repos.length} forked repositories`);
+            const skippedCount = originalCount - repos.length;
+            if (skippedCount > 0) {
+                console.log(`Skipped ${skippedCount} forked repositories out of ${originalCount} total`);
+                if (repos.length === 0) {
+                    showInfo(`All ${originalCount} repositories were forks and were skipped. Uncheck "Skip forked repositories" to analyze them.`);
+                } else {
+                    showInfo(`Skipped ${skippedCount} forked repositories. Analyzing ${repos.length} non-fork repositories.`);
+                }
             }
         }
         
@@ -184,6 +193,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         // Analyze each repo
         const batchResults = [];
+        let failedCount = 0;
         for (let i = 0; i < repos.length; i++) {
             const repo = repos[i];
             const percent = Math.round(((i + 1) / repos.length) * 100);
@@ -196,8 +206,16 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
                 batchResults.push(result);
             } catch (error) {
                 console.error(`Error analyzing ${repo.full_name}:`, error);
+                failedCount++;
                 // Continue with other repos even if one fails
             }
+        }
+        
+        // Log summary
+        console.log(`Analysis complete: ${batchResults.length} succeeded, ${failedCount} failed out of ${repos.length} total`);
+        if (failedCount > 0 && batchResults.length === 0) {
+            showError(`All ${failedCount} repository analyses failed. Check the browser console for details.`);
+            return;
         }
         
         if (append) {
@@ -386,7 +404,7 @@ function copyToClipboard(text) {
 
 function displayResults(results) {
     if (!results || results.length === 0) {
-        showError('No results to display');
+        showError('No results to display. This could mean: (1) All repositories were skipped as forks, (2) No repositories were found, or (3) All analyses failed. Check the browser console for details.');
         return;
     }
     

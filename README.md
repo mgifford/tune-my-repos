@@ -33,21 +33,31 @@ This tool evaluates repositories against established compliance, security, acces
    - **Single repo:** Enter `mgifford/tune-my-repos` to analyze one repo
 
 3. **Optional - Configure GitHub token** (for higher rate limits and private repos):
+   
+   **Option 1 (Recommended): Use .env file**
+   ```bash
+   # Copy the example file
+   cp .env.example .env
+   
+   # Edit .env and add your GitHub Personal Access Token
+   # Get a token from: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
+   ```
+   
+   **Option 2: Use config.js**
    ```bash
    # Copy the example config
    cp config.example.js config.js
    
-   # Edit config.js and add your GitHub Personal Access Token
-   # Get a token from: https://github.com/settings/tokens
+   # Edit config.js and add your token
    ```
    
    **Without a token:**
-   - Rate limit: 60 requests/hour
+   - Rate limit: 60 requests/hour (unauthenticated)
    - Public repositories only
    
    **With a token:**
    - Rate limit: 5,000 requests/hour
-   - Access to private repositories
+   - Access to private repositories (if granted)
 
 4. **Export results:**
    - **JSON** - Complete analysis data for further processing
