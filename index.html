@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered repository analysis tool for open source and inner source best practices">
+    <title>Tune My Repos - Repository Analysis Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🔧 Tune My Repos</h1>
+            <p class="tagline">Evaluate repositories against OSPO best practices</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="input-section">
+            <h2>Analyze Repositories</h2>
+            <form id="analyzeForm">
+                <div class="form-group">
+                    <label for="targetInput">GitHub User, Organization, or Repository</label>
+                    <input 
+                        type="text" 
+                        id="targetInput" 
+                        placeholder="e.g., mgifford or civicactions or mgifford/tune-my-repos"
+                        required
+                        aria-describedby="targetHelp"
+                    >
+                    <small id="targetHelp">Enter username/org (analyzes all repos) or owner/repo (single repo)</small>
+                </div>
+
+                <button type="submit" id="analyzeBtn">Analyze Repositories</button>
+            </form>
+        </section>
+
+        <section id="loadingSection" class="hidden" aria-live="polite">
+            <div class="spinner"></div>
+            <p id="progressText">Analyzing repository...</p>
+            <div id="batchProgress" class="hidden">
+                <div class="progress-bar">
+                    <div id="progressFill"></div>
+                </div>
+                <p id="progressStats"></p>
+            </div>
+        </section>
+
+        <section id="infoSection" class="hidden info-section" role="status">
+            <h3>ℹ️ Note</h3>
+            <p id="infoMessage"></p>
+        </section>
+
+        <section id="errorSection" class="hidden error-section" role="alert">
+            <h3>⚠️ Error</h3>
+            <p id="errorMessage"></p>
+        </section>
+
+        <section id="resultsSection" class="hidden">
+            <div class="results-header">
+                <h2>Analysis Results</h2>
+                <div class="export-buttons">
+                    <button id="exportJson" class="secondary-btn" title="Download complete analysis data">Export JSON</button>
+                    <button id="exportMarkdown" class="secondary-btn" title="Download formatted report">Export Markdown</button>
+                    <button id="exportCsv" class="secondary-btn" title="Download spreadsheet summary (repos, maturity, issue counts)">Export CSV</button>
+                </div>
+            </div>
+
+            <div id="summaryStats" class="summary-card hidden">
+                <h3>📊 Overall Summary</h3>
+                <dl class="summary-grid">
+                    <dt>Total Repositories:</dt>
+                    <dd id="totalRepos">0</dd>
+                    
+                    <dt>Average Maturity:</dt>
+                    <dd id="avgMaturity">-</dd>
+                    
+                    <dt>Critical Issues:</dt>
+                    <dd id="totalCritical">0</dd>
+                    
+                    <dt>Important Issues:</dt>
+                    <dd id="totalImportant">0</dd>
+                </dl>
+            </div>
+
+            <div id="resultsContainer"></div>
+
+            <div id="limitationsContainer" class="hidden">
+                <h3>⚠️ Limitations</h3>
+                <ul id="limitationsList"></ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Analysis based on <a href="AGENTS.md">AGENTS.md</a> governance rules.
+                This tool provides recommendations, not compliance claims.
+            </p>
+            <p>
+                <a href="https://github.com/YOUR_ORG/tune-my-repos">GitHub</a> |
+                <a href="AGENTS.md">Documentation</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="analyzer.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
