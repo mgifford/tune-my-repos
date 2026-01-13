@@ -457,6 +457,52 @@ footer a:hover {
 .maturity-medium { color: var(--warning); font-weight: 600; }
 .maturity-high { color: var(--success); font-weight: 600; }
 
+/* Pagination */
+.pagination-controls {
+    margin-top: var(--spacing);
+    padding: var(--spacing);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.pagination-controls p {
+    margin-bottom: var(--spacing);
+    color: var(--text-secondary);
+}
+
+/* Action links */
+.action-link {
+    display: inline-block;
+    margin-top: calc(var(--spacing) / 2);
+    padding: calc(var(--spacing) / 3) calc(var(--spacing) / 1.5);
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.action-link:hover {
+    background: var(--primary-hover);
+}
+
+/* Form checkboxes */
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) / 2);
+}
+
+.form-group input[type=\"checkbox\"] {
+    width: auto;
+    margin-right: calc(var(--spacing) / 2);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     header h1 {

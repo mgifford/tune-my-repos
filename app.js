@@ -3,11 +3,21 @@
  */
 
 let allResults = [];
+let paginationState = {
+    userOrOrg: null,
+    page: 1,
+    perPage: 50,
+    hasMore: false
+};
 
 // DOM elements
 const form = document.getElementById('analyzeForm');
 const targetInput = document.getElementById('targetInput');
 const analyzeBtn = document.getElementById('analyzeBtn');
+const skipForksCheckbox = document.getElementById('skipForks');
+const paginationControls = document.getElementById('paginationControls');
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+const paginationInfo = document.getElementById('paginationInfo');
 const loadingSection = document.getElementById('loadingSection');
 const progressText = document.getElementById('progressText');
 const batchProgress = document.getElementById('batchProgress');
@@ -27,6 +37,7 @@ form.addEventListener('submit', handleAnalyze);
 exportJsonBtn.addEventListener('click', exportAsJSON);
 exportMarkdownBtn.addEventListener('click', exportAsMarkdown);
 exportCsvBtn.addEventListener('click', exportAsCSV);
+loadMoreBtn.addEventListener('click', handleLoadMore);
 
 async function handleAnalyze(e) {
     e.preventDefault();
@@ -78,9 +89,28 @@ async function handleAnalyze(e) {
     }
 }
 
-async function analyzeBatch(analyzer, userOrOrg) {
+async function handleLoadMore() {
+    if (!paginationState.userOrOrg) return;
+    
+    loadMoreBtn.disabled = true;
+    loadingSection.classList.remove('hidden');
+    
     try {
-        // Fetch all repos for this user/org
+        const analyzer = new GitHubAnalyzer(window.CONFIG?.GITHUB_TOKEN || '');
+        await analyzeBatch(analyzer, paginationState.userOrOrg, paginationState.page + 1, true);
+    } catch (error) {
+        showError(error.message);
+        console.error('Load more error:', error);
+    } finally {
+        loadingSection.classList.add('hidden');
+        loadMoreBtn.disabled = false;
+    }
+}
+
+async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
+    try {
+        // Fetch repos for this user/org with pagination
+        const skipForks = skipForksCheckbox.checked;
         progressText.textContent = `Fetching repositories for ${userOrOrg}...`;
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
@@ -91,16 +121,59 @@ async function analyzeBatch(analyzer, userOrOrg) {
             headers['Authorization'] = `token ${CONFIG.GITHUB_TOKEN}`;
         }
         
-        const response = await fetch(`https://api.github.com/users/${userOrOrg}/repos?per_page=100`, { headers });
-        
-        if (!response.ok) {
-            throw new Error(`Failed to fetch repositories: ${response.statusText}`);
+        let response;
+        try {
+            // Sort by recently updated, fetch in pages of 50
+            response = await fetch(
+                `https://api.github.com/users/${userOrOrg}/repos?sort=updated&direction=desc&per_page=${paginationState.perPage}&page=${page}`,
+                { headers }
+            );
+        } catch (fetchError) {
+            // Network error, CORS issue, or connection problem
+            throw new Error(`Network error fetching repositories: ${fetchError.message}. Make sure you're serving the app via HTTP server (not file://) or use a GitHub token.`);
         }
         
-        const repos = await response.json();
+        if (!response.ok) {
+            let errorMsg = `HTTP ${response.status} ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.message) {
+                    errorMsg += `: ${errorData.message}`;
+                }
+                // Check for rate limiting
+                if (response.status === 403 && response.headers.get('X-RateLimit-Remaining') === '0') {
+                    const resetTime = new Date(parseInt(response.headers.get('X-RateLimit-Reset')) * 1000);
+                    errorMsg += ` Rate limit exceeded. Resets at ${resetTime.toLocaleTimeString()}`;
+                }
+            } catch (e) {
+                // If we can't parse the error response, just use the status
+            }
+            throw new Error(`Failed to fetch repositories: ${errorMsg}`);
+        }
+        
+        let repos = await response.json();
+        
+        // Filter out forks if requested
+        if (skipForks) {
+            const originalCount = repos.length;
+            repos = repos.filter(repo => !repo.fork);
+            if (originalCount > repos.length) {
+                showInfo(`Skipped ${originalCount - repos.length} forked repositories`);
+            }
+        }
+        
+        // Update pagination state
+        paginationState.userOrOrg = userOrOrg;
+        paginationState.page = page;
+        paginationState.hasMore = repos.length === paginationState.perPage;
         
         if (!repos || repos.length === 0) {
-            showError(`No repositories found for ${userOrOrg}`);
+            if (!append) {
+                showError(`No repositories found for ${userOrOrg}`);
+            } else {
+                showInfo('No more repositories to load');
+                paginationControls.classList.add('hidden');
+            }
             return;
         }
         
@@ -110,7 +183,7 @@ async function analyzeBatch(analyzer, userOrOrg) {
         const progressStats = document.getElementById('progressStats');
         
         // Analyze each repo
-        allResults = [];
+        const batchResults = [];
         for (let i = 0; i < repos.length; i++) {
             const repo = repos[i];
             const percent = Math.round(((i + 1) / repos.length) * 100);
@@ -120,14 +193,28 @@ async function analyzeBatch(analyzer, userOrOrg) {
             
             try {
                 const result = await analyzer.analyzeRepository(repo.owner.login, repo.name);
-                allResults.push(result);
+                batchResults.push(result);
             } catch (error) {
                 console.error(`Error analyzing ${repo.full_name}:`, error);
                 // Continue with other repos even if one fails
             }
         }
         
+        if (append) {
+            allResults = allResults.concat(batchResults);
+        } else {
+            allResults = batchResults;
+        }
+        
         displayResults(allResults);
+        
+        // Show/hide pagination controls
+        if (paginationState.hasMore) {
+            paginationControls.classList.remove('hidden');
+            paginationInfo.textContent = `Showing ${allResults.length} repositories (sorted by recently updated)`;
+        } else {
+            paginationControls.classList.add('hidden');
+        }
     } catch (error) {
         throw error;
     }
@@ -187,7 +274,14 @@ function createRepoCard(result) {
         
         topFindings.forEach(finding => {
             const li = document.createElement('li');
+            const actionLink = getActionLink(finding, result.repository);
+            
             li.innerHTML = `<strong>${finding.title}</strong>: ${finding.recommendation}`;
+            
+            if (actionLink) {
+                li.innerHTML += `<br>${actionLink}`;
+            }
+            
             findingsList.appendChild(li);
         });
         
@@ -226,6 +320,56 @@ function showInfo(message) {
     infoMessage.innerHTML = message;
     infoSection.classList.remove('hidden');
     errorSection.classList.add('hidden');
+}
+
+function displayResults(results) {
+    resultsSection.classList.remove('hidden');
+    const container = document.getElementById('resultsContainer');
+    container.innerHTML = '';
+    
+    // Show overall stats if multiple repos
+    if (results.length > 1) {
+        displayOverallStats(results);
+    } else {
+        document.getElementById('summaryStats').classList.add('hidden');
+    }
+    
+    results.forEach(result => {
+        container.appendChild(createRepoCard(result));
+    });
+}
+
+function getActionLink(finding, repoUrl) {
+    const [owner, repo] = repoUrl.split('/');
+    
+    switch(finding.title) {
+        case 'Missing LICENSE':
+            return `<a href="https://github.com/${owner}/${repo}/community/license/new?branch=main" target="_blank" class="action-link">📄 Add LICENSE</a>`;
+        
+        case 'Missing CODE_OF_CONDUCT.md':
+            return `<a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-link">📜 Get Code of Conduct Template</a>`;
+        
+        case 'Missing SECURITY.md':
+            const securityPrompt = `Create a SECURITY.md file for ${repoUrl} that includes:\n- Supported versions\n- How to report vulnerabilities\n- Security update process\n- Contact information`;
+            return `<button class="action-link" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}')">📋 Copy Security.md Prompt</button>`;
+        
+        case 'Missing CONTRIBUTING.md':
+            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-link">📝 Add CONTRIBUTING.md</a>`;
+        
+        case 'Missing README.md':
+            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-link">📘 Add README.md</a>`;
+        
+        default:
+            return null;
+    }
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showInfo('Prompt copied to clipboard! Paste it into your AI assistant.');
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+    });
 }
 
 function displayResults(results) {

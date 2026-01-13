@@ -522,6 +522,55 @@ Not applicable to all repos. State when evaluation is skipped.
 
 ---
 
+## References and standards
+
+### OpenChain (ISO/IEC 5230)
+
+OpenChain defines an **organizational license compliance program standard**, not a repository-level standard.
+
+- [OpenChain ISO/IEC 5230 overview](https://openchainproject.org/license-compliance) - license compliance program focus
+- [OpenChain FAQ](https://openchainproject.org/resources/faq) - explains it is a program standard, not a package standard
+- [OpenChain 2.1 specification](https://github.com/OpenChain-Project/License-Compliance-Specification/blob/master/2.1/en/openchainspec-2.1.md) - full specification text
+
+### CHAOSS metrics
+
+CHAOSS provides community-defined metrics for measuring open source project health.
+
+- [CHAOSS metrics repository](https://github.com/chaoss/metrics) - published metrics context
+- [Issue Response Time metric](https://chaoss.community/kb/metric-issue-response-time/) - definition and usage
+- [Starter Project Health Metrics Model](https://chaoss.community/kb/metrics-model-starter-project-health/) - how to apply metrics carefully
+- [CHAOSS working groups](https://chaoss.community/kb/working-groups/) - OSPO focus area context
+
+---
+
+## Rubric mapping: compliance and metrics context
+
+This table maps evaluation rubric items to OpenChain evidence signals and CHAOSS measurement guidance.
+
+| Rubric item | OpenChain (ISO/IEC 5230 / OpenChain 2.1) | CHAOSS (measurement) |
+|------------|------------------------------------------|----------------------|
+| **LICENSE present** | Supports identifying licensing obligations and compliance artifacts (evidence only). | Not a metric; treat as governance prerequisite |
+| **README baseline** | Not required; supports clarity and process sustainability (evidence). | Indirect; correlate with response time and contribution friction |
+| **CONTRIBUTING / CoC** | Not required; OSPO governance | Track onboarding friction via responsiveness metrics |
+| **Unit tests + CI** | Not OpenChain; quality control | Track PR cycle time, change request closure, failure rates (org-defined) |
+| **SECURITY.md + dependency updates** | Adjacent; OpenChain notes separate security assurance standard. | Risk posture indicators; also response time for security reports (org-defined) |
+| **Fork health** | Not OpenChain; governance risk control | Track divergence and merge frequency; classify fork intent |
+| **Templates and hygiene** | Not OpenChain | Issue Response Time is a direct KPI. |
+| **Release hygiene (tags/changelog)** | Supports traceability for shipped artifacts (evidence) | Track release cadence if relevant to repo type |
+| **WCAG 2.2 AA** | Outside OpenChain | Track accessibility defect rate and audit coverage (org-defined) |
+
+### Usage guidance
+
+- **OpenChain column**: Indicates whether a rubric item provides evidence signals for an organizational OpenChain compliance program. "Not OpenChain" means the item is outside the standard's scope.
+- **CHAOSS column**: Suggests which metrics (published or organization-defined) can measure the health dimension the rubric item addresses.
+
+Remember:
+- OpenChain conformance is **organizational**, not per-repository.
+- CHAOSS metrics are **diagnostic**, not pass/fail gates.
+- Rubric items serve **multiple purposes**: legal risk reduction, sustainability, contributor experience, and quality control.
+
+---
+
 ## Contact and escalation
 
 Defer to maintainer contact defined in the repository.
