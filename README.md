@@ -122,11 +122,7 @@ This tool recommends governance files based on open standards:
 
 ## License
 
-TODO: Add license information
-
-## Contributing
-
-TODO: Add CONTRIBUTING.md
+AGPL
 
 ## Security
 
