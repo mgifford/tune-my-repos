@@ -474,7 +474,7 @@ function getActionLink(finding, repoUrl) {
             return `<a href="https://github.com/${owner}/${repo}/community/license/new?branch=main" target="_blank" class="action-btn" rel="noopener">📄 Add License</a> (GitHub makes this easy)`;
         
         case 'Missing CODE_OF_CONDUCT.md':
-            const cocPrompt = `Create a CODE_OF_CONDUCT.md file for ${repoUrl} using the Contributor Covenant template. Include:
+            const cocPrompt = `Create a CODE_OF_CONDUCT.md file for ${repoUrl} using the Contributor Covenant template. Ensure it is written in valid Markdown. Include:
 - A welcoming and inclusive statement
 - Standards for behavior (Be Respectful, Be Professional, Be Considerate)
 - Examples of unacceptable behavior
@@ -492,11 +492,12 @@ Base it on the Contributor Covenant 2.1: https://www.contributor-covenant.org/ve
         
         case 'Missing SECURITY.md':
             const securityPrompt = `Create a SECURITY.md file for ${repoUrl} that includes:\n- Supported versions\n- How to report vulnerabilities\n- Security update process\n- Contact information`;
+            const securityPromptEscaped = securityPrompt.replace(/'/g, "\\'").replace(/\n/g, '\\n');
             return `<a href="https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">SECURITY.md</span> Guide</a>
-                    <button class="action-btn" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for SECURITY.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=SECURITY.md" target="_blank" class="action-btn" rel="noopener">📝 Create SECURITY.md</a>`;
+                    <button class="action-btn" onclick="copyToClipboard('${securityPromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for SECURITY.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=SECURITY.md" target="_blank" class="action-btn" rel="noopener">📝 Create SECURITY.md</a>`;
         
         case 'Missing CONTRIBUTING.md':
-            const contributingPrompt = `Create a comprehensive CONTRIBUTING.md file for the ${repoUrl} repository that includes:
+            const contributingPrompt = `Create a comprehensive CONTRIBUTING.md file for the ${repoUrl} repository. Ensure it is written in valid Markdown. It should includes:
 - How to set up the development environment
 - Coding standards and style guidelines
 - How to submit changes (pull request process)
@@ -505,19 +506,21 @@ Base it on the Contributor Covenant 2.1: https://www.contributor-covenant.org/ve
 - Code review process
 - Community guidelines and communication channels
 
-Tailor the content to match the project type and tech stack. Make it welcoming and clear for new contributors.`;
+Tailor the content to match the project type and tech stack. Make it welcoming and clear for new contributors. It should clearly welcome people with disabilities as valuable contributors. It should be inspired by https://gitlab.com/tgdp/templates/-/blob/main/CONTRIBUTING.md `;
+            const contributingPromptEscaped = contributingPrompt.replace(/'/g, "\\'").replace(/\n/g, '\\n');
             return `<a href="https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">CONTRIBUTING.md</span> Guide</a> 
-            <button class="action-btn" onclick="copyToClipboard('${contributingPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for CONTRIBUTING.md</span></button><a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📖 Create CONTRIBUTING.md</a>`;
+            <button class="action-btn" onclick="copyToClipboard('${contributingPromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for CONTRIBUTING.md</span></button><a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📖 Create CONTRIBUTING.md</a>`;
         
         case 'Missing README.md':
-            const readmePrompt = `Create a comprehensive README.md file for the ${repoUrl} repository that includes:
+            const readmePrompt = `Create a comprehensive README.md file for the ${repoUrl} repository. Ensure it is written in valid Markdown. It should include:
 - What the project does
 - How to get started installing this project
 - How to get involved
 
-Tailor the content to match the project type and tech stack. Make it welcoming and clear.`;
+Tailor the content to match the project type and tech stack. Make it welcoming and clear. It should be inspired by https://github.com/banesullivan/README`;
+            const readmePromptEscaped = readmePrompt.replace(/'/g, "\\'").replace(/\n/g, '\\n');
             return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">README.md</span> Guide</a> 
-            <button class="action-btn" onclick="copyToClipboard('${readmePrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for README.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README.md</a>`;
+            <button class="action-btn" onclick="copyToClipboard('${readmePromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for README.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README.md</a>`;
         
         case 'Missing CHANGELOG.md':
             return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CHANGELOG.txt" target="_blank" class="action-btn" rel="noopener">📋 Create CHANGELOG.txt</a>`;
