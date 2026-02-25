@@ -15,6 +15,8 @@ const form = document.getElementById('analyzeForm');
 const targetInput = document.getElementById('targetInput');
 const analyzeBtn = document.getElementById('analyzeBtn');
 const skipForksCheckbox = document.getElementById('skipForks');
+const forceRefreshCheckbox = document.getElementById('forceRefresh');
+const cacheStatusDiv = document.getElementById('cacheStatus');
 const paginationControls = document.getElementById('paginationControls');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 const paginationInfo = document.getElementById('paginationInfo');
@@ -133,11 +135,28 @@ async function handleAnalyze(e) {
     
     const targetValue = targetInput.value.trim();
     const token = getGitHubToken();
+    const skipForks = skipForksCheckbox.checked;
+    const forceRefresh = forceRefreshCheckbox.checked;
     
     if (!targetValue) {
         showError('Please enter a GitHub user, organization, or repository');
         return;
     }
+    
+    // Check cache first (unless force refresh is enabled)
+    if (!forceRefresh && window.analysisCache) {
+        const cached = window.analysisCache.get(targetValue, skipForks);
+        if (cached) {
+            const ageMinutes = Math.round(cached.age / 1000 / 60);
+            showCacheStatus(true, ageMinutes);
+            allResults = cached.results;
+            displayResults(allResults);
+            return;
+        }
+    }
+    
+    // Clear cache status indicator
+    hideCacheStatus();
     
     // Debug: Log token status
     console.log('Token status:', token ? `Present (${token.substring(0, 4)}...)` : 'Not present');
@@ -170,6 +189,12 @@ async function handleAnalyze(e) {
                 progressText.textContent = status;
             });
             allResults = [result];
+            
+            // Cache the result
+            if (window.analysisCache) {
+                window.analysisCache.set(targetValue, skipForks, allResults);
+            }
+            
             displayResults(allResults);
         } else {
             // User/org mode - analyze all repos
@@ -329,6 +354,11 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         allResults = batchResults;
         
+        // Cache the results
+        if (window.analysisCache) {
+            window.analysisCache.set(userOrOrg, skipForksCheckbox.checked, allResults);
+        }
+        
         displayResults(allResults);
         
         // Hide pagination controls since we fetched everything
@@ -447,6 +477,22 @@ function showInfo(message) {
     infoMessage.innerHTML = message;
     infoSection.classList.remove('hidden');
     errorSection.classList.add('hidden');
+}
+
+function showCacheStatus(isHit, ageMinutes) {
+    if (!cacheStatusDiv) return;
+    
+    cacheStatusDiv.classList.remove('hidden');
+    cacheStatusDiv.classList.add('cache-hit');
+    cacheStatusDiv.innerHTML = `<strong>📦 Cached results</strong> (${ageMinutes} ${ageMinutes === 1 ? 'minute' : 'minutes'} old) - Check "Force refresh" to fetch fresh data`;
+}
+
+function hideCacheStatus() {
+    if (!cacheStatusDiv) return;
+    
+    cacheStatusDiv.classList.add('hidden');
+    cacheStatusDiv.classList.remove('cache-hit');
+    cacheStatusDiv.innerHTML = '';
 }
 
 function displayResults(results) {
