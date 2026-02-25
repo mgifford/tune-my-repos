@@ -381,7 +381,30 @@ function getActionLink(finding, repoUrl) {
             return `<button class="action-btn" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt</button>`;
         
         case 'Missing CONTRIBUTING.md':
-            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📝 Create File</a>`;
+            const contributingPrompt = `Create a comprehensive CONTRIBUTING.md file for the ${repoUrl} repository that includes:
+- How to set up the development environment
+- Coding standards and style guidelines
+- How to submit changes (pull request process)
+- How to report bugs and request features
+- Testing requirements
+- Code review process
+- Community guidelines and communication channels
+
+Tailor the content to match the project type and tech stack. Make it welcoming and clear for new contributors.`;
+            return `<a href="https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors" target="_blank" class="action-btn" rel="noopener">📚 View Guide</a> 
+            <button class="action-btn" onclick="copyToClipboard('${contributingPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt</button>
+            <details style="margin-top: 10px; font-size: 0.9em;">
+                <summary style="cursor: pointer; color: #0969da;">What's included in the prompt?</summary>
+                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                    <li>How to set up the development environment</li>
+                    <li>Coding standards and style guidelines</li>
+                    <li>How to submit changes (pull request process)</li>
+                    <li>How to report bugs and request features</li>
+                    <li>Testing requirements</li>
+                    <li>Code review process</li>
+                    <li>Community guidelines and communication channels</li>
+                </ul>
+            </details>`;
         
         case 'Missing README.md':
             return `<a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README</a>`;
