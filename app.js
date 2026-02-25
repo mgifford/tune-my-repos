@@ -151,28 +151,16 @@ async function handleAnalyze(e) {
     }
 }
 
+// Load More is no longer needed since we fetch all repos at once
+// Keeping this function for backwards compatibility but it won't be used
 async function handleLoadMore() {
-    if (!paginationState.userOrOrg) return;
-    
-    loadMoreBtn.disabled = true;
-    loadingSection.classList.remove('hidden');
-    
-    try {
-        const token = getGitHubToken();
-        const analyzer = new GitHubAnalyzer(token);
-        await analyzeBatch(analyzer, paginationState.userOrOrg, paginationState.page + 1, true);
-    } catch (error) {
-        showError(error.message);
-        console.error('Load more error:', error);
-    } finally {
-        loadingSection.classList.add('hidden');
-        loadMoreBtn.disabled = false;
-    }
+    // This function is deprecated - we now fetch all repositories automatically
+    console.warn('handleLoadMore called but is deprecated - all repos are fetched automatically');
 }
 
 async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
     try {
-        // Fetch repos for this user/org with pagination
+        // Fetch ALL repos for this user/org across all pages
         const skipForks = skipForksCheckbox.checked;
         progressText.textContent = `Fetching repositories for ${userOrOrg}...`;
         const headers = {
@@ -187,39 +175,67 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             headers['Authorization'] = `token ${token}`;
         }
         
-        let response;
-        try {
-            // Sort by recently updated, fetch in pages of 50
-            response = await fetch(
-                `https://api.github.com/users/${userOrOrg}/repos?sort=updated&direction=desc&per_page=${paginationState.perPage}&page=${page}`,
-                { headers }
-            );
-        } catch (fetchError) {
-            // Network error, CORS issue, or connection problem
-            throw new Error(`Network error fetching repositories: ${fetchError.message}. Make sure you're serving the app via HTTP server (not file://) or use authentication.`);
-        }
+        // Fetch all pages of repositories
+        let allRepos = [];
+        let currentPage = page;
+        let hasMorePages = true;
         
-        if (!response.ok) {
-            let errorMsg = `HTTP ${response.status} ${response.statusText}`;
+        while (hasMorePages) {
+            progressText.textContent = `Fetching repositories for ${userOrOrg} (page ${currentPage})...`;
+            
+            let response;
             try {
-                const errorData = await response.json();
-                if (errorData.message) {
-                    errorMsg += `: ${errorData.message}`;
-                }
-                // Check for rate limiting
-                if (response.status === 403 && response.headers.get('X-RateLimit-Remaining') === '0') {
-                    const resetTime = new Date(parseInt(response.headers.get('X-RateLimit-Reset')) * 1000);
-                    errorMsg += ` Rate limit exceeded. Resets at ${resetTime.toLocaleTimeString()}`;
-                }
-            } catch (e) {
-                // If we can't parse the error response, just use the status
+                // Sort by recently updated, fetch in pages of 100 (max per page)
+                response = await fetch(
+                    `https://api.github.com/users/${userOrOrg}/repos?sort=updated&direction=desc&per_page=100&page=${currentPage}`,
+                    { headers }
+                );
+            } catch (fetchError) {
+                // Network error, CORS issue, or connection problem
+                throw new Error(`Network error fetching repositories: ${fetchError.message}. Make sure you're serving the app via HTTP server (not file://) or use authentication.`);
             }
-            throw new Error(`Failed to fetch repositories: ${errorMsg}`);
+            
+            if (!response.ok) {
+                let errorMsg = `HTTP ${response.status} ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.message) {
+                        errorMsg += `: ${errorData.message}`;
+                    }
+                    // Check for rate limiting
+                    if (response.status === 403 && response.headers.get('X-RateLimit-Remaining') === '0') {
+                        const resetTime = new Date(parseInt(response.headers.get('X-RateLimit-Reset')) * 1000);
+                        errorMsg += ` Rate limit exceeded. Resets at ${resetTime.toLocaleTimeString()}`;
+                    }
+                } catch (e) {
+                    // If we can't parse the error response, just use the status
+                }
+                throw new Error(`Failed to fetch repositories: ${errorMsg}`);
+            }
+            
+            const repos = await response.json();
+            
+            // If we got fewer repos than the max per page, we've reached the end
+            if (repos.length === 0) {
+                hasMorePages = false;
+            } else {
+                allRepos = allRepos.concat(repos);
+                console.log(`Fetched page ${currentPage}: ${repos.length} repos (total so far: ${allRepos.length})`);
+                
+                // Check if there are more pages (if we got 100 repos, there might be more)
+                if (repos.length < 100) {
+                    hasMorePages = false;
+                } else {
+                    currentPage++;
+                }
+            }
         }
         
-        let repos = await response.json();
+        console.log(`Fetched all repositories: ${allRepos.length} total`);
+        progressText.textContent = `Fetched ${allRepos.length} repositories, filtering and analyzing...`;
         
         // Filter out forks if requested
+        let repos = allRepos;
         if (skipForks) {
             const originalCount = repos.length;
             repos = repos.filter(repo => !repo.fork);
@@ -236,16 +252,11 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         // Update pagination state
         paginationState.userOrOrg = userOrOrg;
-        paginationState.page = page;
-        paginationState.hasMore = repos.length === paginationState.perPage;
+        paginationState.page = currentPage;
+        paginationState.hasMore = false; // We fetched everything
         
         if (!repos || repos.length === 0) {
-            if (!append) {
-                showError(`No repositories found for ${userOrOrg}`);
-            } else {
-                showInfo('No more repositories to load');
-                paginationControls.classList.add('hidden');
-            }
+            showError(`No repositories found for ${userOrOrg}`);
             return;
         }
         
@@ -281,21 +292,12 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             return;
         }
         
-        if (append) {
-            allResults = allResults.concat(batchResults);
-        } else {
-            allResults = batchResults;
-        }
+        allResults = batchResults;
         
         displayResults(allResults);
         
-        // Show/hide pagination controls
-        if (paginationState.hasMore) {
-            paginationControls.classList.remove('hidden');
-            paginationInfo.textContent = `Showing ${allResults.length} repositories (sorted by recently updated)`;
-        } else {
-            paginationControls.classList.add('hidden');
-        }
+        // Hide pagination controls since we fetched everything
+        paginationControls.classList.add('hidden');
     } catch (error) {
         throw error;
     }
