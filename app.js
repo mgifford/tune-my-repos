@@ -41,8 +41,11 @@ const authUsername = document.getElementById('authUsername');
 const loginBtn = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 
-// Initialize auth UI when page loads
-window.addEventListener('DOMContentLoaded', initAuthUI);
+// Initialize auth UI and URL params when page loads
+window.addEventListener('DOMContentLoaded', () => {
+    initAuthUI();
+    initURLParams();
+});
 
 async function initAuthUI() {
     if (!window.githubAuth) {
@@ -73,6 +76,37 @@ async function initAuthUI() {
     authLoading.classList.add('hidden');
 }
 
+/**
+ * Initialize URL parameter handling
+ * Reads the 'u' parameter from URL and populates the input field
+ */
+function initURLParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userParam = urlParams.get('u');
+    
+    if (userParam) {
+        targetInput.value = userParam;
+    }
+}
+
+/**
+ * Update URL when the targetInput field changes
+ * Updates the browser URL without reloading the page
+ */
+function updateURL() {
+    const value = targetInput.value.trim();
+    const url = new URL(window.location);
+    
+    if (value) {
+        url.searchParams.set('u', value);
+    } else {
+        url.searchParams.delete('u');
+    }
+    
+    // Update URL without reloading the page
+    window.history.replaceState({}, '', url);
+}
+
 // Event listeners
 form.addEventListener('submit', handleAnalyze);
 exportJsonBtn.addEventListener('click', exportAsJSON);
@@ -81,6 +115,7 @@ exportCsvBtn.addEventListener('click', exportAsCSV);
 loadMoreBtn.addEventListener('click', handleLoadMore);
 loginBtn.addEventListener('click', () => window.githubAuth.login());
 logoutBtn.addEventListener('click', () => window.githubAuth.logout());
+targetInput.addEventListener('input', updateURL);
 
 /**
  * Get the current GitHub token from either OAuth or config
