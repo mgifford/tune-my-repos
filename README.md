@@ -16,6 +16,7 @@ This tool evaluates repositories against established compliance, security, acces
 - **Test coverage** - Ensures unit tests and CI/CD pipelines exist
 - **OpenChain evidence** - Reports signals for ISO/IEC 5230 compliance programs
 - **CHAOSS metrics** - Measures community health indicators
+- **Smart caching** - Results cached for 1 hour to reduce API calls and improve performance
 - **Export options** - Download results as JSON or Markdown
 
 ## Usage
@@ -31,8 +32,17 @@ This tool evaluates repositories against established compliance, security, acces
 2. **Analyze repositories:**
    - **User/Org:** Enter `mgifford` or `civicactions` to scan all repos
    - **Single repo:** Enter `mgifford/tune-my-repos` to analyze one repo
+   - **Skip forks:** Check to exclude forked repositories (recommended)
+   - **Force refresh:** Check to bypass the 1-hour cache and fetch fresh data
 
-3. **Optional - Configure authentication** (for higher rate limits and private repos):
+3. **Caching behavior:**
+   - Analysis results are automatically cached for **1 hour** to reduce API calls
+   - A green indicator shows when cached results are being displayed
+   - Use "Force refresh" checkbox to bypass cache and fetch fresh data
+   - Cache is stored in browser localStorage and cleared automatically after expiration
+   - Different cache entries for different skipForks settings
+
+4. **Optional - Configure authentication** (for higher rate limits and private repos):
    
    **For local development:**
    
@@ -56,8 +66,9 @@ This tool evaluates repositories against established compliance, security, acces
    - Without authentication: 60 requests/hour (unauthenticated)
    - With authentication: 5,000 requests/hour
    - With authentication: Access to private repositories (if granted)
+   - **Caching reduces API usage:** Repeated scans within 1 hour use cached data
 
-4. **Export results:**
+5. **Export results:**
    - **JSON** - Complete analysis data for further processing
    - **Markdown** - Human-readable report
    - **CSV** - Spreadsheet with repo name, classification, maturity, issue counts

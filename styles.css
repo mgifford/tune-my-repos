@@ -665,3 +665,24 @@ footer a:hover {
     width: 1px;
     word-wrap: normal;
 }
+
+/* Cache status indicator */
+.cache-status {
+    padding: 12px;
+    margin: 16px 0;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.cache-status.cache-hit {
+    background: #dafbe1;
+    border-color: var(--success);
+    color: #1a7f37;
+}
+
+.cache-status strong {
+    font-weight: 600;
+}
+
