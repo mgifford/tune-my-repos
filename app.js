@@ -471,7 +471,7 @@ function getActionLink(finding, repoUrl) {
     
     switch(finding.title) {
         case 'Missing LICENSE':
-            return `<a href="https://github.com/${owner}/${repo}/community/license/new?branch=main" target="_blank" class="action-btn" rel="noopener">📄 Add License Now</a> (GitHub makes this easy)`;
+            return `<a href="https://github.com/${owner}/${repo}/community/license/new?branch=main" target="_blank" class="action-btn" rel="noopener">📄 Add License</a> (GitHub makes this easy)`;
         
         case 'Missing CODE_OF_CONDUCT.md':
             const cocPrompt = `Create a CODE_OF_CONDUCT.md file for ${repoUrl} using the Contributor Covenant template. Include:
@@ -486,14 +486,14 @@ function getActionLink(finding, repoUrl) {
 Base it on the Contributor Covenant 2.1: https://www.contributor-covenant.org/version/2/1/code_of_conduct/`;
             const cocPromptEscaped = cocPrompt.replace(/'/g, "\\'").replace(/\n/g, '\\n');
             return `
-                <a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-btn" rel="noopener">📚 View CODE_OF_CONDUCT.md Template</a>
-                <button class="action-btn" onclick="copyToClipboard('${cocPromptEscaped}'); return false;">📋 Copy AI Prompt</button> <a href="https://github.com/${owner}/${repo}/new/main?filename=CODE_OF_CONDUCT.md" target="_blank" class="action-btn" rel="noopener">📝 Create CODE_OF_CONDUCT.md</a>
+                <a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">CODE_OF_CONDUCT.md</span> Guide</a>
+                <button class="action-btn" onclick="copyToClipboard('${cocPromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for CODE_OF_CONDUCT.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=CODE_OF_CONDUCT.md" target="_blank" class="action-btn" rel="noopener">📝 Create CODE_OF_CONDUCT.md</a>
             `;
         
         case 'Missing SECURITY.md':
             const securityPrompt = `Create a SECURITY.md file for ${repoUrl} that includes:\n- Supported versions\n- How to report vulnerabilities\n- Security update process\n- Contact information`;
-            return `<a href="https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository" target="_blank" class="action-btn" rel="noopener">📚 View SECURITY.md Guide</a>
-                    <button class="action-btn" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt for SECURITY.md</button> <a href="https://github.com/${owner}/${repo}/new/main?filename=SECURITY.md" target="_blank" class="action-btn" rel="noopener">📝 Create SECURITY.md</a>`;
+            return `<a href="https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">SECURITY.md</span> Guide</a>
+                    <button class="action-btn" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for SECURITY.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=SECURITY.md" target="_blank" class="action-btn" rel="noopener">📝 Create SECURITY.md</a>`;
         
         case 'Missing CONTRIBUTING.md':
             const contributingPrompt = `Create a comprehensive CONTRIBUTING.md file for the ${repoUrl} repository that includes:
@@ -506,8 +506,8 @@ Base it on the Contributor Covenant 2.1: https://www.contributor-covenant.org/ve
 - Community guidelines and communication channels
 
 Tailor the content to match the project type and tech stack. Make it welcoming and clear for new contributors.`;
-            return `<a href="https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors" target="_blank" class="action-btn" rel="noopener">📚 View CONTRIBUTING.md Guide</a> 
-            <button class="action-btn" onclick="copyToClipboard('${contributingPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt for CONTRIBUTING.md</button><a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📖 Create CONTRIBUTING.md</a>`;
+            return `<a href="https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">CONTRIBUTING.md</span> Guide</a> 
+            <button class="action-btn" onclick="copyToClipboard('${contributingPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for CONTRIBUTING.md</span></button><a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📖 Create CONTRIBUTING.md</a>`;
         
         case 'Missing README.md':
             const readmePrompt = `Create a comprehensive README.md file for the ${repoUrl} repository that includes:
@@ -516,11 +516,11 @@ Tailor the content to match the project type and tech stack. Make it welcoming a
 - How to get involved
 
 Tailor the content to match the project type and tech stack. Make it welcoming and clear.`;
-            return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes" target="_blank" class="action-btn" rel="noopener">📚 View README.md Guide</a> 
-            <button class="action-btn" onclick="copyToClipboard('${readmePrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt for README.md</button> <a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README.md</a>`;
+            return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">README.md</span> Guide</a> 
+            <button class="action-btn" onclick="copyToClipboard('${readmePrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for README.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README.md</a>`;
         
         case 'Missing CHANGELOG.md':
-            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CHANGELOG.md" target="_blank" class="action-btn" rel="noopener">📋 Create Changelog</a>`;
+            return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CHANGELOG.txt" target="_blank" class="action-btn" rel="noopener">📋 Create CHANGELOG.txt</a>`;
         
         default:
             return null;
