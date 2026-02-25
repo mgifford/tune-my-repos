@@ -62,7 +62,14 @@ class GitHubAuth {
      */
     login() {
         if (!this.clientId) {
-            alert('GitHub OAuth is not configured. Please set GITHUB_OAUTH_CLIENT_ID in config.js\n\nFor local development, you can still use a Personal Access Token in .env or config.js');
+            alert('GitHub OAuth is not configured.\n\n' +
+                  'For most users, you don\'t need OAuth!\n' +
+                  'Simply add a Personal Access Token to config.js:\n' +
+                  '  1. Get a token: https://github.com/settings/tokens\n' +
+                  '  2. Add to GITHUB_TOKEN in config.js\n' +
+                  '  3. This gives you 5,000 requests/hour\n\n' +
+                  'OAuth is only needed for GitHub Pages deployment with multiple users.\n' +
+                  'See GITHUB_PAGES_SETUP.md for details.');
             return;
         }
         
