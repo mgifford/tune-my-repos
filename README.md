@@ -112,6 +112,54 @@ All evaluations follow the rules defined in [AGENTS.md](AGENTS.md), including:
 - OpenChain ISO/IEC 5230 evidence signals
 - CHAOSS community health metrics
 
+## Frequently Asked Questions
+
+### Do I need to set up GitHub OAuth?
+
+**Short answer: No, for most users!**
+
+GitHub OAuth is only needed if you're deploying to GitHub Pages and want multiple users to authenticate with their own accounts. For local/personal use, a Personal Access Token is simpler and sufficient.
+
+**When to use Personal Access Token (recommended for most users):**
+- Running locally for personal use
+- Single-user scenarios
+- Testing and development
+- Gives you 5,000 API requests/hour
+
+**When to use GitHub OAuth (advanced):**
+- Deploying to GitHub Pages
+- Multiple users need to authenticate
+- Each user needs their own rate limit
+- Requires setting up an OAuth proxy (see [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md))
+
+### How do I add my GitHub token?
+
+1. **Create a Personal Access Token:**
+   - Go to https://github.com/settings/tokens
+   - Click "Generate new token (classic)"
+   - Select scope: `public_repo` (or `repo` for private repositories)
+   - Copy the token (starts with `ghp_`)
+
+2. **Add the token to config.js:**
+   ```javascript
+   const CONFIG = { 
+       GITHUB_TOKEN: 'ghp_your_token_here',
+       // OAuth settings can be left empty for local use
+   };
+   ```
+
+3. **Verify it works:**
+   - Open the app in your browser
+   - The app will use your token automatically
+   - You'll get 5,000 requests/hour instead of 60
+
+### How do I check if authentication is working?
+
+- **Without any token:** You'll see "60 requests/hour" rate limit
+- **With token or OAuth:** You'll see "5,000 requests/hour" rate limit
+- Check the browser console for messages like "✓ Loaded GitHub token"
+- If OAuth is configured, you'll see your username in the top-right corner
+
 ## Related Resources
 
 This tool recommends governance files based on open standards:
