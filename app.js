@@ -452,7 +452,7 @@ Base it on the Contributor Covenant 2.1: https://www.contributor-covenant.org/ve
             const cocPromptEscaped = cocPrompt.replace(/'/g, "\\'").replace(/\n/g, '\\n');
             return `
                 <a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-btn" rel="noopener">📚 View CODE_OF_CONDUCT.md Template</a>
-                <button class="action-btn" onclick="copyToClipboard('${cocPromptEscaped}'); return false;">📋 Copy AI Prompt</button> <a href="https://github.com/${owner}/${repo}/new/main?filename=CODE_OF_CONDUCT.md" target="_blank" class="action-btn" rel="noopener">📝 Create Missing CODE_OF_CONDUCT.md</a>
+                <button class="action-btn" onclick="copyToClipboard('${cocPromptEscaped}'); return false;">📋 Copy AI Prompt</button> <a href="https://github.com/${owner}/${repo}/new/main?filename=CODE_OF_CONDUCT.md" target="_blank" class="action-btn" rel="noopener">📝 Create CODE_OF_CONDUCT.md</a>
             `;
         
         case 'Missing SECURITY.md':
