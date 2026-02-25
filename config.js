@@ -1,1 +1,5 @@
-const CONFIG = { GITHUB_TOKEN: '' };
+const CONFIG = { 
+    GITHUB_TOKEN: '',
+    GITHUB_OAUTH_CLIENT_ID: '',
+    GITHUB_OAUTH_PROXY: ''
+};

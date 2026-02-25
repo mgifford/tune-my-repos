@@ -45,6 +45,14 @@ header {
     margin-bottom: calc(var(--spacing) * 2);
 }
 
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: calc(var(--spacing) * 2);
+    flex-wrap: wrap;
+}
+
 header h1 {
     font-size: 2rem;
     margin-bottom: calc(var(--spacing) / 2);
@@ -53,6 +61,49 @@ header h1 {
 .tagline {
     color: var(--text-secondary);
     font-size: 1.1rem;
+}
+
+/* Auth Controls */
+.auth-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+}
+
+#authLoggedOut {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: calc(var(--spacing) / 4);
+}
+
+#authLoggedIn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+}
+
+.auth-username {
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) / 2);
+}
+
+.auth-help {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+#loginBtn {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) / 2);
+}
+
+#loginBtn svg {
+    fill: currentColor;
 }
 
 /* Forms */

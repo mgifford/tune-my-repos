@@ -1,6 +1,8 @@
 /**
  * GitHub Configuration
  * 
+ * LOCAL DEVELOPMENT OPTIONS:
+ * 
  * Option 1 (Recommended): Use .env file
  *   1. Copy .env.example to .env
  *   2. Add your token to the .env file
@@ -23,8 +25,34 @@
  *   - Without token: 60 API requests/hour (unauthenticated)
  *   - With token: 5,000 API requests/hour
  *   - Access to private repositories (if granted)
+ * 
+ * 
+ * GITHUB PAGES / PRODUCTION DEPLOYMENT:
+ * 
+ * For GitHub Pages deployment, configure GitHub OAuth:
+ * 
+ * 1. Create a GitHub OAuth App:
+ *    https://github.com/settings/developers
+ *    - Application name: Your app name
+ *    - Homepage URL: https://yourusername.github.io/tune-my-repos/
+ *    - Authorization callback URL: https://yourusername.github.io/tune-my-repos/
+ * 
+ * 2. Deploy an OAuth proxy (required for static sites):
+ *    Option A: Use Cloudflare Workers (recommended)
+ *      https://github.com/gr2m/cloudflare-worker-github-oauth-login
+ *    
+ *    Option B: Deploy your own proxy
+ *      https://github.com/prose/gatekeeper
+ * 
+ * 3. Configure OAuth settings below and commit to repository
  */
 
 const CONFIG = {
-    GITHUB_TOKEN: ''  // Add your token here, or use .env file
+    // Local development token (not committed, optional)
+    GITHUB_TOKEN: '',
+    
+    // GitHub OAuth App Configuration (for GitHub Pages deployment)
+    // These values CAN be committed as they are public (client ID is not secret)
+    GITHUB_OAUTH_CLIENT_ID: '',  // Your OAuth App Client ID
+    GITHUB_OAUTH_PROXY: ''        // Your OAuth proxy URL (e.g., https://your-worker.workers.dev/api/github/oauth/token)
 };
