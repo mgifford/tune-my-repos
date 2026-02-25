@@ -378,7 +378,9 @@ function getActionLink(finding, repoUrl) {
         
         case 'Missing SECURITY.md':
             const securityPrompt = `Create a SECURITY.md file for ${repoUrl} that includes:\n- Supported versions\n- How to report vulnerabilities\n- Security update process\n- Contact information`;
-            return `<button class="action-btn" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt</button>`;
+            return `<a href="https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository" target="_blank" class="action-btn" rel="noopener">📚 View Guide</a>
+                    <a href="https://github.com/${owner}/${repo}/new/main?filename=SECURITY.md" target="_blank" class="action-btn" rel="noopener">📝 Create File</a>
+                    <button class="action-btn" onclick="copyToClipboard('${securityPrompt.replace(/'/g, "\\'")}'); return false;">📋 Copy AI Prompt</button>`;
         
         case 'Missing CONTRIBUTING.md':
             return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📝 Create File</a>`;
