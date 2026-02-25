@@ -143,7 +143,9 @@ class GitHubAnalyzer {
             'CONTRIBUTING.md': { severity: 'important', purpose: 'contribution process' },
             'CODE_OF_CONDUCT.md': { severity: 'recommended', purpose: 'community standards' },
             'SECURITY.md': { severity: 'important', purpose: 'vulnerability reporting' },
-            'CHANGELOG.md': { severity: 'recommended', purpose: 'change tracking' }
+            'CHANGELOG.md': { severity: 'recommended', purpose: 'change tracking' },
+            'ACCESSIBILITY.md': { severity: 'recommended', purpose: 'accessibility commitment and transparency' },
+            'SUSTAINABILITY.md': { severity: 'optional', purpose: 'digital sustainability and environmental impact' }
         };
 
         for (const [filename, config] of Object.entries(governanceFiles)) {
@@ -156,12 +158,21 @@ class GitHubAnalyzer {
             const found = variations.some(v => files.has(v));
 
             if (!found) {
+                let recommendation = `Add ${filename} to clarify ${config.purpose}`;
+                
+                // Add template links for specific files
+                if (filename === 'ACCESSIBILITY.md') {
+                    recommendation += '. Template: https://github.com/mgifford/ACCESSIBILITY.md';
+                } else if (filename === 'SUSTAINABILITY.md') {
+                    recommendation += '. Template: https://github.com/mgifford/SUSTAINABILITY.md';
+                }
+                
                 result.findings.push({
                     category: 'governance',
                     severity: config.severity,
                     title: `Missing ${filename}`,
                     description: this.getGovernanceRisk(filename),
-                    recommendation: `Add ${filename} to clarify ${config.purpose}`,
+                    recommendation: recommendation,
                     automated: ['SECURITY.md', 'CONTRIBUTING.md'].includes(filename),
                     time_estimate: filename === 'LICENSE' ? '1–3 hours' : '15–45 minutes',
                     requires_write_access: true
@@ -276,7 +287,9 @@ class GitHubAnalyzer {
             'CONTRIBUTING.md': 'Contributors lack guidance, inconsistent contributions, review friction',
             'CODE_OF_CONDUCT.md': 'No community standards, potential for unaddressed harassment',
             'SECURITY.md': 'Security researchers lack reporting channel, delayed vulnerability disclosure',
-            'CHANGELOG.md': 'Users cannot track changes, difficult to assess upgrade impact'
+            'CHANGELOG.md': 'Users cannot track changes, difficult to assess upgrade impact',
+            'ACCESSIBILITY.md': 'No accessibility transparency, unclear WCAG conformance, potential barriers for disabled users',
+            'SUSTAINABILITY.md': 'No sustainability policy, unclear environmental impact, missed opportunity for carbon reduction'
         };
         return risks[filename] || 'Governance gap';
     }

@@ -114,6 +114,14 @@ All evaluations follow the rules defined in [AGENTS.md](AGENTS.md), including:
 - OpenChain ISO/IEC 5230 evidence signals
 - CHAOSS community health metrics
 
+## Related Resources
+
+This tool recommends governance files based on open standards:
+
+- **[ACCESSIBILITY.md template](https://github.com/mgifford/ACCESSIBILITY.md)** - Open standard for project accessibility transparency and WCAG conformance tracking
+- **[SUSTAINABILITY.md template](https://github.com/mgifford/SUSTAINABILITY.md)** - Project instructions for reducing digital emissions and environmental impact
+- **[agents.md](https://agents.md/)** - The agents.md standard for AI agent instructions
+
 ## License
 
 TODO: Add license information

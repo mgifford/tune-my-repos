@@ -586,3 +586,18 @@ If this file conflicts with:
 - Upstream fork requirements
 
 State the conflict explicitly and recommend human review.
+
+---
+
+## Related resources
+
+### Standards and templates
+- **agents.md** - https://agents.md/ - The agents.md standard for AI agent instructions
+- **ACCESSIBILITY.md template** - https://github.com/mgifford/ACCESSIBILITY.md - Open standard for project accessibility transparency
+- **SUSTAINABILITY.md template** - https://github.com/mgifford/SUSTAINABILITY.md - Project instructions for reducing digital emissions and environmental impact
+
+### Further reading
+- OpenChain Project - https://openchainproject.org/
+- CHAOSS Community - https://chaoss.community/
+- Web Content Accessibility Guidelines (WCAG) 2.2 - https://www.w3.org/WAI/WCAG22/quickref/
+- Web Sustainability Guidelines - https://w3c.github.io/sustyweb/
