@@ -32,18 +32,72 @@ const exportJsonBtn = document.getElementById('exportJson');
 const exportMarkdownBtn = document.getElementById('exportMarkdown');
 const exportCsvBtn = document.getElementById('exportCsv');
 
+// Auth DOM elements
+const authControls = document.getElementById('authControls');
+const authLoading = document.getElementById('authLoading');
+const authLoggedOut = document.getElementById('authLoggedOut');
+const authLoggedIn = document.getElementById('authLoggedIn');
+const authUsername = document.getElementById('authUsername');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
+// Initialize auth UI when page loads
+window.addEventListener('DOMContentLoaded', initAuthUI);
+
+async function initAuthUI() {
+    if (!window.githubAuth) {
+        console.warn('Auth module not loaded');
+        return;
+    }
+    
+    // Show loading state
+    authLoading.classList.remove('hidden');
+    authLoggedOut.classList.add('hidden');
+    authLoggedIn.classList.add('hidden');
+    
+    if (window.githubAuth.isAuthenticated()) {
+        // User is logged in - show username
+        const userInfo = await window.githubAuth.getUserInfo();
+        if (userInfo) {
+            authUsername.textContent = `@${userInfo.login}`;
+            authLoggedIn.classList.remove('hidden');
+        } else {
+            // Token invalid, show logged out state
+            authLoggedOut.classList.remove('hidden');
+        }
+    } else {
+        // Not logged in
+        authLoggedOut.classList.remove('hidden');
+    }
+    
+    authLoading.classList.add('hidden');
+}
+
 // Event listeners
 form.addEventListener('submit', handleAnalyze);
 exportJsonBtn.addEventListener('click', exportAsJSON);
 exportMarkdownBtn.addEventListener('click', exportAsMarkdown);
 exportCsvBtn.addEventListener('click', exportAsCSV);
 loadMoreBtn.addEventListener('click', handleLoadMore);
+loginBtn.addEventListener('click', () => window.githubAuth.login());
+logoutBtn.addEventListener('click', () => window.githubAuth.logout());
+
+/**
+ * Get the current GitHub token from either OAuth or config
+ */
+function getGitHubToken() {
+    // Priority: OAuth token > local token from config/env
+    if (window.githubAuth && window.githubAuth.isAuthenticated()) {
+        return window.githubAuth.getToken();
+    }
+    return window.CONFIG?.GITHUB_TOKEN || '';
+}
 
 async function handleAnalyze(e) {
     e.preventDefault();
     
     const targetValue = targetInput.value.trim();
-    const token = window.CONFIG?.GITHUB_TOKEN || '';
+    const token = getGitHubToken();
     
     if (!targetValue) {
         showError('Please enter a GitHub user, organization, or repository');
@@ -55,7 +109,12 @@ async function handleAnalyze(e) {
     
     // Show rate limit warning if no token provided
     if (!token) {
-        showInfo('Analyzing public repositories only. Without a GitHub token, you\'re limited to 60 API requests/hour. <a href="https://github.com/settings/tokens" target="_blank">Add a token</a> in .env or config.js for higher rate limits (5,000/hour) and private repo access.');
+        const hasOAuthConfig = window.CONFIG?.GITHUB_OAUTH_CLIENT_ID;
+        if (hasOAuthConfig) {
+            showInfo('⚡ Not authenticated. Click "Sign in with GitHub" above for higher rate limits (5,000/hour) vs. 60/hour unauthenticated.');
+        } else {
+            showInfo('Analyzing public repositories only. Without authentication, you\'re limited to 60 API requests/hour. For higher limits (5,000/hour), <a href="https://github.com/settings/tokens" target="_blank">add a Personal Access Token</a> in .env or config.js for local development. See README for deployment options.');
+        }
     }
     
     // Reset UI
@@ -99,7 +158,8 @@ async function handleLoadMore() {
     loadingSection.classList.remove('hidden');
     
     try {
-        const analyzer = new GitHubAnalyzer(window.CONFIG?.GITHUB_TOKEN || '');
+        const token = getGitHubToken();
+        const analyzer = new GitHubAnalyzer(token);
         await analyzeBatch(analyzer, paginationState.userOrOrg, paginationState.page + 1, true);
     } catch (error) {
         showError(error.message);
@@ -119,9 +179,12 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             'Accept': 'application/vnd.github.v3+json'
         };
         
+        // Get current token (OAuth or config)
+        const token = getGitHubToken();
+        
         // Only add Authorization header if token is provided
-        if (CONFIG.GITHUB_TOKEN) {
-            headers['Authorization'] = `token ${CONFIG.GITHUB_TOKEN}`;
+        if (token) {
+            headers['Authorization'] = `token ${token}`;
         }
         
         let response;
@@ -133,7 +196,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             );
         } catch (fetchError) {
             // Network error, CORS issue, or connection problem
-            throw new Error(`Network error fetching repositories: ${fetchError.message}. Make sure you're serving the app via HTTP server (not file://) or use a GitHub token.`);
+            throw new Error(`Network error fetching repositories: ${fetchError.message}. Make sure you're serving the app via HTTP server (not file://) or use authentication.`);
         }
         
         if (!response.ok) {

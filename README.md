@@ -32,9 +32,11 @@ This tool evaluates repositories against established compliance, security, acces
    - **User/Org:** Enter `mgifford` or `civicactions` to scan all repos
    - **Single repo:** Enter `mgifford/tune-my-repos` to analyze one repo
 
-3. **Optional - Configure GitHub token** (for higher rate limits and private repos):
+3. **Optional - Configure authentication** (for higher rate limits and private repos):
    
-   **Option 1 (Recommended): Use .env file**
+   **For local development:**
+   
+   Use a Personal Access Token with .env file or config.js:
    ```bash
    # Copy the example file
    cp .env.example .env
@@ -43,21 +45,17 @@ This tool evaluates repositories against established compliance, security, acces
    # Get a token from: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
    ```
    
-   **Option 2: Use config.js**
-   ```bash
-   # Copy the example config
-   cp config.example.js config.js
+   **For GitHub Pages deployment:**
    
-   # Edit config.js and add your token
-   ```
+   Use GitHub OAuth for users to sign in with their own accounts:
+   - See [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) for complete OAuth configuration guide
+   - Allows users to authenticate with their GitHub account
+   - Each user gets their own 5,000 requests/hour rate limit
    
-   **Without a token:**
-   - Rate limit: 60 requests/hour (unauthenticated)
-   - Public repositories only
-   
-   **With a token:**
-   - Rate limit: 5,000 requests/hour
-   - Access to private repositories (if granted)
+   **Rate limits:**
+   - Without authentication: 60 requests/hour (unauthenticated)
+   - With authentication: 5,000 requests/hour
+   - With authentication: Access to private repositories (if granted)
 
 4. **Export results:**
    - **JSON** - Complete analysis data for further processing
