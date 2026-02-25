@@ -374,7 +374,22 @@ function getActionLink(finding, repoUrl) {
             return `<a href="https://github.com/${owner}/${repo}/community/license/new?branch=main" target="_blank" class="action-btn" rel="noopener">📄 Add License Now</a>`;
         
         case 'Missing CODE_OF_CONDUCT.md':
-            return `<a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-btn" rel="noopener">📜 Get Template</a>`;
+            const cocPrompt = `Create a CODE_OF_CONDUCT.md file for ${repoUrl} using the Contributor Covenant template. Include:
+- A welcoming and inclusive statement
+- Standards for behavior (Be Respectful, Be Professional, Be Considerate)
+- Examples of unacceptable behavior
+- Responsibilities of maintainers
+- Scope of application (project spaces and public spaces when representing the project)
+- Enforcement process and consequences
+- Contact information for reporting issues
+
+Base it on the Contributor Covenant 2.1: https://www.contributor-covenant.org/version/2/1/code_of_conduct/`;
+            const cocPromptEscaped = cocPrompt.replace(/'/g, "\\'").replace(/\n/g, '\\n');
+            return `
+                <a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/" target="_blank" class="action-btn" rel="noopener">📚 View Template</a>
+                <a href="https://github.com/${owner}/${repo}/new/main?filename=CODE_OF_CONDUCT.md" target="_blank" class="action-btn" rel="noopener">📝 Create File</a>
+                <button class="action-btn" onclick="copyToClipboard('${cocPromptEscaped}'); return false;">📋 Copy AI Prompt</button>
+            `;
         
         case 'Missing SECURITY.md':
             const securityPrompt = `Create a SECURITY.md file for ${repoUrl} that includes:\n- Supported versions\n- How to report vulnerabilities\n- Security update process\n- Contact information`;
