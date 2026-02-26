@@ -766,7 +766,14 @@ function exportAsJSON() {
 function exportAsCSV() {
     if (!allResults || allResults.length === 0) return;
     
-    let csv = 'Repository,Classification,Maturity,Fork,Critical,Important,Recommended,Optional\n';
+    let csv = '';
+    
+    // Add summary as header comment if there were failures
+    if (analysisStats.failed > 0) {
+        csv += `# Summary: ${allResults.length} analyzed successfully, ${analysisStats.failed} failed out of ${analysisStats.total} total\n`;
+    }
+    
+    csv += 'Repository,Classification,Maturity,Fork,Critical,Important,Recommended,Optional\n';
     
     allResults.forEach(result => {
         const critical = result.findings.filter(f => f.severity === 'critical').length;
@@ -776,11 +783,6 @@ function exportAsCSV() {
         
         csv += `"${result.repository}","${result.classification}","${result.maturity_level}","${result.is_fork}",${critical},${important},${recommended},${optional}\n`;
     });
-    
-    // Add summary as a comment if there were failures (using # prefix for CSV comments)
-    if (analysisStats.failed > 0) {
-        csv += `\n# Summary: ${allResults.length} analyzed successfully, ${analysisStats.failed} failed out of ${analysisStats.total} total\n`;
-    }
     
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
