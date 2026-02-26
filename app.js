@@ -2,6 +2,12 @@
  * Main application logic for tune-my-repos
  */
 
+// GitHub API rate limits (as of 2024)
+const GITHUB_RATE_LIMITS = {
+    unauthenticated: 60,  // requests per hour
+    authenticated: 5000   // requests per hour
+};
+
 let allResults = [];
 let analysisStats = {
     succeeded: 0,
@@ -160,7 +166,8 @@ async function handleAnalyze(e) {
             if (cached.analysisStats) {
                 analysisStats = cached.analysisStats;
             } else {
-                // Legacy cache without stats - reset to defaults
+                // Legacy cache without stats - we can't know if there were failures
+                // Assume all cached results were successful (may not be accurate for old partial analyses)
                 analysisStats = {
                     succeeded: cached.results.length,
                     failed: 0,
@@ -183,9 +190,9 @@ async function handleAnalyze(e) {
     if (!token) {
         const hasOAuthConfig = window.CONFIG?.GITHUB_OAUTH_CLIENT_ID;
         if (hasOAuthConfig) {
-            showInfo('⚡ Not authenticated. Click "Sign in with GitHub" above for higher rate limits (5,000/hour) vs. 60/hour unauthenticated.');
+            showInfo(`⚡ Not authenticated. Click "Sign in with GitHub" above for higher rate limits (${GITHUB_RATE_LIMITS.authenticated.toLocaleString()}/hour) vs. ${GITHUB_RATE_LIMITS.unauthenticated}/hour unauthenticated.`);
         } else {
-            showInfo('Analyzing public repositories only. Without authentication, you\'re limited to 60 API requests/hour. For higher limits (5,000/hour), <a href="https://github.com/settings/tokens" target="_blank">add a Personal Access Token</a> in .env or config.js for local development. See README for deployment options.');
+            showInfo(`Analyzing public repositories only. Without authentication, you're limited to ${GITHUB_RATE_LIMITS.unauthenticated} API requests/hour. For higher limits (${GITHUB_RATE_LIMITS.authenticated.toLocaleString()}/hour), <a href="https://github.com/settings/tokens" target="_blank">add a Personal Access Token</a> in .env or config.js for local development. See README for deployment options.`);
         }
     }
     
@@ -393,7 +400,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             const token = getGitHubToken();
             let warningMessage = `⚠️ Partial analysis: ${batchResults.length} repositories analyzed successfully, but ${failedCount} failed. `;
             if (!token) {
-                warningMessage += `You are not authenticated. Without authentication, you are limited to 60 API requests per hour. <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Get a Personal Access Token</a> for 5,000 requests/hour, or click "Sign in with GitHub" above.`;
+                warningMessage += `You are not authenticated. Without authentication, you are limited to ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour. <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Get a Personal Access Token</a> for ${GITHUB_RATE_LIMITS.authenticated.toLocaleString()} requests/hour, or click "Sign in with GitHub" above.`;
             } else {
                 warningMessage += `This may be due to rate limiting or individual repository access issues. Check the browser console for details.`;
             }
@@ -770,9 +777,9 @@ function exportAsCSV() {
         csv += `"${result.repository}","${result.classification}","${result.maturity_level}","${result.is_fork}",${critical},${important},${recommended},${optional}\n`;
     });
     
-    // Add summary row if there were failures
+    // Add summary as a comment if there were failures (using # prefix for CSV comments)
     if (analysisStats.failed > 0) {
-        csv += `\n"Summary: ${allResults.length} analyzed successfully, ${analysisStats.failed} failed out of ${analysisStats.total} total"\n`;
+        csv += `\n# Summary: ${allResults.length} analyzed successfully, ${analysisStats.failed} failed out of ${analysisStats.total} total\n`;
     }
     
     const blob = new Blob([csv], { type: 'text/csv' });
