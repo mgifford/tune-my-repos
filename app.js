@@ -3,6 +3,11 @@
  */
 
 let allResults = [];
+let analysisStats = {
+    succeeded: 0,
+    failed: 0,
+    total: 0
+};
 let paginationState = {
     userOrOrg: null,
     page: 1,
@@ -150,6 +155,19 @@ async function handleAnalyze(e) {
             const ageMinutes = Math.round(cached.age / 1000 / 60);
             showCacheStatus(true, ageMinutes);
             allResults = cached.results;
+            
+            // Restore analysis stats from cache
+            if (cached.analysisStats) {
+                analysisStats = cached.analysisStats;
+            } else {
+                // Legacy cache without stats - reset to defaults
+                analysisStats = {
+                    succeeded: cached.results.length,
+                    failed: 0,
+                    total: cached.results.length
+                };
+            }
+            
             displayResults(allResults);
             return;
         }
@@ -190,9 +208,14 @@ async function handleAnalyze(e) {
             });
             allResults = [result];
             
+            // Reset stats for single repo
+            analysisStats.succeeded = 1;
+            analysisStats.failed = 0;
+            analysisStats.total = 1;
+            
             // Cache the result
             if (window.analysisCache) {
-                window.analysisCache.set(targetValue, skipForks, allResults);
+                window.analysisCache.set(targetValue, skipForks, allResults, analysisStats);
             }
             
             displayResults(allResults);
@@ -347,6 +370,12 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         // Log summary
         console.log(`Analysis complete: ${batchResults.length} succeeded, ${failedCount} failed out of ${repos.length} total`);
+        
+        // Update analysis stats
+        analysisStats.succeeded = batchResults.length;
+        analysisStats.failed = failedCount;
+        analysisStats.total = repos.length;
+        
         if (failedCount > 0 && batchResults.length === 0) {
             showError(`All ${failedCount} repository analyses failed. Check the browser console for details.`);
             return;
@@ -356,7 +385,19 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         // Cache the results
         if (window.analysisCache) {
-            window.analysisCache.set(userOrOrg, skipForksCheckbox.checked, allResults);
+            window.analysisCache.set(userOrOrg, skipForksCheckbox.checked, allResults, analysisStats);
+        }
+        
+        // Show warning if there were partial failures
+        if (failedCount > 0) {
+            const token = getGitHubToken();
+            let warningMessage = `⚠️ Partial analysis: ${batchResults.length} repositories analyzed successfully, but ${failedCount} failed. `;
+            if (!token) {
+                warningMessage += `You are not authenticated. Without authentication, you are limited to 60 API requests per hour. <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Get a Personal Access Token</a> for 5,000 requests/hour, or click "Sign in with GitHub" above.`;
+            } else {
+                warningMessage += `This may be due to rate limiting or individual repository access issues. Check the browser console for details.`;
+            }
+            showInfo(warningMessage);
         }
         
         displayResults(allResults);
@@ -692,7 +733,15 @@ function createFindingCard(finding) {
 function exportAsJSON() {
     if (!allResults || allResults.length === 0) return;
     
-    const json = JSON.stringify(allResults, null, 2);
+    const exportData = {
+        analyzed_at: new Date().toISOString(),
+        total_analyzed: allResults.length,
+        failed_count: analysisStats.failed,
+        total_attempted: analysisStats.total,
+        repositories: allResults
+    };
+    
+    const json = JSON.stringify(exportData, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     
@@ -721,6 +770,11 @@ function exportAsCSV() {
         csv += `"${result.repository}","${result.classification}","${result.maturity_level}","${result.is_fork}",${critical},${important},${recommended},${optional}\n`;
     });
     
+    // Add summary row if there were failures
+    if (analysisStats.failed > 0) {
+        csv += `\n"Summary: ${allResults.length} analyzed successfully, ${analysisStats.failed} failed out of ${analysisStats.total} total"\n`;
+    }
+    
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     
@@ -737,7 +791,13 @@ function exportAsMarkdown() {
     
     let md = `# Repository Analysis Report\n\n`;
     md += `**Analyzed:** ${new Date().toLocaleString()}\n`;
-    md += `**Total Repositories:** ${allResults.length}\n\n`;
+    md += `**Total Repositories:** ${allResults.length}\n`;
+    
+    // Add info about failures if any
+    if (analysisStats.failed > 0) {
+        md += `**⚠️ Note:** ${analysisStats.failed} repositories failed analysis out of ${analysisStats.total} total\n`;
+    }
+    md += `\n`;
     
     allResults.forEach(result => {
         md += `## ${result.repository}\n\n`;

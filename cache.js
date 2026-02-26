@@ -22,14 +22,15 @@ class AnalysisCache {
     /**
      * Store analysis results in cache
      */
-    set(target, skipForks, results) {
+    set(target, skipForks, results, analysisStats = null) {
         try {
             const key = this.generateKey(target, skipForks);
             const cacheEntry = {
                 timestamp: Date.now(),
                 target: target,
                 skipForks: skipForks,
-                results: results
+                results: results,
+                analysisStats: analysisStats
             };
             
             localStorage.setItem(key, JSON.stringify(cacheEntry));
@@ -71,6 +72,7 @@ class AnalysisCache {
             this.updateStats('hit');
             return {
                 results: cacheEntry.results,
+                analysisStats: cacheEntry.analysisStats || null,
                 age: age,
                 timestamp: cacheEntry.timestamp
             };
