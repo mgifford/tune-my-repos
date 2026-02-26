@@ -168,6 +168,7 @@ async function handleAnalyze(e) {
             } else {
                 // Legacy cache without stats - we can't know if there were failures
                 // Assume all cached results were successful (may not be accurate for old partial analyses)
+                // Impact: Legacy cached results won't show failure counts in exports even if failures occurred
                 analysisStats = {
                     succeeded: cached.results.length,
                     failed: 0,
