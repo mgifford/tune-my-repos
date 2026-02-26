@@ -6,6 +6,8 @@ class GitHubAnalyzer {
     constructor(token = null) {
         this.token = token;
         this.apiBase = 'https://api.github.com';
+        // Cache for organization .github repository checks
+        this.orgGithubCache = new Map();
     }
 
     async fetchJSON(url) {
@@ -24,6 +26,57 @@ class GitHubAnalyzer {
         }
         
         return response.json();
+    }
+
+    /**
+     * Check if a file exists in the organization's .github repository
+     * @param {string} owner - The organization name
+     * @param {string} filename - The filename to check (e.g., 'CODE_OF_CONDUCT.md')
+     * @returns {Promise<boolean>} - True if the file exists in org .github repo
+     */
+    async checkOrgGithubFile(owner, filename) {
+        // Check cache first
+        const cacheKey = `${owner}:${filename}`;
+        if (this.orgGithubCache.has(cacheKey)) {
+            return this.orgGithubCache.get(cacheKey);
+        }
+
+        try {
+            // Try to fetch the file from organization's .github repository
+            // This will check if https://github.com/[owner]/.github/blob/main/[filename] exists
+            await this.fetchJSON(`${this.apiBase}/repos/${owner}/.github/contents/${filename}`);
+            
+            // File exists
+            this.orgGithubCache.set(cacheKey, true);
+            return true;
+        } catch (error) {
+            // File doesn't exist or .github repo doesn't exist
+            this.orgGithubCache.set(cacheKey, false);
+            return false;
+        }
+    }
+
+    /**
+     * Check if owner is an organization and has a .github repository
+     * @param {string} owner - The owner name
+     * @returns {Promise<boolean>} - True if owner is an org with .github repo
+     */
+    async hasOrgGithubRepo(owner) {
+        const cacheKey = `${owner}:_has_github_repo`;
+        if (this.orgGithubCache.has(cacheKey)) {
+            return this.orgGithubCache.get(cacheKey);
+        }
+
+        try {
+            // Check if the .github repository exists
+            await this.fetchJSON(`${this.apiBase}/repos/${owner}/.github`);
+            this.orgGithubCache.set(cacheKey, true);
+            return true;
+        } catch (error) {
+            // Either not an org, or no .github repo
+            this.orgGithubCache.set(cacheKey, false);
+            return false;
+        }
     }
 
     async analyzeRepository(owner, repo, progressCallback = null) {
@@ -53,6 +106,10 @@ class GitHubAnalyzer {
                 result.limitations.push('Fork ahead/behind status requires additional API calls');
             }
 
+            // Check if owner has an organization .github repository
+            if (progressCallback) progressCallback('Checking for organization-level governance files...');
+            const hasOrgGithub = await this.hasOrgGithubRepo(owner);
+
             // Fetch file tree
             if (progressCallback) progressCallback('Fetching repository file tree...');
             const tree = await this.fetchJSON(`${this.apiBase}/repos/${owner}/${repo}/git/trees/${repoData.default_branch}?recursive=1`);
@@ -66,7 +123,7 @@ class GitHubAnalyzer {
 
             // Run analysis checks
             if (progressCallback) progressCallback('Checking governance files (LICENSE, CONTRIBUTING, etc.)...');
-            this.checkGovernanceFiles(files, result);
+            await this.checkGovernanceFiles(files, result, owner, hasOrgGithub);
             
             if (progressCallback) progressCallback('Checking README quality...');
             this.checkReadme(files, result);
@@ -137,7 +194,7 @@ class GitHubAnalyzer {
         return 'mixed';
     }
 
-    checkGovernanceFiles(files, result) {
+    async checkGovernanceFiles(files, result, owner, hasOrgGithub) {
         const governanceFiles = {
             'LICENSE': { severity: 'critical', purpose: 'usage rights and legal terms' },
             'CONTRIBUTING.md': { severity: 'important', purpose: 'contribution process' },
@@ -155,9 +212,15 @@ class GitHubAnalyzer {
                 `.github/${filename}`,
                 `.github/${filename.toLowerCase()}`
             ];
-            const found = variations.some(v => files.has(v));
+            const foundInRepo = variations.some(v => files.has(v));
 
-            if (!found) {
+            // Check if file exists in organization .github repository
+            let foundInOrgGithub = false;
+            if (!foundInRepo && hasOrgGithub) {
+                foundInOrgGithub = await this.checkOrgGithubFile(owner, filename);
+            }
+
+            if (!foundInRepo && !foundInOrgGithub) {
                 let recommendation = `Add ${filename} to clarify ${config.purpose}`;
                 
                 // Add template links for specific files
@@ -177,6 +240,12 @@ class GitHubAnalyzer {
                     time_estimate: filename === 'LICENSE' ? '1–3 hours' : '15–45 minutes',
                     requires_write_access: true
                 });
+            } else if (foundInOrgGithub) {
+                // File is inherited from organization .github repository
+                // Add this as informational note, not a finding
+                result.limitations.push(
+                    `${filename} inherited from organization-level https://github.com/${owner}/.github`
+                );
             }
         }
     }

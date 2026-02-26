@@ -11,6 +11,7 @@ This tool evaluates repositories against established compliance, security, acces
 - **Repository classification** - Automatically identifies repo type (library, webapp, CLI, docs, etc.)
 - **Fork analysis** - Detects upstream divergence and sync recommendations
 - **Governance evaluation** - Checks LICENSE, CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md
+- **Organization-level governance** - Detects inherited files from organization `.github` repositories (e.g., `https://github.com/chaoss/.github`)
 - **Dependency security** - Scans for outdated packages and vulnerabilities
 - **Accessibility compliance** - Validates WCAG 2.2 AA requirements
 - **Test coverage** - Ensures unit tests and CI/CD pipelines exist
@@ -170,6 +171,28 @@ GitHub OAuth is only needed if you're deploying to GitHub Pages and want multipl
 - **With token or OAuth:** You'll see "5,000 requests/hour" rate limit
 - Check the browser console for messages like "✓ Loaded GitHub token"
 - If OAuth is configured, you'll see your username in the top-right corner
+
+### How does organization-level governance file detection work?
+
+Organizations can maintain governance files (like CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md) in a special `.github` repository that are automatically inherited by all repositories in the organization.
+
+**Examples:**
+- https://github.com/chaoss/.github - CHAOSS organization-level files
+- https://github.com/civicactions/.github - CivicActions organization-level files
+
+**How tune-my-repos handles this:**
+1. When analyzing a repository, the tool checks if the owner has a `.github` repository
+2. For missing governance files, it checks if they exist in the organization's `.github` repository
+3. If found at the organization level, the file is marked as "inherited" rather than "missing"
+4. Results include a note in the limitations section indicating which files are inherited
+
+**Benefits:**
+- Avoids false positives for missing governance files
+- Recognizes organization-wide policies
+- Reduces maintenance burden (files managed in one place)
+- Follows GitHub's community health file inheritance feature
+
+This feature respects GitHub's built-in community health file inheritance, ensuring accurate analysis for organizations with centralized governance.
 
 ## Related Resources
 
