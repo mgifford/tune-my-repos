@@ -494,7 +494,7 @@ function createRepoCard(result) {
     
     card.appendChild(header);
     
-    // Show top findings only
+    // Show top findings and collapsible details
     if (result.findings.length > 0) {
         const topFindings = result.findings.slice(0, 3);
         const findingsList = document.createElement('div');
@@ -524,11 +524,43 @@ function createRepoCard(result) {
         
         card.appendChild(findingsList);
         
+        // Show collapsible details for additional findings
         if (result.findings.length > 3) {
-            const more = document.createElement('p');
-            more.className = 'more-findings';
-            more.textContent = `+ ${result.findings.length - 3} more issues`;
-            card.appendChild(more);
+            const details = document.createElement('details');
+            details.className = 'findings-details';
+            
+            const summary = document.createElement('summary');
+            summary.className = 'findings-summary-toggle';
+            summary.textContent = `View ${result.findings.length - 3} more issue${result.findings.length - 3 !== 1 ? 's' : ''}`;
+            details.appendChild(summary);
+            
+            const additionalFindings = document.createElement('div');
+            additionalFindings.className = 'findings-summary additional-findings';
+            
+            result.findings.slice(3).forEach(finding => {
+                const findingItem = document.createElement('div');
+                findingItem.className = 'finding-item';
+                
+                const findingText = document.createElement('div');
+                findingText.className = 'finding-text';
+                findingText.innerHTML = `<strong>${finding.title}</strong>: ${finding.recommendation}`;
+                
+                const actionLink = getActionLink(finding, result.repository);
+                
+                findingItem.appendChild(findingText);
+                
+                if (actionLink) {
+                    const actionDiv = document.createElement('div');
+                    actionDiv.className = 'finding-action';
+                    actionDiv.innerHTML = actionLink;
+                    findingItem.appendChild(actionDiv);
+                }
+                
+                additionalFindings.appendChild(findingItem);
+            });
+            
+            details.appendChild(additionalFindings);
+            card.appendChild(details);
         }
     } else {
         const noIssues = document.createElement('p');

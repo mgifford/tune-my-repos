@@ -486,6 +486,51 @@ footer {
     color: var(--success);
     font-weight: 600;
 }
+
+/* Collapsible findings details */
+.findings-details {
+    margin-top: var(--spacing);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--background);
+}
+
+.findings-summary-toggle {
+    padding: calc(var(--spacing) / 1.5);
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary-color);
+    list-style: none;
+    user-select: none;
+    border-radius: var(--radius);
+    transition: background 0.2s;
+}
+
+.findings-summary-toggle:hover {
+    background: var(--surface);
+}
+
+.findings-summary-toggle::marker,
+.findings-summary-toggle::-webkit-details-marker {
+    display: none;
+}
+
+.findings-summary-toggle::before {
+    content: '▶';
+    display: inline-block;
+    margin-right: calc(var(--spacing) / 2);
+    transition: transform 0.2s;
+}
+
+details[open] .findings-summary-toggle::before {
+    transform: rotate(90deg);
+}
+
+.additional-findings {
+    padding: var(--spacing);
+    padding-top: 0;
+    margin-top: 0;
+}
     color: var(--text-secondary);
     font-size: 0.875rem;
 }
