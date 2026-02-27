@@ -209,7 +209,7 @@ class GitHubAnalyzer {
         };
 
         for (const [filename, config] of Object.entries(governanceFiles)) {
-            // Generate .rst variations for files with .md extensions
+            // Extract base filename (remove .md extension if present)
             const baseName = filename.replace(/\.md$/, '');
             const variations = [
                 filename,
@@ -218,7 +218,7 @@ class GitHubAnalyzer {
                 `.github/${filename.toLowerCase()}`
             ];
             
-            // Add .rst variations for files with .md extension
+            // Generate .rst variations if the original filename has .md extension
             if (filename.endsWith('.md')) {
                 const rstFilename = baseName + '.rst';
                 variations.push(
