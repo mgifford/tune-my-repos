@@ -17,23 +17,27 @@ For better performance and private repository access, configure a GitHub Persona
 
 ### Step 2: Configure the Token
 
-**Option 1: .env file (Recommended)**
+**Option 1: .env file (Recommended for localhost)**
 ```bash
 cp .env.example .env
 # Edit .env and paste your token
 ```
 
-**Option 2: config.js file**
+**Option 2: config.js file (Use for custom dev setups)**
 ```bash
 cp config.example.js config.js
 # Edit config.js and paste your token
 ```
+
+> **Note:** `.env` only works on localhost or file://. For Docker, VMs, or .local domains, use config.js instead.
 
 ### Step 3: Verify
 
 1. Refresh your browser at http://localhost:8000
 2. You should see **no rate limit warning**
 3. Console should show: `✓ Loaded GitHub token from .env file`
+
+**Note:** The `.env` file is only loaded in development environments (localhost or file://). In production deployments like GitHub Pages, `.env` is not used. Instead, production uses OAuth authentication to allow users to sign in with their GitHub accounts. See [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) for OAuth deployment instructions.
 
 ## Rate Limits
 
