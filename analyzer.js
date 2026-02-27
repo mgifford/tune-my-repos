@@ -128,6 +128,9 @@ class GitHubAnalyzer {
             if (progressCallback) progressCallback('Checking README quality...');
             this.checkReadme(files, result);
             
+            if (progressCallback) progressCallback('Checking About box metadata...');
+            this.checkAboutMetadata(repoData, result);
+            
             if (progressCallback) progressCallback('Checking CI/CD workflows...');
             this.checkCIWorkflows(files, result);
             
@@ -264,6 +267,59 @@ class GitHubAnalyzer {
                 recommendation: 'Create README.md with purpose, audience, scope, and basic usage',
                 automated: true,
                 time_estimate: '1–3 hours',
+                requires_write_access: true
+            });
+        }
+    }
+
+    checkAboutMetadata(repoData, result) {
+        // Check for description
+        const hasDescription = repoData.description && repoData.description.trim().length > 0;
+        
+        // Check for homepage/website
+        const hasHomepage = repoData.homepage && repoData.homepage.trim().length > 0;
+        
+        // Check for topics (tags)
+        const hasTopics = repoData.topics && repoData.topics.length > 0;
+        
+        // Missing description
+        if (!hasDescription) {
+            result.findings.push({
+                category: 'documentation',
+                severity: 'important',
+                title: 'Missing repository description',
+                description: 'Repository description helps users understand the project at a glance and improves discoverability',
+                recommendation: 'Add a clear, concise description in the About section (Settings → General → Description)',
+                automated: false,
+                time_estimate: '15–45 minutes',
+                requires_write_access: true
+            });
+        }
+        
+        // Missing website
+        if (!hasHomepage) {
+            result.findings.push({
+                category: 'documentation',
+                severity: 'recommended',
+                title: 'Missing repository website',
+                description: 'A website URL (documentation, demo, or project homepage) provides quick access to additional resources',
+                recommendation: 'Add a website URL in the About section if documentation or demo site exists',
+                automated: false,
+                time_estimate: '15–45 minutes',
+                requires_write_access: true
+            });
+        }
+        
+        // Missing topics
+        if (!hasTopics) {
+            result.findings.push({
+                category: 'documentation',
+                severity: 'recommended',
+                title: 'Missing repository topics',
+                description: 'Topics (tags) help users discover your repository through GitHub search and trending pages',
+                recommendation: 'Add relevant topics in the About section (e.g., language, framework, domain keywords)',
+                automated: false,
+                time_estimate: '15–45 minutes',
                 requires_write_access: true
             });
         }
