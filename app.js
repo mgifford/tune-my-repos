@@ -27,8 +27,11 @@ let debugMode = false;
 // Priorities configuration
 let prioritiesConfig = null;
 
-// Debug logging helper
+// Debug logging helper - checks localStorage for cross-session persistence
 function debugLog(message, ...args) {
+    // Check both debugMode and localStorage to support:
+    // 1. debugMode variable (for same-session checks)
+    // 2. localStorage (for persistence across reloads and cross-module access)
     if (debugMode || localStorage.getItem('tune-my-repos-debug') === 'true') {
         console.log(`[DEBUG] ${message}`, ...args);
     }
@@ -777,29 +780,42 @@ function showError(message) {
     const mainError = parts[0];
     const additionalInfo = parts.slice(1);
     
-    // Create main error text
+    // Create main error text (safe - no user input)
     const errorText = document.createElement('div');
     errorText.textContent = mainError;
     errorText.style.marginBottom = '10px';
     errorMessage.appendChild(errorText);
     
-    // Add additional info if present
+    // Add additional info if present (safe - generated internally)
     if (additionalInfo.length > 0) {
         const infoDiv = document.createElement('div');
         infoDiv.style.marginTop = '10px';
         infoDiv.style.padding = '10px';
         infoDiv.style.background = 'rgba(255, 255, 255, 0.1)';
         infoDiv.style.borderRadius = '4px';
+        // Note: innerHTML used here for internal content only (tips with emoji, no user input)
         infoDiv.innerHTML = additionalInfo.join('<br><br>');
         errorMessage.appendChild(infoDiv);
     }
     
-    // Add debug instructions
+    // Add debug instructions with kbd element
     const debugInfo = document.createElement('div');
     debugInfo.style.marginTop = '15px';
     debugInfo.style.fontSize = '0.9em';
     debugInfo.style.opacity = '0.8';
-    debugInfo.innerHTML = '💡 <strong>Need more details?</strong> Press <kbd>Ctrl+Shift+D</kbd> to enable debug mode, then check the browser console (F12) for detailed logs.';
+    
+    const strong = document.createElement('strong');
+    strong.textContent = 'Need more details?';
+    
+    const kbd = document.createElement('kbd');
+    kbd.textContent = 'Ctrl+Shift+D';
+    
+    debugInfo.appendChild(document.createTextNode('💡 '));
+    debugInfo.appendChild(strong);
+    debugInfo.appendChild(document.createTextNode(' Press '));
+    debugInfo.appendChild(kbd);
+    debugInfo.appendChild(document.createTextNode(' to enable debug mode, then check the browser console (F12) for detailed logs.'));
+    
     errorMessage.appendChild(debugInfo);
     
     errorSection.classList.remove('hidden');

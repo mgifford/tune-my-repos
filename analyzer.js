@@ -9,7 +9,8 @@ class GitHubAnalyzer {
         // Cache for organization .github repository checks
         this.orgGithubCache = new Map();
         
-        // Debug logging helper
+        // Debug logging helper - checks both window.debugMode and localStorage
+        // to support cross-module debug state and persistence across reloads
         this.debugLog = (message, ...args) => {
             if (window.debugMode || localStorage.getItem('tune-my-repos-debug') === 'true') {
                 console.log(`[ANALYZER] ${message}`, ...args);
