@@ -128,6 +128,7 @@ const authLoggedIn = document.getElementById('authLoggedIn');
 const authUsername = document.getElementById('authUsername');
 const loginBtn = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+const debugIndicator = document.getElementById('debugIndicator');
 
 // Initialize auth UI and URL params when page loads
 window.addEventListener('DOMContentLoaded', () => {
@@ -143,6 +144,9 @@ function initDebugMode() {
     debugMode = localStorage.getItem('tune-my-repos-debug') === 'true';
     debugLog('Debug mode initialized:', debugMode);
     
+    // Update UI indicator
+    updateDebugIndicator();
+    
     // Add keyboard shortcut for debug toggle (Ctrl+Shift+D)
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.shiftKey && e.key === 'D') {
@@ -152,11 +156,23 @@ function initDebugMode() {
             if (debugMode) {
                 console.log('Debug logging is now active. All API calls and errors will be logged.');
             }
+            updateDebugIndicator();
         }
     });
     
     // Log debug instructions on startup
     console.log('💡 Tip: Press Ctrl+Shift+D to toggle debug mode for detailed logging');
+}
+
+// Update debug mode indicator
+function updateDebugIndicator() {
+    if (debugIndicator) {
+        if (debugMode) {
+            debugIndicator.classList.remove('hidden');
+        } else {
+            debugIndicator.classList.add('hidden');
+        }
+    }
 }
 
 async function initAuthUI() {
