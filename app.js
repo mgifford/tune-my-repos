@@ -2,7 +2,18 @@
  * Main application logic for tune-my-repos
  */
 
+// GitHub API rate limits (as of 2024)
+const GITHUB_RATE_LIMITS = {
+    unauthenticated: 60,  // requests per hour
+    authenticated: 5000   // requests per hour
+};
+
 let allResults = [];
+let analysisStats = {
+    succeeded: 0,
+    failed: 0,
+    total: 0
+};
 let paginationState = {
     userOrOrg: null,
     page: 1,
@@ -150,6 +161,21 @@ async function handleAnalyze(e) {
             const ageMinutes = Math.round(cached.age / 1000 / 60);
             showCacheStatus(true, ageMinutes);
             allResults = cached.results;
+            
+            // Restore analysis stats from cache
+            if (cached.analysisStats) {
+                analysisStats = cached.analysisStats;
+            } else {
+                // Legacy cache without stats - we can't know if there were failures
+                // Assume all cached results were successful (may not be accurate for old partial analyses)
+                // Impact: Legacy cached results won't show failure counts in exports even if failures occurred
+                analysisStats = {
+                    succeeded: cached.results.length,
+                    failed: 0,
+                    total: cached.results.length
+                };
+            }
+            
             displayResults(allResults);
             return;
         }
@@ -165,9 +191,9 @@ async function handleAnalyze(e) {
     if (!token) {
         const hasOAuthConfig = window.CONFIG?.GITHUB_OAUTH_CLIENT_ID;
         if (hasOAuthConfig) {
-            showInfo('⚡ Not authenticated. Click "Sign in with GitHub" above for higher rate limits (5,000/hour) vs. 60/hour unauthenticated.');
+            showInfo(`⚡ Not authenticated. Click "Sign in with GitHub" above for higher rate limits (${GITHUB_RATE_LIMITS.authenticated.toLocaleString()}/hour) vs. ${GITHUB_RATE_LIMITS.unauthenticated}/hour unauthenticated.`);
         } else {
-            showInfo('Analyzing public repositories only. Without authentication, you\'re limited to 60 API requests/hour. For higher limits (5,000/hour), <a href="https://github.com/settings/tokens" target="_blank">add a Personal Access Token</a> in .env or config.js for local development. See README for deployment options.');
+            showInfo(`Analyzing public repositories only. Without authentication, you're limited to ${GITHUB_RATE_LIMITS.unauthenticated} API requests/hour. For higher limits (${GITHUB_RATE_LIMITS.authenticated.toLocaleString()}/hour), <a href="https://github.com/settings/tokens" target="_blank">add a Personal Access Token</a> in .env or config.js for local development. See README for deployment options.`);
         }
     }
     
@@ -190,9 +216,14 @@ async function handleAnalyze(e) {
             });
             allResults = [result];
             
+            // Reset stats for single repo
+            analysisStats.succeeded = 1;
+            analysisStats.failed = 0;
+            analysisStats.total = 1;
+            
             // Cache the result
             if (window.analysisCache) {
-                window.analysisCache.set(targetValue, skipForks, allResults);
+                window.analysisCache.set(targetValue, skipForks, allResults, analysisStats);
             }
             
             displayResults(allResults);
@@ -347,6 +378,12 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         // Log summary
         console.log(`Analysis complete: ${batchResults.length} succeeded, ${failedCount} failed out of ${repos.length} total`);
+        
+        // Update analysis stats
+        analysisStats.succeeded = batchResults.length;
+        analysisStats.failed = failedCount;
+        analysisStats.total = repos.length;
+        
         if (failedCount > 0 && batchResults.length === 0) {
             showError(`All ${failedCount} repository analyses failed. Check the browser console for details.`);
             return;
@@ -356,7 +393,19 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         // Cache the results
         if (window.analysisCache) {
-            window.analysisCache.set(userOrOrg, skipForksCheckbox.checked, allResults);
+            window.analysisCache.set(userOrOrg, skipForksCheckbox.checked, allResults, analysisStats);
+        }
+        
+        // Show warning if there were partial failures
+        if (failedCount > 0) {
+            const token = getGitHubToken();
+            let warningMessage = `⚠️ Partial analysis: ${batchResults.length} repositories analyzed successfully, but ${failedCount} failed. `;
+            if (!token) {
+                warningMessage += `You are not authenticated. Without authentication, you are limited to ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour. <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Get a Personal Access Token</a> for ${GITHUB_RATE_LIMITS.authenticated.toLocaleString()} requests/hour, or click "Sign in with GitHub" above.`;
+            } else {
+                warningMessage += `This may be due to rate limiting or individual repository access issues. Check the browser console for details.`;
+            }
+            showInfo(warningMessage);
         }
         
         displayResults(allResults);
@@ -692,7 +741,15 @@ function createFindingCard(finding) {
 function exportAsJSON() {
     if (!allResults || allResults.length === 0) return;
     
-    const json = JSON.stringify(allResults, null, 2);
+    const exportData = {
+        analyzed_at: new Date().toISOString(),
+        total_analyzed: allResults.length,
+        failed_count: analysisStats.failed,
+        total_attempted: analysisStats.total,
+        repositories: allResults
+    };
+    
+    const json = JSON.stringify(exportData, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     
@@ -710,7 +767,14 @@ function exportAsJSON() {
 function exportAsCSV() {
     if (!allResults || allResults.length === 0) return;
     
-    let csv = 'Repository,Classification,Maturity,Fork,Critical,Important,Recommended,Optional\n';
+    let csv = '';
+    
+    // Add summary as header comment if there were failures
+    if (analysisStats.failed > 0) {
+        csv += `# Summary: ${allResults.length} analyzed successfully, ${analysisStats.failed} failed out of ${analysisStats.total} total\n`;
+    }
+    
+    csv += 'Repository,Classification,Maturity,Fork,Critical,Important,Recommended,Optional\n';
     
     allResults.forEach(result => {
         const critical = result.findings.filter(f => f.severity === 'critical').length;
@@ -737,7 +801,13 @@ function exportAsMarkdown() {
     
     let md = `# Repository Analysis Report\n\n`;
     md += `**Analyzed:** ${new Date().toLocaleString()}\n`;
-    md += `**Total Repositories:** ${allResults.length}\n\n`;
+    md += `**Total Repositories:** ${allResults.length}\n`;
+    
+    // Add info about failures if any
+    if (analysisStats.failed > 0) {
+        md += `**⚠️ Note:** ${analysisStats.failed} repositories failed analysis out of ${analysisStats.total} total\n`;
+    }
+    md += `\n`;
     
     allResults.forEach(result => {
         md += `## ${result.repository}\n\n`;
