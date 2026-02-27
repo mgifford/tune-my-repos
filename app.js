@@ -45,6 +45,35 @@ function errorLog(message, error) {
     }
 }
 
+// Global unhandled rejection handler
+// Catches any unhandled promise rejections to prevent console clutter
+window.addEventListener('unhandledrejection', (event) => {
+    // Check if the error is from a browser extension
+    // Extension errors typically have filenames that aren't part of our app
+    const isExtensionError = event.reason && (
+        event.filename?.includes('extension://') ||
+        event.filename?.includes('chrome-extension://') ||
+        event.filename?.includes('moz-extension://') ||
+        // Common extension file patterns
+        event.filename?.includes('background-redux') ||
+        event.filename?.includes('content_script')
+    );
+    
+    if (isExtensionError) {
+        // Silently prevent extension errors from showing in console
+        event.preventDefault();
+        debugLog('Suppressed browser extension error:', event.reason);
+        return;
+    }
+    
+    // Log application errors for debugging
+    errorLog('Unhandled promise rejection', event.reason);
+    debugLog('Promise rejection details:', {
+        reason: event.reason,
+        promise: event.promise
+    });
+});
+
 // Load priorities configuration
 async function loadPrioritiesConfig() {
     try {
@@ -134,12 +163,25 @@ const logoutBtn = document.getElementById('logoutBtn');
 const debugIndicator = document.getElementById('debugIndicator');
 
 // Initialize auth UI and URL params when page loads
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     debugLog('DOMContentLoaded - initializing app');
-    loadPrioritiesConfig();
-    initAuthUI();
-    initURLParams();
+    
+    // Initialize synchronous components first
     initDebugMode();
+    initURLParams();
+    
+    // Initialize async components with error handling
+    try {
+        await loadPrioritiesConfig();
+    } catch (error) {
+        console.error('Failed to load priorities config:', error);
+    }
+    
+    try {
+        await initAuthUI();
+    } catch (error) {
+        console.error('Failed to initialize auth UI:', error);
+    }
 });
 
 // Initialize debug mode
@@ -179,39 +221,55 @@ function updateDebugIndicator() {
 }
 
 async function initAuthUI() {
-    if (!window.githubAuth) {
-        console.warn('Auth module not loaded');
-        debugLog('githubAuth object not found on window');
-        return;
-    }
-    
-    debugLog('Initializing auth UI...');
-    
-    // Show loading state
-    authLoading.classList.remove('hidden');
-    authLoggedOut.classList.add('hidden');
-    authLoggedIn.classList.add('hidden');
-    
-    if (window.githubAuth.isAuthenticated()) {
-        debugLog('User is authenticated, fetching user info...');
-        // User is logged in - show username
-        const userInfo = await window.githubAuth.getUserInfo();
-        if (userInfo) {
-            debugLog('User info retrieved:', userInfo.login);
-            authUsername.textContent = `@${userInfo.login}`;
-            authLoggedIn.classList.remove('hidden');
+    try {
+        if (!window.githubAuth) {
+            console.warn('Auth module not loaded');
+            debugLog('githubAuth object not found on window');
+            return;
+        }
+        
+        debugLog('Initializing auth UI...');
+        
+        // Show loading state
+        authLoading.classList.remove('hidden');
+        authLoggedOut.classList.add('hidden');
+        authLoggedIn.classList.add('hidden');
+        
+        if (window.githubAuth.isAuthenticated()) {
+            debugLog('User is authenticated, fetching user info...');
+            // User is logged in - show username
+            try {
+                const userInfo = await window.githubAuth.getUserInfo();
+                if (userInfo) {
+                    debugLog('User info retrieved:', userInfo.login);
+                    authUsername.textContent = `@${userInfo.login}`;
+                    authLoggedIn.classList.remove('hidden');
+                } else {
+                    debugLog('Failed to retrieve user info - token may be invalid');
+                    // Token invalid, show logged out state
+                    authLoggedOut.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+                debugLog('getUserInfo error:', error);
+                // Show logged out state on error
+                authLoggedOut.classList.remove('hidden');
+            }
         } else {
-            debugLog('Failed to retrieve user info - token may be invalid');
-            // Token invalid, show logged out state
+            debugLog('User is not authenticated');
+            // Not logged in
             authLoggedOut.classList.remove('hidden');
         }
-    } else {
-        debugLog('User is not authenticated');
-        // Not logged in
-        authLoggedOut.classList.remove('hidden');
+        
+        authLoading.classList.add('hidden');
+    } catch (error) {
+        console.error('Error in initAuthUI:', error);
+        // Ensure we hide loading and show logged out state on any error
+        authLoading.classList.add('hidden');
+        if (authLoggedOut) {
+            authLoggedOut.classList.remove('hidden');
+        }
     }
-    
-    authLoading.classList.add('hidden');
 }
 
 /**
