@@ -144,7 +144,7 @@ Common finding titles from the analyzer:
 - `Stale README`
 - `Missing issue templates`
 - `Missing pull request template`
-- Outdated dependencies
+- `Outdated dependencies`
 
 **Note:** Finding titles may vary based on the analyzer configuration. Check your actual findings to see the exact titles.
 
