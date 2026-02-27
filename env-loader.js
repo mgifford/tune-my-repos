@@ -1,6 +1,7 @@
 /**
  * Simple .env file loader for browser-based apps
  * Attempts to load GITHUB_TOKEN from .env file if present
+ * Only runs in development environments (file:// or localhost)
  */
 
 // Make sure CONFIG exists
@@ -9,6 +10,17 @@ if (typeof CONFIG === 'undefined') {
 }
 
 (async function loadEnv() {
+    // Skip .env loading in production environments (GitHub Pages, etc.)
+    // to avoid 404 errors in the console
+    const isProduction = location.hostname !== 'localhost' && 
+                        location.hostname !== '127.0.0.1' && 
+                        location.protocol !== 'file:';
+    
+    if (isProduction) {
+        // In production, rely on config.js or OAuth authentication
+        return;
+    }
+    
     try {
         const response = await fetch('.env');
         if (response.ok) {
