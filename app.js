@@ -730,7 +730,7 @@ Tailor the content to match the project type and tech stack. Make it welcoming a
             return `<a href="https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">CONTRIBUTING.md</span> Guide</a> 
             <button class="action-btn" onclick="copyToClipboard('${contributingPromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for CONTRIBUTING.md</span></button><a href="https://github.com/${owner}/${repo}/new/main?filename=CONTRIBUTING.md" target="_blank" class="action-btn" rel="noopener">📖 Create CONTRIBUTING.md</a>`;
         
-        case 'Missing README.md':
+        case 'Missing README':
             const readmePrompt = `Create a comprehensive README.md file for the ${repoUrl} repository. Ensure it is written in valid Markdown. It should include:
 - What the project does
 - How to get started installing this project
@@ -738,8 +738,8 @@ Tailor the content to match the project type and tech stack. Make it welcoming a
 
 Tailor the content to match the project type and tech stack. Make it welcoming and clear. It should be inspired by https://github.com/banesullivan/README`;
             const readmePromptEscaped = readmePrompt.replace(/'/g, "\\'").replace(/\n/g, '\\n');
-            return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">README.md</span> Guide</a> 
-            <button class="action-btn" onclick="copyToClipboard('${readmePromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for README.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README.md</a>`;
+            return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">README</span> Guide</a> 
+            <button class="action-btn" onclick="copyToClipboard('${readmePromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for README</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README.md</a>`;
         
         case 'Missing repository description':
             return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics#about-topics" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">About section</span> Guide</a> <a href="https://github.com/${owner}/${repo}/settings" target="_blank" class="action-btn" rel="noopener">⚙️ Edit About Section</a>`;

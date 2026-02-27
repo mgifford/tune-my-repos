@@ -179,8 +179,8 @@ class GitHubAnalyzer {
         }
 
         // Check for documentation-only
-        const mdFiles = Array.from(files).filter(f => f.endsWith('.md'));
-        if (mdFiles.length >= files.size * 0.7) {
+        const documentationFiles = Array.from(files).filter(f => f.endsWith('.md') || f.endsWith('.rst'));
+        if (documentationFiles.length >= files.size * 0.7) {
             return 'docs';
         }
 
@@ -209,12 +209,26 @@ class GitHubAnalyzer {
         };
 
         for (const [filename, config] of Object.entries(governanceFiles)) {
+            // Extract base filename (remove .md extension if present)
+            const baseName = filename.replace(/\.md$/, '');
             const variations = [
                 filename,
                 filename.toLowerCase(),
                 `.github/${filename}`,
                 `.github/${filename.toLowerCase()}`
             ];
+            
+            // Generate .rst variations if the original filename has .md extension
+            if (filename.endsWith('.md')) {
+                const rstFilename = baseName + '.rst';
+                variations.push(
+                    rstFilename,
+                    rstFilename.toLowerCase(),
+                    `.github/${rstFilename}`,
+                    `.github/${rstFilename.toLowerCase()}`
+                );
+            }
+            
             const foundInRepo = variations.some(v => files.has(v));
 
             // Check if file exists in organization .github repository
@@ -224,7 +238,7 @@ class GitHubAnalyzer {
             }
 
             if (!foundInRepo && !foundInOrgGithub) {
-                let recommendation = `Add ${filename} to clarify ${config.purpose}`;
+                let recommendation = `Add ${filename} (or .rst equivalent) to clarify ${config.purpose}`;
                 
                 // Add template links for specific files
                 if (filename === 'ACCESSIBILITY.md') {
@@ -255,16 +269,18 @@ class GitHubAnalyzer {
 
     checkReadme(files, result) {
         const hasReadme = Array.from(files).some(f => 
-            f.toLowerCase() === 'readme.md' || f.toLowerCase() === 'readme'
+            f.toLowerCase() === 'readme.md' || 
+            f.toLowerCase() === 'readme.rst' || 
+            f.toLowerCase() === 'readme'
         );
 
         if (!hasReadme) {
             result.findings.push({
                 category: 'documentation',
                 severity: 'critical',
-                title: 'Missing README.md',
+                title: 'Missing README',
                 description: 'README is essential for communicating purpose, scope, and usage',
-                recommendation: 'Create README.md with purpose, audience, scope, and basic usage',
+                recommendation: 'Create README.md or README.rst with purpose, audience, scope, and basic usage',
                 automated: true,
                 time_estimate: '1–3 hours',
                 requires_write_access: true
@@ -347,7 +363,9 @@ class GitHubAnalyzer {
             f.startsWith('.github/ISSUE_TEMPLATE/')
         );
         const hasPRTemplate = files.has('.github/PULL_REQUEST_TEMPLATE.md') || 
-                              files.has('.github/pull_request_template.md');
+                              files.has('.github/pull_request_template.md') ||
+                              files.has('.github/PULL_REQUEST_TEMPLATE.rst') ||
+                              files.has('.github/pull_request_template.rst');
 
         if (!hasIssueTemplates) {
             result.findings.push({
