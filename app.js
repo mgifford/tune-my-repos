@@ -648,6 +648,15 @@ Tailor the content to match the project type and tech stack. Make it welcoming a
             return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">README.md</span> Guide</a> 
             <button class="action-btn" onclick="copyToClipboard('${readmePromptEscaped}'); return false;">📋 Copy AI Prompt<span class="visually-hidden"> for README.md</span></button> <a href="https://github.com/${owner}/${repo}/new/main?filename=README.md" target="_blank" class="action-btn" rel="noopener">📖 Create README.md</a>`;
         
+        case 'Missing repository description':
+            return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics#about-topics" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">About section</span> Guide</a> <a href="https://github.com/${owner}/${repo}/settings" target="_blank" class="action-btn" rel="noopener">⚙️ Edit About Section</a>`;
+        
+        case 'Missing repository website':
+            return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">About section</span> Guide</a> <a href="https://github.com/${owner}/${repo}/settings" target="_blank" class="action-btn" rel="noopener">⚙️ Edit About Section</a>`;
+        
+        case 'Missing repository topics':
+            return `<a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics" target="_blank" class="action-btn" rel="noopener">📚 View <span class="visually-hidden">repository topics</span> Guide</a> <a href="https://github.com/${owner}/${repo}" target="_blank" class="action-btn" rel="noopener">🏷️ Add Topics</a>`;
+        
         case 'Missing CHANGELOG.md':
             return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CHANGELOG.txt" target="_blank" class="action-btn" rel="noopener">📋 Create CHANGELOG.txt</a>`;
         
