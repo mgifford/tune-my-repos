@@ -22,8 +22,7 @@ This document describes how to test the organization repository fetching fix tha
 
 #### Setup
 ```bash
-# Start the local server
-cd /home/runner/work/tune-my-repos/tune-my-repos
+# Start the local server (from the repository root)
 python3 -m http.server 8000
 
 # Open in browser
