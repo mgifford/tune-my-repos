@@ -230,7 +230,7 @@ async function initAuthUI() {
         
         debugLog('Initializing auth UI...');
         
-        // Show loading state
+        // Show loading state - hide all other states
         authLoading.classList.remove('hidden');
         authLoggedOut.classList.add('hidden');
         authLoggedIn.classList.add('hidden');
@@ -244,28 +244,34 @@ async function initAuthUI() {
                     debugLog('User info retrieved:', userInfo.login);
                     authUsername.textContent = `@${userInfo.login}`;
                     authLoggedIn.classList.remove('hidden');
+                    authLoggedOut.classList.add('hidden');
                 } else {
                     debugLog('Failed to retrieve user info - token may be invalid');
                     // Token invalid, show logged out state
+                    authLoggedIn.classList.add('hidden');
                     authLoggedOut.classList.remove('hidden');
                 }
             } catch (error) {
                 console.error('Error fetching user info:', error);
                 debugLog('getUserInfo error:', error);
-                // Show logged out state on error
+                // Show logged out state on error, hide logged in state
+                authLoggedIn.classList.add('hidden');
                 authLoggedOut.classList.remove('hidden');
             }
         } else {
             debugLog('User is not authenticated');
-            // Not logged in
+            // Not logged in - ensure logged in state is hidden
+            authLoggedIn.classList.add('hidden');
             authLoggedOut.classList.remove('hidden');
         }
         
+        // Hide loading state
         authLoading.classList.add('hidden');
     } catch (error) {
         console.error('Error in initAuthUI:', error);
-        // Ensure we hide loading and show logged out state on any error
+        // Ensure we hide loading and show only logged out state on any error
         authLoading.classList.add('hidden');
+        authLoggedIn.classList.add('hidden');
         if (authLoggedOut) {
             authLoggedOut.classList.remove('hidden');
         }
@@ -831,6 +837,12 @@ function hideAllSections() {
 }
 
 function showError(message) {
+    // Don't show empty or whitespace-only messages
+    if (!message || !message.trim()) {
+        debugLog('showError called with empty message, ignoring');
+        return;
+    }
+    
     errorMessage.innerHTML = '';
     
     // Split message into main error and tips/details
@@ -884,6 +896,11 @@ function showError(message) {
 }
 
 function showInfo(message) {
+    // Don't show empty or whitespace-only messages
+    if (!message || !message.trim()) {
+        debugLog('showInfo called with empty message, ignoring');
+        return;
+    }
     infoMessage.innerHTML = message;
     infoSection.classList.remove('hidden');
     errorSection.classList.add('hidden');
