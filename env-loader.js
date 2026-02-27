@@ -12,11 +12,12 @@ if (typeof CONFIG === 'undefined') {
 (async function loadEnv() {
     // Skip .env loading in production environments (GitHub Pages, etc.)
     // to avoid 404 errors in the console
-    const isProduction = location.hostname !== 'localhost' && 
-                        location.hostname !== '127.0.0.1' && 
-                        location.protocol !== 'file:';
+    // Development environments: localhost, 127.0.0.1, or file:// protocol
+    const isDevelopment = location.hostname === 'localhost' || 
+                         location.hostname === '127.0.0.1' || 
+                         location.protocol === 'file:';
     
-    if (isProduction) {
+    if (!isDevelopment) {
         // In production, rely on config.js or OAuth authentication
         return;
     }
