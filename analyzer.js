@@ -209,8 +209,7 @@ class GitHubAnalyzer {
         };
 
         for (const [filename, config] of Object.entries(governanceFiles)) {
-            // Create variations for both .md and .rst extensions
-            // Most keys in governanceFiles have .md extension and we generate .rst equivalents
+            // Generate .rst variations for files with .md extensions
             const baseName = filename.replace(/\.md$/, '');
             const variations = [
                 filename,
@@ -279,7 +278,7 @@ class GitHubAnalyzer {
             result.findings.push({
                 category: 'documentation',
                 severity: 'critical',
-                title: 'Missing README.md',
+                title: 'Missing README',
                 description: 'README is essential for communicating purpose, scope, and usage',
                 recommendation: 'Create README.md or README.rst with purpose, audience, scope, and basic usage',
                 automated: true,
