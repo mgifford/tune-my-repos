@@ -21,6 +21,60 @@ let paginationState = {
     hasMore: false
 };
 
+// Priorities configuration
+let prioritiesConfig = null;
+
+// Load priorities configuration
+async function loadPrioritiesConfig() {
+    try {
+        const response = await fetch('priorities.json');
+        if (response.ok) {
+            prioritiesConfig = await response.json();
+            console.log('Priorities configuration loaded');
+        } else {
+            console.warn('Priorities configuration file not found (404), using default severity sorting');
+        }
+    } catch (error) {
+        console.warn('Failed to fetch priorities configuration, using default severity sorting:', error);
+    }
+}
+
+// Sort findings based on priority configuration
+function sortFindings(findings) {
+    if (!prioritiesConfig || prioritiesConfig.options.sort_strategy !== 'priority') {
+        // Default: sort by severity
+        const severityOrder = { critical: 0, important: 1, recommended: 2, optional: 3 };
+        return [...findings].sort((a, b) => {
+            return severityOrder[a.severity] - severityOrder[b.severity];
+        });
+    }
+    
+    // Build priority map
+    const priorityMap = new Map();
+    prioritiesConfig.priorities.forEach(p => {
+        priorityMap.set(p.title, p);
+    });
+    
+    // Sort by priority if available, then by severity
+    const severityOrder = { critical: 0, important: 1, recommended: 2, optional: 3 };
+    return [...findings].sort((a, b) => {
+        const aPriority = priorityMap.get(a.title);
+        const bPriority = priorityMap.get(b.title);
+        
+        // If both have priority, sort by priority number
+        if (aPriority && bPriority) {
+            return aPriority.priority - bPriority.priority;
+        }
+        
+        // If only one has priority, it comes first
+        if (aPriority) return -1;
+        if (bPriority) return 1;
+        
+        // Neither has priority, sort by severity
+        return severityOrder[a.severity] - severityOrder[b.severity];
+    });
+}
+
 // DOM elements
 const form = document.getElementById('analyzeForm');
 const targetInput = document.getElementById('targetInput');
@@ -56,6 +110,7 @@ const logoutBtn = document.getElementById('logoutBtn');
 
 // Initialize auth UI and URL params when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    loadPrioritiesConfig();
     initAuthUI();
     initURLParams();
 });
@@ -494,9 +549,14 @@ function createRepoCard(result) {
     
     card.appendChild(header);
     
-    // Show top findings only
+    // Show top findings and collapsible details
     if (result.findings.length > 0) {
-        const topFindings = result.findings.slice(0, 3);
+        // Sort findings based on priority configuration
+        const sortedFindings = sortFindings(result.findings);
+        
+        // Determine how many top findings to show
+        const topCount = prioritiesConfig?.options?.top_findings_count || 3;
+        const topFindings = sortedFindings.slice(0, topCount);
         const findingsList = document.createElement('div');
         findingsList.className = 'findings-summary';
         
@@ -524,11 +584,44 @@ function createRepoCard(result) {
         
         card.appendChild(findingsList);
         
-        if (result.findings.length > 3) {
-            const more = document.createElement('p');
-            more.className = 'more-findings';
-            more.textContent = `+ ${result.findings.length - 3} more issues`;
-            card.appendChild(more);
+        // Show collapsible details for additional findings
+        if (sortedFindings.length > topCount) {
+            const details = document.createElement('details');
+            details.className = 'findings-details';
+            
+            const remainingCount = sortedFindings.length - topCount;
+            const summary = document.createElement('summary');
+            summary.className = 'findings-summary-toggle';
+            summary.textContent = `View ${remainingCount} more issue${remainingCount !== 1 ? 's' : ''}`;
+            details.appendChild(summary);
+            
+            const additionalFindings = document.createElement('div');
+            additionalFindings.className = 'findings-summary additional-findings';
+            
+            sortedFindings.slice(topCount).forEach(finding => {
+                const findingItem = document.createElement('div');
+                findingItem.className = 'finding-item';
+                
+                const findingText = document.createElement('div');
+                findingText.className = 'finding-text';
+                findingText.innerHTML = `<strong>${finding.title}</strong>: ${finding.recommendation}`;
+                
+                const actionLink = getActionLink(finding, result.repository);
+                
+                findingItem.appendChild(findingText);
+                
+                if (actionLink) {
+                    const actionDiv = document.createElement('div');
+                    actionDiv.className = 'finding-action';
+                    actionDiv.innerHTML = actionLink;
+                    findingItem.appendChild(actionDiv);
+                }
+                
+                additionalFindings.appendChild(findingItem);
+            });
+            
+            details.appendChild(additionalFindings);
+            card.appendChild(details);
         }
     } else {
         const noIssues = document.createElement('p');

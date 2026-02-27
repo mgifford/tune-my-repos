@@ -1,0 +1,73 @@
+# Priority configuration for displaying findings
+# 
+# NOTE: This file is for documentation/reference only.
+# The actual configuration used by the application is priorities.json
+#
+# Lower priority number = shown first in the top 3 findings
+# Findings not listed here will be sorted by severity (critical > important > recommended > optional)
+
+priorities:
+  # Critical governance files (highest priority)
+  - title: "Missing LICENSE"
+    priority: 1
+    reason: "Legal clarity is essential for any open source project"
+  
+  - title: "Missing README baseline"
+    priority: 2
+    reason: "README is the first thing users see"
+  
+  - title: "Missing CONTRIBUTING.md"
+    priority: 3
+    reason: "Clear contribution guidelines help onboard contributors"
+  
+  - title: "Missing CODE_OF_CONDUCT.md"
+    priority: 4
+    reason: "Community standards are important for healthy projects"
+  
+  # Security (configurable - user mentioned uncertainty about SECURITY.md)
+  - title: "Missing SECURITY.md"
+    priority: 5
+    reason: "Vulnerability reporting process, but may be inherited from org"
+    optional_top_3: true  # Can be excluded from top 3 if inherited
+  
+  # Testing and CI
+  - title: "Missing unit tests"
+    priority: 6
+    reason: "Code quality foundation"
+  
+  - title: "Missing CI/CD pipeline"
+    priority: 7
+    reason: "Automated testing ensures reliability"
+  
+  # Documentation
+  - title: "Missing repository description"
+    priority: 8
+    reason: "Helps with discoverability"
+  
+  - title: "Missing repository topics"
+    priority: 9
+    reason: "Improves searchability"
+  
+  - title: "Stale README"
+    priority: 10
+    reason: "Outdated docs can mislead users"
+  
+  # Nice to have
+  - title: "Missing CHANGELOG.md"
+    priority: 11
+    reason: "Version history tracking"
+  
+  - title: "Missing repository website"
+    priority: 12
+    reason: "Additional project info"
+
+# Configuration options
+options:
+  # Number of findings to show prominently before the collapsible section
+  top_findings_count: 3
+  
+  # Whether to exclude findings marked as optional_top_3 when they are inherited
+  respect_optional_flag: true
+  
+  # Sort strategy: "priority" (use this file) or "severity" (use finding severity only)
+  sort_strategy: "priority"
