@@ -8,9 +8,20 @@ class GitHubAnalyzer {
         this.apiBase = 'https://api.github.com';
         // Cache for organization .github repository checks
         this.orgGithubCache = new Map();
+        
+        // Debug logging helper - checks both window.debugMode and localStorage
+        // to support cross-module debug state and persistence across reloads
+        this.debugLog = (message, ...args) => {
+            if (window.debugMode || localStorage.getItem('tune-my-repos-debug') === 'true') {
+                console.log(`[ANALYZER] ${message}`, ...args);
+            }
+        };
+        
+        this.debugLog('GitHubAnalyzer initialized', { hasToken: !!token });
     }
 
     async fetchJSON(url) {
+        this.debugLog('Fetching:', url);
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
         };
@@ -18,14 +29,41 @@ class GitHubAnalyzer {
             headers['Authorization'] = `token ${this.token}`;
         }
 
-        const response = await fetch(url, { headers });
-        
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({}));
-            throw new Error(error.message || `GitHub API error: ${response.status}`);
+        let response;
+        try {
+            response = await fetch(url, { headers });
+        } catch (fetchError) {
+            console.error('[ANALYZER] Fetch error:', fetchError);
+            throw new Error(`Network error: ${fetchError.message}. Check your connection or CORS settings.`);
         }
         
-        return response.json();
+        this.debugLog('Response status:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            this.debugLog('Error response body:', errorText);
+            
+            let error;
+            try {
+                error = JSON.parse(errorText);
+            } catch (e) {
+                error = { message: errorText };
+            }
+            
+            const errorMessage = error.message || `GitHub API error: ${response.status}`;
+            console.error('[ANALYZER] API error:', {
+                url,
+                status: response.status,
+                statusText: response.statusText,
+                error: errorMessage
+            });
+            
+            throw new Error(errorMessage);
+        }
+        
+        const data = await response.json();
+        this.debugLog('Response data received:', Object.keys(data).length, 'keys');
+        return data;
     }
 
     /**
@@ -38,19 +76,23 @@ class GitHubAnalyzer {
         // Check cache first
         const cacheKey = `${owner}:${filename}`;
         if (this.orgGithubCache.has(cacheKey)) {
+            this.debugLog(`Cache hit for org file: ${cacheKey}`);
             return this.orgGithubCache.get(cacheKey);
         }
 
+        this.debugLog(`Checking org .github file: ${owner}/.github/${filename}`);
         try {
             // Try to fetch the file from organization's .github repository
             // This will check if https://github.com/[owner]/.github/blob/main/[filename] exists
             await this.fetchJSON(`${this.apiBase}/repos/${owner}/.github/contents/${filename}`);
             
             // File exists
+            this.debugLog(`Org file exists: ${cacheKey}`);
             this.orgGithubCache.set(cacheKey, true);
             return true;
         } catch (error) {
             // File doesn't exist or .github repo doesn't exist
+            this.debugLog(`Org file not found: ${cacheKey}`, error.message);
             this.orgGithubCache.set(cacheKey, false);
             return false;
         }
@@ -64,22 +106,28 @@ class GitHubAnalyzer {
     async hasOrgGithubRepo(owner) {
         const cacheKey = `${owner}:_has_github_repo`;
         if (this.orgGithubCache.has(cacheKey)) {
+            this.debugLog(`Cache hit for org .github repo check: ${owner}`);
             return this.orgGithubCache.get(cacheKey);
         }
 
+        this.debugLog(`Checking if org has .github repo: ${owner}`);
         try {
             // Check if the .github repository exists
             await this.fetchJSON(`${this.apiBase}/repos/${owner}/.github`);
+            this.debugLog(`Org has .github repo: ${owner}`);
             this.orgGithubCache.set(cacheKey, true);
             return true;
         } catch (error) {
             // Either not an org, or no .github repo
+            this.debugLog(`Org does not have .github repo: ${owner}`, error.message);
             this.orgGithubCache.set(cacheKey, false);
             return false;
         }
     }
 
     async analyzeRepository(owner, repo, progressCallback = null) {
+        this.debugLog(`=== Starting analysis for ${owner}/${repo} ===`);
+        
         const result = {
             repository: `${owner}/${repo}`,
             analyzed_at: new Date().toISOString(),
@@ -96,7 +144,14 @@ class GitHubAnalyzer {
         try {
             // Fetch repository metadata
             if (progressCallback) progressCallback('Fetching repository metadata...');
+            this.debugLog('Fetching repository metadata...');
             const repoData = await this.fetchJSON(`${this.apiBase}/repos/${owner}/${repo}`);
+            this.debugLog('Repository metadata received:', {
+                name: repoData.name,
+                private: repoData.private,
+                fork: repoData.fork,
+                default_branch: repoData.default_branch
+            });
             
             if (progressCallback) progressCallback('Analyzing fork status...');
             result.is_fork = repoData.fork;
@@ -108,46 +163,65 @@ class GitHubAnalyzer {
 
             // Check if owner has an organization .github repository
             if (progressCallback) progressCallback('Checking for organization-level governance files...');
+            this.debugLog('Checking for organization .github repository...');
             const hasOrgGithub = await this.hasOrgGithubRepo(owner);
 
             // Fetch file tree
             if (progressCallback) progressCallback('Fetching repository file tree...');
+            this.debugLog('Fetching file tree from branch:', repoData.default_branch);
             const tree = await this.fetchJSON(`${this.apiBase}/repos/${owner}/${repo}/git/trees/${repoData.default_branch}?recursive=1`);
             const files = new Set(tree.tree.map(item => item.path));
             if (progressCallback) progressCallback(`Found ${files.size} files in repository`);
+            this.debugLog(`Found ${files.size} files in repository`);
 
             // Classify repository
             if (progressCallback) progressCallback('Classifying repository type...');
+            this.debugLog('Classifying repository...');
             result.classification = this.classifyRepository(files, repoData);
             if (progressCallback) progressCallback(`Classified as: ${result.classification}`);
+            this.debugLog('Classification:', result.classification);
 
             // Run analysis checks
             if (progressCallback) progressCallback('Checking governance files (LICENSE, CONTRIBUTING, etc.)...');
+            this.debugLog('Running governance file checks...');
             await this.checkGovernanceFiles(files, result, owner, hasOrgGithub);
             
             if (progressCallback) progressCallback('Checking README quality...');
+            this.debugLog('Checking README...');
             this.checkReadme(files, result);
             
             if (progressCallback) progressCallback('Checking About box metadata...');
+            this.debugLog('Checking About metadata...');
             this.checkAboutMetadata(repoData, result);
             
             if (progressCallback) progressCallback('Checking CI/CD workflows...');
+            this.debugLog('Checking CI/CD...');
             this.checkCIWorkflows(files, result);
             
             if (progressCallback) progressCallback('Checking community health files...');
+            this.debugLog('Checking community files...');
             this.checkCommunityFiles(files, result);
             
             if (progressCallback) progressCallback('Checking dependencies...');
+            this.debugLog('Checking dependencies...');
             this.checkDependencies(files, result);
 
             // Calculate maturity
             if (progressCallback) progressCallback('Calculating maturity score...');
+            this.debugLog('Calculating maturity...');
             result.maturity_level = this.calculateMaturity(result);
             
             if (progressCallback) progressCallback('Analysis complete!');
+            this.debugLog(`=== Analysis complete for ${owner}/${repo} ===`);
+            this.debugLog('Findings count:', result.findings.length);
 
         } catch (error) {
-            throw new Error(`Analysis failed: ${error.message}`);
+            console.error('[ANALYZER] Analysis error:', error);
+            this.debugLog('Analysis failed with error:', error.message);
+            if (error.stack) {
+                this.debugLog('Error stack:', error.stack);
+            }
+            throw new Error(`Analysis failed for ${owner}/${repo}: ${error.message}`);
         }
 
         return result;

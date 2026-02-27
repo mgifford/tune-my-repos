@@ -21,21 +21,45 @@ let paginationState = {
     hasMore: false
 };
 
+// Debug mode
+let debugMode = false;
+
 // Priorities configuration
 let prioritiesConfig = null;
+
+// Debug logging helper - checks localStorage for cross-session persistence
+function debugLog(message, ...args) {
+    // Check both debugMode and localStorage to support:
+    // 1. debugMode variable (for same-session checks)
+    // 2. localStorage (for persistence across reloads and cross-module access)
+    if (debugMode || localStorage.getItem('tune-my-repos-debug') === 'true') {
+        console.log(`[DEBUG] ${message}`, ...args);
+    }
+}
+
+// Error logging helper with stack trace
+function errorLog(message, error) {
+    console.error(`[ERROR] ${message}`, error);
+    if (error && error.stack) {
+        console.error('Stack trace:', error.stack);
+    }
+}
 
 // Load priorities configuration
 async function loadPrioritiesConfig() {
     try {
+        debugLog('Loading priorities configuration...');
         const response = await fetch('priorities.json');
         if (response.ok) {
             prioritiesConfig = await response.json();
             console.log('Priorities configuration loaded');
+            debugLog('Priorities config:', prioritiesConfig);
         } else {
             console.warn('Priorities configuration file not found (404), using default severity sorting');
         }
     } catch (error) {
         console.warn('Failed to fetch priorities configuration, using default severity sorting:', error);
+        errorLog('Error loading priorities configuration', error);
     }
 }
 
@@ -107,19 +131,61 @@ const authLoggedIn = document.getElementById('authLoggedIn');
 const authUsername = document.getElementById('authUsername');
 const loginBtn = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+const debugIndicator = document.getElementById('debugIndicator');
 
 // Initialize auth UI and URL params when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    debugLog('DOMContentLoaded - initializing app');
     loadPrioritiesConfig();
     initAuthUI();
     initURLParams();
+    initDebugMode();
 });
+
+// Initialize debug mode
+function initDebugMode() {
+    debugMode = localStorage.getItem('tune-my-repos-debug') === 'true';
+    debugLog('Debug mode initialized:', debugMode);
+    
+    // Update UI indicator
+    updateDebugIndicator();
+    
+    // Add keyboard shortcut for debug toggle (Ctrl+Shift+D)
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+            debugMode = !debugMode;
+            localStorage.setItem('tune-my-repos-debug', debugMode ? 'true' : 'false');
+            console.log(`Debug mode ${debugMode ? 'ENABLED' : 'DISABLED'}. Press Ctrl+Shift+D to toggle.`);
+            if (debugMode) {
+                console.log('Debug logging is now active. All API calls and errors will be logged.');
+            }
+            updateDebugIndicator();
+        }
+    });
+    
+    // Log debug instructions on startup
+    console.log('💡 Tip: Press Ctrl+Shift+D to toggle debug mode for detailed logging');
+}
+
+// Update debug mode indicator
+function updateDebugIndicator() {
+    if (debugIndicator) {
+        if (debugMode) {
+            debugIndicator.classList.remove('hidden');
+        } else {
+            debugIndicator.classList.add('hidden');
+        }
+    }
+}
 
 async function initAuthUI() {
     if (!window.githubAuth) {
         console.warn('Auth module not loaded');
+        debugLog('githubAuth object not found on window');
         return;
     }
+    
+    debugLog('Initializing auth UI...');
     
     // Show loading state
     authLoading.classList.remove('hidden');
@@ -127,16 +193,20 @@ async function initAuthUI() {
     authLoggedIn.classList.add('hidden');
     
     if (window.githubAuth.isAuthenticated()) {
+        debugLog('User is authenticated, fetching user info...');
         // User is logged in - show username
         const userInfo = await window.githubAuth.getUserInfo();
         if (userInfo) {
+            debugLog('User info retrieved:', userInfo.login);
             authUsername.textContent = `@${userInfo.login}`;
             authLoggedIn.classList.remove('hidden');
         } else {
+            debugLog('Failed to retrieve user info - token may be invalid');
             // Token invalid, show logged out state
             authLoggedOut.classList.remove('hidden');
         }
     } else {
+        debugLog('User is not authenticated');
         // Not logged in
         authLoggedOut.classList.remove('hidden');
     }
@@ -204,6 +274,12 @@ async function handleAnalyze(e) {
     const skipForks = skipForksCheckbox.checked;
     const forceRefresh = forceRefreshCheckbox.checked;
     
+    debugLog('=== Starting analysis ===');
+    debugLog('Target:', targetValue);
+    debugLog('Skip forks:', skipForks);
+    debugLog('Force refresh:', forceRefresh);
+    debugLog('Token present:', !!token);
+    
     if (!targetValue) {
         showError('Please enter a GitHub user, organization, or repository');
         return;
@@ -211,8 +287,10 @@ async function handleAnalyze(e) {
     
     // Check cache first (unless force refresh is enabled)
     if (!forceRefresh && window.analysisCache) {
+        debugLog('Checking cache...');
         const cached = window.analysisCache.get(targetValue, skipForks);
         if (cached) {
+            debugLog('Cache hit! Using cached results');
             const ageMinutes = Math.round(cached.age / 1000 / 60);
             showCacheStatus(true, ageMinutes);
             allResults = cached.results;
@@ -234,6 +312,7 @@ async function handleAnalyze(e) {
             displayResults(allResults);
             return;
         }
+        debugLog('Cache miss, proceeding with fresh analysis');
     }
     
     // Clear cache status indicator
@@ -241,6 +320,7 @@ async function handleAnalyze(e) {
     
     // Debug: Log token status
     console.log('Token status:', token ? `Present (${token.substring(0, 4)}...)` : 'Not present');
+    debugLog('Token length:', token ? token.length : 0);
     
     // Show rate limit warning if no token provided
     if (!token) {
@@ -259,16 +339,21 @@ async function handleAnalyze(e) {
     allResults = [];
     
     try {
+        debugLog('Creating GitHubAnalyzer instance...');
         const analyzer = new GitHubAnalyzer(token);
         
         // Determine if it's a single repo (contains /) or user/org
         if (targetValue.includes('/')) {
+            debugLog('Single repository mode detected');
             // Single repo mode
             const [owner, repo] = targetValue.split('/', 2);
+            debugLog(`Analyzing repository: ${owner}/${repo}`);
             progressText.textContent = `Analyzing ${targetValue}...`;
             const result = await analyzer.analyzeRepository(owner, repo, (status) => {
+                debugLog('Progress:', status);
                 progressText.textContent = status;
             });
+            debugLog('Repository analysis complete', result);
             allResults = [result];
             
             // Reset stats for single repo
@@ -278,18 +363,38 @@ async function handleAnalyze(e) {
             
             // Cache the result
             if (window.analysisCache) {
+                debugLog('Caching results...');
                 window.analysisCache.set(targetValue, skipForks, allResults, analysisStats);
             }
             
             displayResults(allResults);
         } else {
+            debugLog('User/organization mode detected');
             // User/org mode - analyze all repos
             await analyzeBatch(analyzer, targetValue);
         }
     } catch (error) {
-        showError(error.message);
+        errorLog('Analysis failed', error);
+        
+        // Create a more detailed error message
+        let errorDetails = error.message;
+        if (error.stack) {
+            debugLog('Error stack:', error.stack);
+        }
+        
+        // Provide helpful context based on error type
+        if (error.message.includes('404')) {
+            errorDetails += '\n\n💡 Tip: Make sure the repository or user/organization exists and is accessible.';
+        } else if (error.message.includes('403') || error.message.includes('rate limit')) {
+            errorDetails += '\n\n💡 Tip: You may have hit the GitHub API rate limit. Try authenticating or wait for the limit to reset.';
+        } else if (error.message.includes('Network')) {
+            errorDetails += '\n\n💡 Tip: Check your internet connection. If you\'re running locally, make sure you\'re using an HTTP server (not file://).';
+        }
+        
+        showError(errorDetails);
         console.error('Analysis error:', error);
     } finally {
+        debugLog('Analysis completed, cleaning up UI');
         loadingSection.classList.add('hidden');
         batchProgress.classList.add('hidden');
         analyzeBtn.disabled = false;
@@ -306,6 +411,8 @@ async function handleLoadMore() {
 
 async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
     try {
+        debugLog(`=== Starting batch analysis for ${userOrOrg} ===`);
+        
         // Fetch ALL repos for this user/org across all pages
         const skipForks = skipForksCheckbox.checked;
         progressText.textContent = `Fetching repositories for ${userOrOrg}...`;
@@ -321,6 +428,8 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             headers['Authorization'] = `token ${token}`;
         }
         
+        debugLog('Determining account type (user vs organization)...');
+        
         // Determine if this is an organization or a user
         let reposEndpoint;
         try {
@@ -328,6 +437,8 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
                 `https://api.github.com/users/${userOrOrg}`,
                 { headers }
             );
+            
+            debugLog('Account check response status:', accountResponse.status);
             
             if (accountResponse.ok) {
                 const accountData = await accountResponse.json();
@@ -337,20 +448,26 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
                 if (isOrg) {
                     reposEndpoint = `https://api.github.com/orgs/${userOrOrg}/repos`;
                     console.log(`Detected organization: ${userOrOrg}, using /orgs endpoint`);
+                    debugLog('Organization detected:', accountData);
                 } else {
                     reposEndpoint = `https://api.github.com/users/${userOrOrg}/repos`;
                     console.log(`Detected user: ${userOrOrg}, using /users endpoint`);
+                    debugLog('User account detected:', accountData);
                 }
             } else {
                 // If we can't determine the type, fall back to /users endpoint
                 console.warn(`Could not determine account type for ${userOrOrg}, falling back to /users endpoint`);
+                debugLog('Account type check failed with status:', accountResponse.status);
                 reposEndpoint = `https://api.github.com/users/${userOrOrg}/repos`;
             }
         } catch (error) {
             // If there's an error checking the account type, fall back to /users endpoint
             console.warn(`Error checking account type for ${userOrOrg}:`, error.message);
+            errorLog('Error checking account type', error);
             reposEndpoint = `https://api.github.com/users/${userOrOrg}/repos`;
         }
+        
+        debugLog('Using endpoint:', reposEndpoint);
         
         // Fetch all pages of repositories
         let allRepos = [];
@@ -359,23 +476,27 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         while (hasMorePages) {
             progressText.textContent = `Fetching repositories for ${userOrOrg} (page ${currentPage})...`;
+            debugLog(`Fetching page ${currentPage}...`);
             
             let response;
             try {
                 // Sort by recently updated, fetch in pages of 100 (max per page)
-                response = await fetch(
-                    `${reposEndpoint}?sort=updated&direction=desc&per_page=100&page=${currentPage}`,
-                    { headers }
-                );
+                const fetchUrl = `${reposEndpoint}?sort=updated&direction=desc&per_page=100&page=${currentPage}`;
+                debugLog('Fetching:', fetchUrl);
+                response = await fetch(fetchUrl, { headers });
             } catch (fetchError) {
                 // Network error, CORS issue, or connection problem
+                errorLog('Network error fetching repositories', fetchError);
                 throw new Error(`Network error fetching repositories: ${fetchError.message}. Make sure you're serving the app via HTTP server (not file://) or use authentication.`);
             }
+            
+            debugLog('Repos page response status:', response.status);
             
             if (!response.ok) {
                 let errorMsg = `HTTP ${response.status} ${response.statusText}`;
                 try {
                     const errorData = await response.json();
+                    debugLog('Error response data:', errorData);
                     if (errorData.message) {
                         errorMsg += `: ${errorData.message}`;
                     }
@@ -442,6 +563,8 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         const progressBar = document.getElementById('progressFill');
         const progressStats = document.getElementById('progressStats');
         
+        debugLog(`Starting analysis of ${repos.length} repositories`);
+        
         // Analyze each repo
         const batchResults = [];
         let failedCount = 0;
@@ -452,11 +575,15 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             progressStats.textContent = `${i + 1} / ${repos.length}`;
             progressText.textContent = `Analyzing ${repo.full_name}...`;
             
+            debugLog(`[${i + 1}/${repos.length}] Analyzing ${repo.full_name}...`);
+            
             try {
                 const result = await analyzer.analyzeRepository(repo.owner.login, repo.name);
                 batchResults.push(result);
+                debugLog(`[${i + 1}/${repos.length}] ✓ ${repo.full_name} completed`);
             } catch (error) {
                 console.error(`Error analyzing ${repo.full_name}:`, error);
+                errorLog(`Failed to analyze ${repo.full_name}`, error);
                 failedCount++;
                 // Continue with other repos even if one fails
             }
@@ -464,6 +591,12 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         
         // Log summary
         console.log(`Analysis complete: ${batchResults.length} succeeded, ${failedCount} failed out of ${repos.length} total`);
+        debugLog(`=== Batch analysis complete ===`);
+        debugLog('Results:', {
+            succeeded: batchResults.length,
+            failed: failedCount,
+            total: repos.length
+        });
         
         // Update analysis stats
         analysisStats.succeeded = batchResults.length;
@@ -640,10 +773,56 @@ function hideAllSections() {
 }
 
 function showError(message) {
-    errorMessage.textContent = message;
+    errorMessage.innerHTML = '';
+    
+    // Split message into main error and tips/details
+    const parts = message.split('\n\n');
+    const mainError = parts[0];
+    const additionalInfo = parts.slice(1);
+    
+    // Create main error text (safe - no user input)
+    const errorText = document.createElement('div');
+    errorText.textContent = mainError;
+    errorText.style.marginBottom = '10px';
+    errorMessage.appendChild(errorText);
+    
+    // Add additional info if present (safe - generated internally)
+    if (additionalInfo.length > 0) {
+        const infoDiv = document.createElement('div');
+        infoDiv.style.marginTop = '10px';
+        infoDiv.style.padding = '10px';
+        infoDiv.style.background = 'rgba(255, 255, 255, 0.1)';
+        infoDiv.style.borderRadius = '4px';
+        // Note: innerHTML used here for internal content only (tips with emoji, no user input)
+        infoDiv.innerHTML = additionalInfo.join('<br><br>');
+        errorMessage.appendChild(infoDiv);
+    }
+    
+    // Add debug instructions with kbd element
+    const debugInfo = document.createElement('div');
+    debugInfo.style.marginTop = '15px';
+    debugInfo.style.fontSize = '0.9em';
+    debugInfo.style.opacity = '0.8';
+    
+    const strong = document.createElement('strong');
+    strong.textContent = 'Need more details?';
+    
+    const kbd = document.createElement('kbd');
+    kbd.textContent = 'Ctrl+Shift+D';
+    
+    debugInfo.appendChild(document.createTextNode('💡 '));
+    debugInfo.appendChild(strong);
+    debugInfo.appendChild(document.createTextNode(' Press '));
+    debugInfo.appendChild(kbd);
+    debugInfo.appendChild(document.createTextNode(' to enable debug mode, then check the browser console (F12) for detailed logs.'));
+    
+    errorMessage.appendChild(debugInfo);
+    
     errorSection.classList.remove('hidden');
     infoSection.classList.add('hidden');
     resultsSection.classList.add('hidden');
+    
+    console.error('[ERROR] Error displayed to user:', mainError);
 }
 
 function showInfo(message) {

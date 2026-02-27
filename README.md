@@ -22,6 +22,7 @@ This tool evaluates repositories against established compliance, security, acces
 - **Collapsible findings** - Top 3 findings shown prominently, with all others accessible via expandable section
 - **Configurable priorities** - Customize which findings appear first using `priorities.json` (see [PRIORITIES_CONFIG.md](PRIORITIES_CONFIG.md))
 - **Export options** - Download results as JSON or Markdown
+- **Debug mode** - Enhanced error logging and debugging (press `Ctrl+Shift+D` to toggle)
 
 ## Usage
 
@@ -46,7 +47,13 @@ This tool evaluates repositories against established compliance, security, acces
    - Cache is stored in browser localStorage and cleared automatically after expiration
    - Different cache entries for different skipForks settings
 
-4. **Optional - Configure authentication** (for higher rate limits and private repos):
+4. **Debugging and Troubleshooting:**
+   - Press `Ctrl+Shift+D` to toggle debug mode
+   - When enabled, detailed logs appear in the browser console (F12)
+   - See [DEBUGGING.md](DEBUGGING.md) for complete debugging guide
+   - Error messages now include helpful tips and context
+
+5. **Optional - Configure authentication** (for higher rate limits and private repos):
    
    **For local development:**
    

@@ -550,6 +550,28 @@ footer a:hover {
 .maturity-medium { color: var(--warning); font-weight: 600; }
 .maturity-high { color: var(--success); font-weight: 600; }
 
+/* Debug Indicator */
+.debug-indicator {
+    padding: 6px 12px;
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: help;
+    transition: all 0.2s;
+}
+
+.debug-indicator:hover {
+    background: #ffc107;
+    color: #000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* Pagination */
 .pagination-controls {
     margin-top: var(--spacing);
