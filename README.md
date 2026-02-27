@@ -12,6 +12,7 @@ This tool evaluates repositories against established compliance, security, acces
 - **Fork analysis** - Detects upstream divergence and sync recommendations
 - **Governance evaluation** - Checks LICENSE, CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md
 - **Organization-level governance** - Detects inherited files from organization `.github` repositories (e.g., `https://github.com/chaoss/.github`)
+- **About box metadata** - Validates repository description, website, and topics for better discoverability
 - **Dependency security** - Scans for outdated packages and vulnerabilities
 - **Accessibility compliance** - Validates WCAG 2.2 AA requirements
 - **Test coverage** - Ensures unit tests and CI/CD pipelines exist
