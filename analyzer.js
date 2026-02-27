@@ -210,7 +210,7 @@ class GitHubAnalyzer {
 
         for (const [filename, config] of Object.entries(governanceFiles)) {
             // Create variations for both .md and .rst extensions
-            // Note: All governanceFiles keys are defined with .md extension (except LICENSE)
+            // Most keys in governanceFiles have .md extension and we generate .rst equivalents
             const baseName = filename.replace(/\.md$/, '');
             const variations = [
                 filename,
@@ -220,7 +220,6 @@ class GitHubAnalyzer {
             ];
             
             // Add .rst variations for files with .md extension
-            // (Defensive check: technically all non-LICENSE keys have .md)
             if (filename.endsWith('.md')) {
                 const rstFilename = baseName + '.rst';
                 variations.push(
