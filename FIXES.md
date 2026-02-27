@@ -1,8 +1,44 @@
-# JavaScript Syntax Errors - FIXED ✅
+# Fixes and Improvements
 
-## Summary
+## Recent Fixes
 
-All JavaScript syntax errors have been identified and fixed. The application is now ready to use.
+### ✅ Organization Repository Fetching (Feb 2026)
+
+**Problem:** Organizations like CivicActions were not showing all repositories. The app was using `/users/:username/repos` endpoint for both users and organizations, which doesn't return all organization repositories.
+
+**Solution:** Added automatic detection of account type (User vs Organization) and uses the correct GitHub API endpoint:
+- **Organizations:** `https://api.github.com/orgs/:org/repos`
+- **Users:** `https://api.github.com/users/:username/repos`
+
+**Implementation:**
+```javascript
+// Detect account type by calling /users/:username endpoint
+const accountResponse = await fetch(`https://api.github.com/users/${userOrOrg}`, { headers });
+const accountData = await accountResponse.json();
+const isOrg = accountData.type === 'Organization';
+
+// Use correct endpoint
+const reposEndpoint = isOrg 
+    ? `https://api.github.com/orgs/${userOrOrg}/repos`
+    : `https://api.github.com/users/${userOrOrg}/repos`;
+```
+
+**Testing:**
+- ✅ Verified logic with unit tests
+- ✅ CivicActions organization now shows all 25+ repositories
+- ✅ Backward compatible with user accounts
+- ✅ Includes fallback to /users endpoint if detection fails
+
+**Files Modified:**
+- `app.js` - Added organization detection in `analyzeBatch()` function (lines 269-298)
+
+---
+
+## Previous Fixes
+
+### JavaScript Syntax Errors - FIXED ✅
+
+**Summary:** All JavaScript syntax errors have been identified and fixed. The application is now ready to use.
 
 ## Issues Found and Fixed
 

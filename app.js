@@ -266,6 +266,37 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             headers['Authorization'] = `token ${token}`;
         }
         
+        // Determine if this is an organization or a user
+        let reposEndpoint;
+        try {
+            const accountResponse = await fetch(
+                `https://api.github.com/users/${userOrOrg}`,
+                { headers }
+            );
+            
+            if (accountResponse.ok) {
+                const accountData = await accountResponse.json();
+                // GitHub API returns 'type' field: 'User' or 'Organization'
+                const isOrg = accountData.type === 'Organization';
+                
+                if (isOrg) {
+                    reposEndpoint = `https://api.github.com/orgs/${userOrOrg}/repos`;
+                    console.log(`Detected organization: ${userOrOrg}, using /orgs endpoint`);
+                } else {
+                    reposEndpoint = `https://api.github.com/users/${userOrOrg}/repos`;
+                    console.log(`Detected user: ${userOrOrg}, using /users endpoint`);
+                }
+            } else {
+                // If we can't determine the type, fall back to /users endpoint
+                console.warn(`Could not determine account type for ${userOrOrg}, falling back to /users endpoint`);
+                reposEndpoint = `https://api.github.com/users/${userOrOrg}/repos`;
+            }
+        } catch (error) {
+            // If there's an error checking the account type, fall back to /users endpoint
+            console.warn(`Error checking account type for ${userOrOrg}:`, error.message);
+            reposEndpoint = `https://api.github.com/users/${userOrOrg}/repos`;
+        }
+        
         // Fetch all pages of repositories
         let allRepos = [];
         let currentPage = page;
@@ -278,7 +309,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             try {
                 // Sort by recently updated, fetch in pages of 100 (max per page)
                 response = await fetch(
-                    `https://api.github.com/users/${userOrOrg}/repos?sort=updated&direction=desc&per_page=100&page=${currentPage}`,
+                    `${reposEndpoint}?sort=updated&direction=desc&per_page=100&page=${currentPage}`,
                     { headers }
                 );
             } catch (fetchError) {
