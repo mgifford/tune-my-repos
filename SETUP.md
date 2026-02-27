@@ -37,7 +37,7 @@ cp config.example.js config.js
 2. You should see **no rate limit warning**
 3. Console should show: `✓ Loaded GitHub token from .env file`
 
-**Note:** The `.env` file is only loaded in development environments (localhost or file://). In production deployments like GitHub Pages, the app will skip `.env` loading and rely on OAuth authentication or the token configured in `config.js`.
+**Note:** The `.env` file is only loaded in development environments (localhost or file://). In production deployments like GitHub Pages, `.env` is not used. Instead, production uses OAuth authentication to allow users to sign in with their GitHub accounts. See [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) for OAuth deployment instructions.
 
 ## Rate Limits
 
