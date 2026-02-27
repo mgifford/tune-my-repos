@@ -32,10 +32,10 @@ async function loadPrioritiesConfig() {
             prioritiesConfig = await response.json();
             console.log('Priorities configuration loaded');
         } else {
-            console.warn('Priorities configuration not found, using default sorting');
+            console.warn('Priorities configuration file not found (404), using default severity sorting');
         }
     } catch (error) {
-        console.warn('Failed to load priorities configuration:', error);
+        console.warn('Failed to fetch priorities configuration, using default severity sorting:', error);
     }
 }
 
@@ -589,9 +589,10 @@ function createRepoCard(result) {
             const details = document.createElement('details');
             details.className = 'findings-details';
             
+            const remainingCount = sortedFindings.length - topCount;
             const summary = document.createElement('summary');
             summary.className = 'findings-summary-toggle';
-            summary.textContent = `View ${sortedFindings.length - topCount} more issue${sortedFindings.length - topCount !== 1 ? 's' : ''}`;
+            summary.textContent = `View ${remainingCount} more issue${remainingCount !== 1 ? 's' : ''}`;
             details.appendChild(summary);
             
             const additionalFindings = document.createElement('div');

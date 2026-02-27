@@ -1,4 +1,8 @@
 # Priority configuration for displaying findings
+# 
+# NOTE: This file is for documentation/reference only.
+# The actual configuration used by the application is priorities.json
+#
 # Lower priority number = shown first in the top 3 findings
 # Findings not listed here will be sorted by severity (critical > important > recommended > optional)
 

@@ -24,7 +24,11 @@ The priority configuration is stored in **`priorities.json`** (or `priorities.ya
       "priority": 1,
       "reason": "Legal clarity is essential for any open source project"
     },
-    ...
+    {
+      "title": "Missing README baseline",
+      "priority": 2,
+      "reason": "README is the first thing users see"
+    }
   ],
   "options": {
     "top_findings_count": 3,
