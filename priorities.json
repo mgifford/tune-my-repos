@@ -1,0 +1,70 @@
+{
+  "priorities": [
+    {
+      "title": "Missing LICENSE",
+      "priority": 1,
+      "reason": "Legal clarity is essential for any open source project"
+    },
+    {
+      "title": "Missing README baseline",
+      "priority": 2,
+      "reason": "README is the first thing users see"
+    },
+    {
+      "title": "Missing CONTRIBUTING.md",
+      "priority": 3,
+      "reason": "Clear contribution guidelines help onboard contributors"
+    },
+    {
+      "title": "Missing CODE_OF_CONDUCT.md",
+      "priority": 4,
+      "reason": "Community standards are important for healthy projects"
+    },
+    {
+      "title": "Missing SECURITY.md",
+      "priority": 5,
+      "reason": "Vulnerability reporting process, but may be inherited from org",
+      "optional_top_3": true
+    },
+    {
+      "title": "Missing unit tests",
+      "priority": 6,
+      "reason": "Code quality foundation"
+    },
+    {
+      "title": "Missing CI/CD pipeline",
+      "priority": 7,
+      "reason": "Automated testing ensures reliability"
+    },
+    {
+      "title": "Missing repository description",
+      "priority": 8,
+      "reason": "Helps with discoverability"
+    },
+    {
+      "title": "Missing repository topics",
+      "priority": 9,
+      "reason": "Improves searchability"
+    },
+    {
+      "title": "Stale README",
+      "priority": 10,
+      "reason": "Outdated docs can mislead users"
+    },
+    {
+      "title": "Missing CHANGELOG.md",
+      "priority": 11,
+      "reason": "Version history tracking"
+    },
+    {
+      "title": "Missing repository website",
+      "priority": 12,
+      "reason": "Additional project info"
+    }
+  ],
+  "options": {
+    "top_findings_count": 3,
+    "respect_optional_flag": true,
+    "sort_strategy": "priority"
+  }
+}

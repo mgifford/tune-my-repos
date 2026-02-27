@@ -19,6 +19,8 @@ This tool evaluates repositories against established compliance, security, acces
 - **OpenChain evidence** - Reports signals for ISO/IEC 5230 compliance programs
 - **CHAOSS metrics** - Measures community health indicators
 - **Smart caching** - Results cached for 1 hour to reduce API calls and improve performance
+- **Collapsible findings** - Top 3 findings shown prominently, with all others accessible via expandable section
+- **Configurable priorities** - Customize which findings appear first using `priorities.json` (see [PRIORITIES_CONFIG.md](PRIORITIES_CONFIG.md))
 - **Export options** - Download results as JSON or Markdown
 
 ## Usage

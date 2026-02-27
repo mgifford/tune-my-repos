@@ -21,6 +21,60 @@ let paginationState = {
     hasMore: false
 };
 
+// Priorities configuration
+let prioritiesConfig = null;
+
+// Load priorities configuration
+async function loadPrioritiesConfig() {
+    try {
+        const response = await fetch('priorities.json');
+        if (response.ok) {
+            prioritiesConfig = await response.json();
+            console.log('Priorities configuration loaded');
+        } else {
+            console.warn('Priorities configuration not found, using default sorting');
+        }
+    } catch (error) {
+        console.warn('Failed to load priorities configuration:', error);
+    }
+}
+
+// Sort findings based on priority configuration
+function sortFindings(findings) {
+    if (!prioritiesConfig || prioritiesConfig.options.sort_strategy !== 'priority') {
+        // Default: sort by severity
+        const severityOrder = { critical: 0, important: 1, recommended: 2, optional: 3 };
+        return [...findings].sort((a, b) => {
+            return severityOrder[a.severity] - severityOrder[b.severity];
+        });
+    }
+    
+    // Build priority map
+    const priorityMap = new Map();
+    prioritiesConfig.priorities.forEach(p => {
+        priorityMap.set(p.title, p);
+    });
+    
+    // Sort by priority if available, then by severity
+    const severityOrder = { critical: 0, important: 1, recommended: 2, optional: 3 };
+    return [...findings].sort((a, b) => {
+        const aPriority = priorityMap.get(a.title);
+        const bPriority = priorityMap.get(b.title);
+        
+        // If both have priority, sort by priority number
+        if (aPriority && bPriority) {
+            return aPriority.priority - bPriority.priority;
+        }
+        
+        // If only one has priority, it comes first
+        if (aPriority) return -1;
+        if (bPriority) return 1;
+        
+        // Neither has priority, sort by severity
+        return severityOrder[a.severity] - severityOrder[b.severity];
+    });
+}
+
 // DOM elements
 const form = document.getElementById('analyzeForm');
 const targetInput = document.getElementById('targetInput');
@@ -56,6 +110,7 @@ const logoutBtn = document.getElementById('logoutBtn');
 
 // Initialize auth UI and URL params when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    loadPrioritiesConfig();
     initAuthUI();
     initURLParams();
 });
@@ -496,7 +551,12 @@ function createRepoCard(result) {
     
     // Show top findings and collapsible details
     if (result.findings.length > 0) {
-        const topFindings = result.findings.slice(0, 3);
+        // Sort findings based on priority configuration
+        const sortedFindings = sortFindings(result.findings);
+        
+        // Determine how many top findings to show
+        const topCount = prioritiesConfig?.options?.top_findings_count || 3;
+        const topFindings = sortedFindings.slice(0, topCount);
         const findingsList = document.createElement('div');
         findingsList.className = 'findings-summary';
         
@@ -525,19 +585,19 @@ function createRepoCard(result) {
         card.appendChild(findingsList);
         
         // Show collapsible details for additional findings
-        if (result.findings.length > 3) {
+        if (sortedFindings.length > topCount) {
             const details = document.createElement('details');
             details.className = 'findings-details';
             
             const summary = document.createElement('summary');
             summary.className = 'findings-summary-toggle';
-            summary.textContent = `View ${result.findings.length - 3} more issue${result.findings.length - 3 !== 1 ? 's' : ''}`;
+            summary.textContent = `View ${sortedFindings.length - topCount} more issue${sortedFindings.length - topCount !== 1 ? 's' : ''}`;
             details.appendChild(summary);
             
             const additionalFindings = document.createElement('div');
             additionalFindings.className = 'findings-summary additional-findings';
             
-            result.findings.slice(3).forEach(finding => {
+            sortedFindings.slice(topCount).forEach(finding => {
                 const findingItem = document.createElement('div');
                 findingItem.className = 'finding-item';
                 
