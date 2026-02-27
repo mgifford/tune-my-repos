@@ -13,6 +13,8 @@ if (typeof CONFIG === 'undefined') {
     // Skip .env loading in production environments (GitHub Pages, etc.)
     // to avoid 404 errors in the console
     // Development environments: localhost, 127.0.0.1, or file:// protocol
+    // Note: For custom development setups (Docker, VMs, .local domains, etc.),
+    // use config.js instead of .env for token configuration
     const isDevelopment = location.hostname === 'localhost' || 
                          location.hostname === '127.0.0.1' || 
                          location.protocol === 'file:';

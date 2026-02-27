@@ -17,17 +17,19 @@ For better performance and private repository access, configure a GitHub Persona
 
 ### Step 2: Configure the Token
 
-**Option 1: .env file (Recommended)**
+**Option 1: .env file (Recommended for localhost)**
 ```bash
 cp .env.example .env
 # Edit .env and paste your token
 ```
 
-**Option 2: config.js file**
+**Option 2: config.js file (Use for custom dev setups)**
 ```bash
 cp config.example.js config.js
 # Edit config.js and paste your token
 ```
+
+> **Note:** `.env` only works on localhost or file://. For Docker, VMs, or .local domains, use config.js instead.
 
 ### Step 3: Verify
 
