@@ -289,7 +289,7 @@ class GitHubAnalyzer {
                 severity: 'important',
                 title: 'Missing repository description',
                 description: 'Repository description helps users understand the project at a glance and improves discoverability',
-                recommendation: 'Add a clear, concise description in the About section (Settings → General → Description)',
+                recommendation: 'Add a clear, concise description in the About section (Settings → Description)',
                 automated: false,
                 time_estimate: '15–45 minutes',
                 requires_write_access: true
