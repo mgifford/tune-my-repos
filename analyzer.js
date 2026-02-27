@@ -179,8 +179,8 @@ class GitHubAnalyzer {
         }
 
         // Check for documentation-only
-        const mdFiles = Array.from(files).filter(f => f.endsWith('.md'));
-        if (mdFiles.length >= files.size * 0.7) {
+        const docFiles = Array.from(files).filter(f => f.endsWith('.md') || f.endsWith('.rst'));
+        if (docFiles.length >= files.size * 0.7) {
             return 'docs';
         }
 
@@ -363,7 +363,9 @@ class GitHubAnalyzer {
             f.startsWith('.github/ISSUE_TEMPLATE/')
         );
         const hasPRTemplate = files.has('.github/PULL_REQUEST_TEMPLATE.md') || 
-                              files.has('.github/pull_request_template.md');
+                              files.has('.github/pull_request_template.md') ||
+                              files.has('.github/PULL_REQUEST_TEMPLATE.rst') ||
+                              files.has('.github/pull_request_template.rst');
 
         if (!hasIssueTemplates) {
             result.findings.push({
