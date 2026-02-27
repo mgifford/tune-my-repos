@@ -179,8 +179,8 @@ class GitHubAnalyzer {
         }
 
         // Check for documentation-only
-        const docFiles = Array.from(files).filter(f => f.endsWith('.md') || f.endsWith('.rst'));
-        if (docFiles.length >= files.size * 0.7) {
+        const documentationFiles = Array.from(files).filter(f => f.endsWith('.md') || f.endsWith('.rst'));
+        if (documentationFiles.length >= files.size * 0.7) {
             return 'docs';
         }
 
@@ -210,7 +210,7 @@ class GitHubAnalyzer {
 
         for (const [filename, config] of Object.entries(governanceFiles)) {
             // Create variations for both .md and .rst extensions
-            // Note: governanceFiles keys are defined with .md extension, we generate .rst equivalents
+            // Note: All governanceFiles keys are defined with .md extension (except LICENSE)
             const baseName = filename.replace(/\.md$/, '');
             const variations = [
                 filename,
@@ -219,7 +219,8 @@ class GitHubAnalyzer {
                 `.github/${filename.toLowerCase()}`
             ];
             
-            // Add .rst variations (all governanceFiles keys end with .md)
+            // Add .rst variations for files with .md extension
+            // (Defensive check: technically all non-LICENSE keys have .md)
             if (filename.endsWith('.md')) {
                 const rstFilename = baseName + '.rst';
                 variations.push(
