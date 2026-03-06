@@ -168,7 +168,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     // Initialize synchronous components first
     initDebugMode();
-    initURLParams();
+    const shouldAutoSubmit = initURLParams();
     
     // Initialize async components with error handling
     try {
@@ -181,6 +181,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         await initAuthUI();
     } catch (error) {
         console.error('Failed to initialize auth UI:', error);
+    }
+    
+    // Auto-submit the form if a URL parameter was provided
+    // This allows shareable links like ?u=civicactions to trigger analysis immediately
+    if (shouldAutoSubmit) {
+        debugLog('Auto-submitting form from URL parameter:', targetInput.value);
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     }
 });
 
@@ -281,6 +288,7 @@ async function initAuthUI() {
 /**
  * Initialize URL parameter handling
  * Reads the 'u' parameter from URL and populates the input field
+ * Returns true if a URL parameter was found (so the caller can auto-submit)
  */
 function initURLParams() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -288,7 +296,9 @@ function initURLParams() {
     
     if (userParam) {
         targetInput.value = userParam;
+        return true;
     }
+    return false;
 }
 
 /**
