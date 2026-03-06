@@ -316,9 +316,9 @@ class GitHubAnalyzer {
                 
                 // Add template links for specific files
                 if (filename === 'ACCESSIBILITY.md') {
-                    recommendation += '. Template: https://github.com/mgifford/ACCESSIBILITY.md';
+                    recommendation += '. See the template at github.com/mgifford/ACCESSIBILITY.md';
                 } else if (filename === 'SUSTAINABILITY.md') {
-                    recommendation += '. Template: https://github.com/mgifford/SUSTAINABILITY.md';
+                    recommendation += '. See the template at github.com/mgifford/SUSTAINABILITY.md';
                 }
                 
                 result.findings.push({
