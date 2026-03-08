@@ -407,6 +407,7 @@ footer {
     padding: calc(var(--spacing) * 2) 0;
     border-top: 1px solid var(--border);
     text-align: center;
+}
 
 /* Repo result cards */
 .repo-result-card {
@@ -601,17 +602,20 @@ footer a:hover {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--spacing);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--spacing) / 2);
 }
 
 .finding-text {
     flex: 1;
+    overflow-wrap: anywhere;
 }
 
 .finding-action {
-    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--spacing) / 2);
 }
 
 /* Action buttons - prominent, call-to-action style */
@@ -676,16 +680,6 @@ footer a:hover {
         flex-direction: column;
         align-items: flex-start;
         gap: var(--spacing);
-    }
-    
-    .finding-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .action-btn {
-        width: 100%;
-        text-align: center;
     }
     
     .summary-grid {

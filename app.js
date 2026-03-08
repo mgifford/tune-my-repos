@@ -1017,6 +1017,12 @@ Tailor the content to match the project type and tech stack. Make it welcoming a
         case 'Missing CHANGELOG.md':
             return `<a href="https://github.com/${owner}/${repo}/new/main?filename=CHANGELOG.txt" target="_blank" class="action-btn" rel="noopener">📋 Create CHANGELOG.txt</a>`;
         
+        case 'Missing ACCESSIBILITY.md':
+            return `<a href="https://github.com/mgifford/ACCESSIBILITY.md" target="_blank" class="action-btn" rel="noopener">📋 View ACCESSIBILITY.md Template</a> <a href="https://github.com/${owner}/${repo}/new/main?filename=ACCESSIBILITY.md" target="_blank" class="action-btn" rel="noopener">📝 Create ACCESSIBILITY.md</a>`;
+        
+        case 'Missing SUSTAINABILITY.md':
+            return `<a href="https://github.com/mgifford/SUSTAINABILITY.md" target="_blank" class="action-btn" rel="noopener">📋 View SUSTAINABILITY.md Template</a> <a href="https://github.com/${owner}/${repo}/new/main?filename=SUSTAINABILITY.md" target="_blank" class="action-btn" rel="noopener">📝 Create SUSTAINABILITY.md</a>`;
+        
         default:
             return null;
     }
