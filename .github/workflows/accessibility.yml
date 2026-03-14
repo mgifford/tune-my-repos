@@ -1,0 +1,65 @@
+name: Accessibility Scan
+
+# Runs axe-core against the GitHub Pages site on every push to main
+# and on a monthly schedule.  Inspired by github/accessibility-scanner:
+# https://github.com/github/accessibility-scanner
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 1st of every month at 00:00 UTC
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  axe-scan:
+    name: axe-core / GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install @axe-core/cli
+        run: npm install -g @axe-core/cli
+
+      - name: Start local HTTP server
+        run: |
+          python3 -m http.server 8080 &
+          echo "HTTP_SERVER_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for server to be ready
+        run: |
+          timeout 15 bash -c \
+            'until curl -sf http://localhost:8080 > /dev/null; do sleep 1; done' || {
+            echo "ERROR: local HTTP server did not start within 15 seconds"
+            exit 1
+          }
+
+      - name: Run axe-core accessibility scan
+        run: axe http://localhost:8080 --reporter json --exit > axe-results.json
+
+      - name: Display scan results
+        if: always()
+        run: cat axe-results.json || true
+
+      - name: Stop local HTTP server
+        if: always()
+        run: kill "$HTTP_SERVER_PID" || true
+
+      - name: Upload axe results as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-scan-results
+          path: axe-results.json
+          if-no-files-found: ignore
