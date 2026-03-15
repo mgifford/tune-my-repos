@@ -1,8 +1,20 @@
 name: Accessibility Scan
 
-# Runs axe-core against the GitHub Pages site on every push to main
-# and on a monthly schedule.  Inspired by github/accessibility-scanner:
-# https://github.com/github/accessibility-scanner
+# Scans the GitHub Pages site for accessibility issues using the
+# GitHub accessibility-scanner marketplace action:
+# https://github.com/marketplace/actions/accessibility-scanner
+#
+# Prerequisites – before this workflow can succeed you must:
+#   1. Enable GitHub Pages for this repository (Settings → Pages).
+#   2. Create a fine-grained Personal Access Token (PAT) with the
+#      following repository permissions for your repository:
+#        actions: write, contents: write, issues: write,
+#        pull-requests: write, metadata: read
+#   3. Add that token as a repository secret named GH_TOKEN
+#      (Settings → Secrets and variables → Actions → New repository secret).
+#
+# Note: GitHub Actions' default GITHUB_TOKEN cannot be used here
+# because the action needs to create issues and (optionally) open PRs.
 
 on:
   push:
@@ -16,50 +28,21 @@ permissions:
   contents: read
 
 jobs:
-  axe-scan:
-    name: axe-core / GitHub Pages
+  accessibility-scan:
+    name: Accessibility / GitHub Pages
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: github/accessibility-scanner@v2
         with:
-          node-version: '20'
-
-      - name: Install @axe-core/cli
-        run: npm install -g @axe-core/cli
-
-      - name: Start local HTTP server
-        run: |
-          python3 -m http.server 8080 &
-          echo "HTTP_SERVER_PID=$!" >> "$GITHUB_ENV"
-
-      - name: Wait for server to be ready
-        run: |
-          timeout 15 bash -c \
-            'until curl -sf http://localhost:8080 > /dev/null; do sleep 1; done' || {
-            echo "ERROR: local HTTP server did not start within 15 seconds"
-            exit 1
-          }
-
-      - name: Run axe-core accessibility scan
-        run: axe http://localhost:8080 --reporter json --exit > axe-results.json
-
-      - name: Display scan results
-        if: always()
-        run: cat axe-results.json || true
-
-      - name: Stop local HTTP server
-        if: always()
-        run: kill "$HTTP_SERVER_PID" || true
-
-      - name: Upload axe results as artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: axe-scan-results
-          path: axe-results.json
-          if-no-files-found: ignore
+          # The URL below uses the standard GitHub Pages pattern:
+          #   https://<owner>.github.io/<repo>/
+          # If your site uses a custom domain, replace this with the real URL.
+          urls: |
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          repository: ${{ github.repository }}
+          token: ${{ secrets.GH_TOKEN }}
+          cache_key: ${{ github.repository }}-main
+          # Set to true if GitHub Copilot is not available on this account.
+          # When false, Copilot will be assigned to auto-fix filed issues.
+          skip_copilot_assignment: true
