@@ -535,11 +535,11 @@ details[open] .findings-summary-toggle::before {
 
 footer a {
     color: var(--primary-color);
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 footer a:hover {
-    text-decoration: underline;
+    color: var(--primary-hover);
 }
 
 /* Utilities */
