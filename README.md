@@ -212,6 +212,29 @@ This tool recommends governance files based on open standards:
 - **[SUSTAINABILITY.md template](https://github.com/mgifford/SUSTAINABILITY.md)** - Project instructions for reducing digital emissions and environmental impact
 - **[agents.md](https://agents.md/)** - The agents.md standard for AI agent instructions
 
+## AI Disclosure
+
+This project was built with AI assistance. The following AI tools have been used:
+
+### GitHub Copilot (code generation and maintenance)
+
+**Used to build this project.** GitHub Copilot and the GitHub Copilot Agent have been used to:
+- Generate and refactor JavaScript source code (`analyzer.js`, `app.js`, `auth.js`, `cache.js`, `env-loader.js`)
+- Draft and update documentation (`README.md`, `AGENTS.md`, and other Markdown files)
+- Implement feature branches and bug fixes (evidenced by branches prefixed `copilot/` and the `IMPLEMENTATION_SUMMARY.md` file)
+
+The `.github/copilot-instructions.md` file configures Copilot's behavior for this repository.
+
+### Runtime AI use
+
+**No AI is used at runtime.** When the application runs in a browser, it calls the GitHub REST API directly using vanilla JavaScript. No LLM or AI inference service is invoked during normal operation.
+
+### Browser-based AI
+
+**No browser-based AI is used.** The application does not use browser built-in AI APIs (e.g., the Chrome `window.ai` API), WebLLM, ONNX Runtime Web, or any other client-side model inference. All logic is pure JavaScript with no on-device model inference.
+
+---
+
 ## License
 
 AGPL

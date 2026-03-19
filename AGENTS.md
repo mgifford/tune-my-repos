@@ -124,6 +124,22 @@ When editing or drafting README content:
 - Use TODO markers for unverifiable content.
 - Prefer incremental, diff-friendly edits.
 
+### AI transparency in README
+
+Every repository README must include an **AI Disclosure** section that documents:
+- Which AI tools (LLMs, code assistants, agents) have been used and for what purpose
+- Whether any AI is used at runtime when the program runs
+- Whether any browser-based AI (e.g., built-in browser AI APIs, WebLLM, client-side models) is used by the application
+- Whether AI generates any content shown to users
+
+The AI Disclosure section should appear near the end of the README, before the License section and after the main content sections.
+
+Rules for the AI Disclosure section:
+- **Do not list AI tools that cannot be verified** from repository contents, commit history, workflow files, or contributor statements.
+- Each AI tool entry must describe its specific role (e.g., code generation, documentation drafting, test writing).
+- If no AI has been used, state that explicitly.
+- If AI use is unknown or unverifiable, state that explicitly rather than omitting the section.
+
 ---
 
 ## Governance and policy documents
