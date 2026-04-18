@@ -31,9 +31,12 @@ class GitHubAuth {
     }
 
     /**
-     * Wire up PAT modal buttons and keyboard handlers
+     * Wire up PAT modal buttons and keyboard handlers (idempotent — runs only once)
      */
     initPATModal() {
+        if (this._patModalInitialized) return;
+        this._patModalInitialized = true;
+
         const modal = document.getElementById('patModal');
         if (!modal) return;
 
@@ -52,16 +55,18 @@ class GitHubAuth {
         }
 
         // Close when clicking the backdrop
-        modal.addEventListener('click', (e) => {
+        this._backdropHandler = (e) => {
             if (e.target === modal) this.closePATModal();
-        });
+        };
+        modal.addEventListener('click', this._backdropHandler);
 
         // Close on Escape key
-        document.addEventListener('keydown', (e) => {
+        this._escapeHandler = (e) => {
             if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
                 this.closePATModal();
             }
-        });
+        };
+        document.addEventListener('keydown', this._escapeHandler);
     }
 
     /**
@@ -108,7 +113,7 @@ class GitHubAuth {
         try {
             const response = await fetch('https://api.github.com/user', {
                 headers: {
-                    'Authorization': `token ${token.trim()}`,
+                    'Authorization': `Bearer ${token.trim()}`,
                     'Accept': 'application/vnd.github.v3+json'
                 }
             });
