@@ -27,7 +27,11 @@ class GitHubAuth {
         }
 
         // Set up PAT modal event listeners once the DOM is ready
-        window.addEventListener('DOMContentLoaded', () => this.initPATModal());
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', () => this.initPATModal());
+        } else {
+            this.initPATModal();
+        }
     }
 
     /**
