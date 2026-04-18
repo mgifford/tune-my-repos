@@ -25,6 +25,145 @@ class GitHubAuth {
         if (code && state) {
             this.handleOAuthCallback(code, state);
         }
+
+        // Set up PAT modal event listeners once the DOM is ready
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', () => this.initPATModal());
+        } else {
+            this.initPATModal();
+        }
+    }
+
+    /**
+     * Wire up PAT modal buttons and keyboard handlers (idempotent — runs only once)
+     */
+    initPATModal() {
+        if (this._patModalInitialized) return;
+        this._patModalInitialized = true;
+
+        const modal = document.getElementById('patModal');
+        if (!modal) return;
+
+        const closeBtn = document.getElementById('patModalClose');
+        const cancelBtn = document.getElementById('patCancel');
+        const form = document.getElementById('patForm');
+
+        if (closeBtn) closeBtn.addEventListener('click', () => this.closePATModal());
+        if (cancelBtn) cancelBtn.addEventListener('click', () => this.closePATModal());
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const token = document.getElementById('patInput')?.value;
+                this.submitPAT(token);
+            });
+        }
+
+        // Close when clicking the backdrop
+        this._backdropHandler = (e) => {
+            if (e.target === modal) this.closePATModal();
+        };
+        modal.addEventListener('click', this._backdropHandler);
+
+        // Close on Escape key
+        this._escapeHandler = (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                this.closePATModal();
+            }
+        };
+        document.addEventListener('keydown', this._escapeHandler);
+    }
+
+    /**
+     * Show the PAT input modal and focus the input field
+     */
+    showPATModal() {
+        const modal = document.getElementById('patModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        const patInput = document.getElementById('patInput');
+        if (patInput) {
+            patInput.value = '';
+            patInput.focus();
+        }
+        this.clearPATError();
+    }
+
+    /**
+     * Hide the PAT input modal and reset its state
+     */
+    closePATModal() {
+        const modal = document.getElementById('patModal');
+        if (modal) modal.classList.add('hidden');
+        const patInput = document.getElementById('patInput');
+        if (patInput) patInput.value = '';
+        this.clearPATError();
+    }
+
+    /**
+     * Validate the supplied PAT against the GitHub API and store it on success
+     */
+    async submitPAT(token) {
+        if (!token || !token.trim()) {
+            this.showPATError('Please enter a token.');
+            return;
+        }
+
+        const submitBtn = document.getElementById('patSubmit');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying…';
+        }
+
+        try {
+            const response = await fetch('https://api.github.com/user', {
+                headers: {
+                    'Authorization': `Bearer ${token.trim()}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                const msg = response.status === 401
+                    ? 'Invalid token. Please check it and try again.'
+                    : 'Could not verify token (GitHub returned ' + response.status + '). Please try again.';
+                this.showPATError(msg);
+                return;
+            }
+
+            this.setToken(token.trim());
+            this.closePATModal();
+            window.location.reload();
+        } catch (error) {
+            console.error('PAT validation error:', error);
+            this.showPATError('Network error. Please check your connection and try again.');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign in';
+            }
+        }
+    }
+
+    /**
+     * Show an error message inside the PAT modal
+     */
+    showPATError(message) {
+        const patError = document.getElementById('patError');
+        if (patError) {
+            patError.textContent = message;
+            patError.classList.remove('hidden');
+        }
+    }
+
+    /**
+     * Clear any error message inside the PAT modal
+     */
+    clearPATError() {
+        const patError = document.getElementById('patError');
+        if (patError) {
+            patError.textContent = '';
+            patError.classList.add('hidden');
+        }
     }
     
     /**
@@ -62,14 +201,8 @@ class GitHubAuth {
      */
     login() {
         if (!this.clientId) {
-            alert('GitHub OAuth is not configured.\n\n' +
-                  'For most users, you don\'t need OAuth!\n' +
-                  'Simply add a Personal Access Token to config.js:\n' +
-                  '  1. Get a token: https://github.com/settings/tokens\n' +
-                  '  2. Add to GITHUB_TOKEN in config.js\n' +
-                  '  3. This gives you 5,000 requests/hour\n\n' +
-                  'OAuth is only needed for GitHub Pages deployment with multiple users.\n' +
-                  'See GITHUB_PAGES_SETUP.md for details.');
+            // No OAuth App configured — fall back to the PAT input modal
+            this.showPATModal();
             return;
         }
         
