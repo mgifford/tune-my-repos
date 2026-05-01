@@ -6,15 +6,12 @@ name: Accessibility Scan
 #
 # Prerequisites – before this workflow can succeed you must:
 #   1. Enable GitHub Pages for this repository (Settings → Pages).
-#   2. Create a fine-grained Personal Access Token (PAT) with the
-#      following repository permissions for your repository:
-#        actions: write, contents: write, issues: write,
-#        pull-requests: write, metadata: read
-#   3. Add that token as a repository secret named GH_TOKEN
-#      (Settings → Secrets and variables → Actions → New repository secret).
 #
-# Note: GitHub Actions' default GITHUB_TOKEN cannot be used here
-# because the action needs to create issues and (optionally) open PRs.
+# The workflow uses the built-in GITHUB_TOKEN, so no external secret is
+# required. The permissions block below grants the minimum rights needed:
+#   - contents: write   → push results to the gh-cache branch
+#   - issues: write     → file accessibility findings as issues
+#   - pull-requests: write → open fix PRs (optional, for Copilot auto-fix)
 
 on:
   push:
@@ -25,7 +22,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   accessibility-scan:
@@ -41,7 +40,7 @@ jobs:
           urls: |
             https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
           repository: ${{ github.repository }}
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ github.token }}
           cache_key: ${{ github.repository }}-main
           # Set to true if GitHub Copilot is not available on this account.
           # When false, Copilot will be assigned to auto-fix filed issues.
