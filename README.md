@@ -159,6 +159,17 @@ remains the merge gate for every change.
   requests); without it, Dependabot alert and branch-protection coverage report as `unknown` rather than
   failing the run.
 
+### Open decision: publishing the live rollup to GitHub Pages
+
+The live `maintenance-rollup.json` is currently **only** a private workflow artifact (90-day retention,
+visible to repository collaborators via the Actions tab) — it is not published to the public
+`maintenance.html` page today. GitHub Pages for a public repo cannot require authentication, so before
+any future phase wires the live rollup into Pages publishing, the published version must be reduced to
+**alert counts by severity and PR risk states only** — not exact dependency names, versions, or detailed
+failure text — so the public page cannot be used as a ready-made map of this repo's known vulnerabilities.
+This has been decided but not yet implemented; do not publish the full rollup to Pages without applying
+this reduction first.
+
 ### Tests
 
 Run `npm test` (uses Node's built-in test runner, no dependencies) to run the policy engine, schema
