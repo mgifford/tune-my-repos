@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mgifford/tune-my-repos/policy/policy.schema.json",
+  "title": "Maintenance Policy",
+  "type": "object",
+  "required": ["policy_version", "repositories", "tiers", "dependency_classes", "special_cases", "attention_thresholds", "overrides"],
+  "additionalProperties": false,
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "repositories": {
+      "type": "object",
+      "required": ["include", "exclude"],
+      "additionalProperties": false,
+      "properties": {
+        "include": { "type": "array", "items": { "type": "string" } },
+        "exclude": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "tiers": {
+      "type": "object",
+      "required": ["pilot", "standard", "archive", "manual"],
+      "additionalProperties": false,
+      "properties": {
+        "pilot": { "type": "array", "items": { "type": "string" } },
+        "standard": { "type": "array", "items": { "type": "string" } },
+        "archive": { "type": "array", "items": { "type": "string" } },
+        "manual": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "dependency_classes": {
+      "type": "object",
+      "required": ["github-actions", "development", "production", "major", "unknown"],
+      "additionalProperties": false,
+      "properties": {
+        "github-actions": { "$ref": "#/definitions/updateTypeRules" },
+        "development": { "$ref": "#/definitions/updateTypeRules" },
+        "production": { "$ref": "#/definitions/updateTypeRules" },
+        "major": { "$ref": "#/definitions/anyRule" },
+        "unknown": { "$ref": "#/definitions/anyRule" }
+      }
+    },
+    "special_cases": {
+      "type": "object",
+      "required": [
+        "workflow_permission_change",
+        "lockfile_only_change",
+        "generated_output_change",
+        "requires_secret_or_elevated_access",
+        "failing_required_check"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z_]+$": { "$ref": "#/definitions/specialCaseRule" }
+      }
+    },
+    "attention_thresholds": {
+      "type": "object",
+      "required": ["max_age_days_open_pr", "max_age_days_open_alert_by_severity"],
+      "additionalProperties": false,
+      "properties": {
+        "max_age_days_open_pr": { "type": "integer", "minimum": 0 },
+        "max_age_days_open_alert_by_severity": {
+          "type": "object",
+          "required": ["critical", "high", "moderate", "low"],
+          "additionalProperties": false,
+          "properties": {
+            "critical": { "type": "integer", "minimum": 0 },
+            "high": { "type": "integer", "minimum": 0 },
+            "moderate": { "type": "integer", "minimum": 0 },
+            "low": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["repository", "dependency_name", "ecosystem", "risk_state", "reason", "expires"],
+        "additionalProperties": false,
+        "properties": {
+          "repository": { "type": "string" },
+          "dependency_name": { "type": "string" },
+          "ecosystem": { "type": "string" },
+          "risk_state": { "$ref": "#/definitions/riskState" },
+          "reason": { "type": "string", "minLength": 1 },
+          "expires": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "riskState": {
+      "type": "string",
+      "enum": ["eligible", "needs_review", "needs_repair", "blocked", "ignored"]
+    },
+    "ruleBody": {
+      "type": "object",
+      "required": ["risk_state", "requires"],
+      "additionalProperties": false,
+      "properties": {
+        "risk_state": { "$ref": "#/definitions/riskState" },
+        "requires": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "updateTypeRules": {
+      "type": "object",
+      "required": ["description", "patch", "minor", "major"],
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "patch": { "$ref": "#/definitions/ruleBody" },
+        "minor": { "$ref": "#/definitions/ruleBody" },
+        "major": { "$ref": "#/definitions/ruleBody" }
+      }
+    },
+    "anyRule": {
+      "type": "object",
+      "required": ["description", "any"],
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "any": { "$ref": "#/definitions/ruleBody" }
+      }
+    },
+    "specialCaseRule": {
+      "type": "object",
+      "required": ["risk_state", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "risk_state": { "$ref": "#/definitions/riskState" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

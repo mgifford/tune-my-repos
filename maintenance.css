@@ -1,0 +1,67 @@
+/* Maintenance dashboard: additive styles layered on top of styles.css. */
+
+.finding-card.success { border-left-color: var(--success); }
+
+.maintenance-section {
+    background: var(--background);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: calc(var(--spacing) * 1.5);
+    margin-bottom: calc(var(--spacing) * 1.5);
+}
+
+.maintenance-section h2 {
+    margin-bottom: calc(var(--spacing) / 2);
+}
+
+.section-note {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing);
+}
+
+.finding-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.finding-list .finding-card a {
+    display: inline-block;
+    margin-top: calc(var(--spacing) / 2);
+}
+
+.rollup-meta {
+    color: var(--text-secondary);
+    margin-top: calc(var(--spacing) / 2);
+}
+
+.export-section {
+    background: var(--background);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: calc(var(--spacing) * 1.5);
+}
+
+.export-buttons {
+    display: flex;
+    gap: var(--spacing);
+    flex-wrap: wrap;
+}
+
+nav[aria-label="Dashboards"] a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+nav[aria-label="Dashboards"] a:hover,
+nav[aria-label="Dashboards"] a:focus-visible {
+    text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

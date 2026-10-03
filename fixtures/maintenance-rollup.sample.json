@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "run_timestamp": "2026-10-03T00:00:00Z",
+  "policy_version": "1.0.0",
+  "repositories": [
+    {
+      "full_name": "mgifford/tune-my-repos",
+      "default_branch": "main",
+      "tier": "pilot",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-03T00:00:00Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "not_available",
+        "branch_protection": "unknown"
+      },
+      "security_alerts": {
+        "critical": 1,
+        "high": 2,
+        "moderate": 0,
+        "low": 3
+      },
+      "dependabot_prs": [
+        {
+          "number": 42,
+          "url": "https://github.com/mgifford/tune-my-repos/pull/42",
+          "ecosystem": "github-actions",
+          "dependency_name": "actions/checkout",
+          "version_from": "v3",
+          "version_to": "v4",
+          "update_type": "major",
+          "dependency_class": "github-actions",
+          "labels": ["dependencies", "github-actions"],
+          "ci_status": "passing",
+          "risk_state": "needs_review",
+          "reason": "Any update classified as a major/breaking version bump, regardless of dependency class"
+        },
+        {
+          "number": 43,
+          "url": "https://github.com/mgifford/tune-my-repos/pull/43",
+          "ecosystem": "npm",
+          "dependency_name": "eslint",
+          "version_from": "8.56.0",
+          "version_to": "8.57.0",
+          "update_type": "minor",
+          "dependency_class": "development",
+          "labels": ["dependencies", "javascript"],
+          "ci_status": "passing",
+          "risk_state": "eligible",
+          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
+        },
+        {
+          "number": 44,
+          "url": "https://github.com/mgifford/tune-my-repos/pull/44",
+          "ecosystem": "npm",
+          "dependency_name": "left-pad",
+          "version_from": "1.3.0",
+          "version_to": "1.3.1",
+          "update_type": "patch",
+          "dependency_class": "unknown",
+          "labels": ["dependencies"],
+          "ci_status": "unknown",
+          "risk_state": "needs_review",
+          "reason": "Dependency class could not be determined from manifest or PR metadata"
+        }
+      ],
+      "failed_update_prs": [
+        {
+          "number": 45,
+          "url": "https://github.com/mgifford/tune-my-repos/pull/45",
+          "dependency_name": "axe-core",
+          "failed_check_name": "accessibility-scan",
+          "failed_check_url": "https://github.com/mgifford/tune-my-repos/actions/runs/000000001",
+          "failure_summary": "2 new serious violations detected on /index.html after dependency bump (truncated; see check run for full output)"
+        }
+      ],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "1 critical and 2 high severity Dependabot alerts are open and unaddressed"
+      }
+    }
+  ]
+}

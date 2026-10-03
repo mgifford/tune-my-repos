@@ -31,6 +31,12 @@ This tool analyzes GitHub repositories against open source best-practice standar
 | `env-loader.js` | Loads `.env` on localhost/`file://` only; no-op in production |
 | `config.js` | GitHub token and OAuth config (not committed; see `config.example.js`) |
 | `priorities.json` / `priorities.yaml` | Configurable finding sort order (see `PRIORITIES_CONFIG.md`) |
+| `maintenance.html` / `maintenance.js` / `maintenance.css` | Separate maintenance control-plane dashboard (security alerts, Dependabot status, policy-derived risk states) |
+| `maintenance-policy.json` / `maintenance-policy.yml` | Versioned policy: dependency classification and merge eligibility rules. JSON is loaded; YAML is the documented source (same pattern as `priorities.json`/`priorities.yaml`) |
+| `policy/policy-engine.js` | Deterministic classifier (`classifyUpdate`) — pure function, no network access, no AI |
+| `policy/policy-validator.js`, `policy/*.schema.json` | Dependency-free JSON Schema validation for the policy file and the maintenance rollup data model |
+| `fixtures/maintenance-rollup.sample.json` | Static sample rollup so the maintenance dashboard works without credentials |
+| `test/*.test.js` | Unit tests (Node's built-in `node:test`, run via `npm test`) for the policy engine, schema validator, and fixture conformance |
 | `AGENTS.md` | **Full governance ruleset — read before every task** |
 
 ---

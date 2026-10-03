@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Deterministic maintenance control plane: security visibility, Dependabot status, and recommended next actions for mgifford repositories">
+    <title>Maintenance Dashboard - Tune My Repos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="maintenance.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>🛠️ Maintenance Control Plane</h1>
+                    <p class="tagline">Evidence and policy-based routing for security alerts and dependency updates</p>
+                </div>
+                <nav aria-label="Dashboards">
+                    <a href="index.html">Repository Analysis</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="input-section" aria-labelledby="dataSourceHeading">
+            <h2 id="dataSourceHeading">Data source</h2>
+            <p>
+                This dashboard reads a <code>maintenance-rollup.json</code> file produced by a scheduled,
+                deterministic GitHub Actions workflow (see Phase 2). No AI is involved in generating or
+                classifying this data. Until that workflow is enabled, a static sample fixture is shown
+                below so the interface can be reviewed without credentials.
+            </p>
+            <div class="form-group">
+                <label for="rollupSource">Rollup data file</label>
+                <select id="rollupSource">
+                    <option value="fixtures/maintenance-rollup.sample.json" selected>Sample fixture (no credentials required)</option>
+                    <option value="maintenance-rollup.json">Live rollup (maintenance-rollup.json, if published)</option>
+                </select>
+            </div>
+            <p id="rollupMeta" class="rollup-meta" role="status"></p>
+        </section>
+
+        <section id="unavailableSection" class="maintenance-section" aria-labelledby="unavailableHeading" hidden>
+            <h2 id="unavailableHeading">⚪ Unavailable or unknown data</h2>
+            <p class="section-note">
+                These coverage gaps mean a signal could not be verified — they are not evidence that a
+                repository is insecure or non-compliant.
+            </p>
+            <ul id="unavailableList" class="finding-list"></ul>
+        </section>
+
+        <section id="urgentSection" class="maintenance-section" aria-labelledby="urgentHeading" hidden>
+            <h2 id="urgentHeading">🔴 Urgent security work</h2>
+            <p class="section-note">Open Dependabot alerts at critical or high severity.</p>
+            <ul id="urgentList" class="finding-list"></ul>
+        </section>
+
+        <section id="failedSection" class="maintenance-section" aria-labelledby="failedHeading" hidden>
+            <h2 id="failedHeading">🟠 Failed maintenance PRs</h2>
+            <p class="section-note">Dependabot update PRs that failed a required CI check and need repair.</p>
+            <ul id="failedList" class="finding-list"></ul>
+        </section>
+
+        <section id="eligibleSection" class="maintenance-section" aria-labelledby="eligibleHeading" hidden>
+            <h2 id="eligibleHeading">🟢 Eligible for low-risk merge</h2>
+            <p class="section-note">Updates the policy classifies as eligible once required checks pass. Normal repository CI remains the merge gate — this dashboard does not merge anything.</p>
+            <ul id="eligibleList" class="finding-list"></ul>
+        </section>
+
+        <section id="reviewSection" class="maintenance-section" aria-labelledby="reviewHeading" hidden>
+            <h2 id="reviewHeading">🟡 Needs human decision</h2>
+            <p class="section-note">Production, major, lockfile-only, or unclassified updates that always require review.</p>
+            <ul id="reviewList" class="finding-list"></ul>
+        </section>
+
+        <section id="emptyState" class="maintenance-section" hidden>
+            <p>No maintenance data loaded yet.</p>
+        </section>
+
+        <section class="export-section" aria-labelledby="exportHeading">
+            <h2 id="exportHeading">Export</h2>
+            <div class="export-buttons">
+                <button id="exportJsonBtn" class="secondary-btn" type="button">Export JSON</button>
+                <button id="exportMarkdownBtn" class="secondary-btn" type="button">Export Markdown</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="policy/policy-engine.js"></script>
+    <script src="policy/policy-validator.js"></script>
+    <script src="maintenance.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{
+  "policy_version": "1.0.0",
+  "repositories": {
+    "include": ["mgifford/tune-my-repos"],
+    "exclude": []
+  },
+  "tiers": {
+    "pilot": ["mgifford/tune-my-repos"],
+    "standard": [],
+    "archive": [],
+    "manual": []
+  },
+  "dependency_classes": {
+    "github-actions": {
+      "description": "Updates to .github/workflows/*.yml action references",
+      "patch": { "risk_state": "eligible", "requires": ["required_ci_pass"] },
+      "minor": { "risk_state": "eligible", "requires": ["required_ci_pass"] },
+      "major": { "risk_state": "needs_review", "requires": [] }
+    },
+    "development": {
+      "description": "devDependencies / test-only / lint-only packages",
+      "patch": { "risk_state": "eligible", "requires": ["required_ci_pass"] },
+      "minor": { "risk_state": "eligible", "requires": ["required_ci_pass"] },
+      "major": { "risk_state": "needs_review", "requires": [] }
+    },
+    "production": {
+      "description": "Runtime dependencies shipped to users",
+      "patch": { "risk_state": "needs_review", "requires": [] },
+      "minor": { "risk_state": "needs_review", "requires": [] },
+      "major": { "risk_state": "needs_review", "requires": [] }
+    },
+    "major": {
+      "description": "Any update classified as a major/breaking version bump, regardless of dependency class",
+      "any": { "risk_state": "needs_review", "requires": [] }
+    },
+    "unknown": {
+      "description": "Dependency class could not be determined from manifest or PR metadata",
+      "any": { "risk_state": "needs_review", "requires": [] }
+    }
+  },
+  "special_cases": {
+    "workflow_permission_change": {
+      "risk_state": "blocked",
+      "reason": "PR modifies permissions: block in a workflow file"
+    },
+    "lockfile_only_change": {
+      "risk_state": "needs_review",
+      "reason": "Lockfile-only diffs can mask transitive dependency changes"
+    },
+    "generated_output_change": {
+      "risk_state": "needs_review",
+      "reason": "Generated/build output changes are not human-reviewable diffs"
+    },
+    "requires_secret_or_elevated_access": {
+      "risk_state": "blocked",
+      "reason": "Update requires a new secret or elevated workflow permission"
+    },
+    "failing_required_check": {
+      "risk_state": "needs_repair",
+      "reason": "One or more required CI checks failed"
+    }
+  },
+  "attention_thresholds": {
+    "max_age_days_open_pr": 14,
+    "max_age_days_open_alert_by_severity": {
+      "critical": 2,
+      "high": 7,
+      "moderate": 30,
+      "low": 90
+    }
+  },
+  "overrides": []
+}

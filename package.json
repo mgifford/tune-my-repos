@@ -1,0 +1,8 @@
+{
+  "name": "tune-my-repos",
+  "private": true,
+  "description": "Deterministic maintenance control plane and repository analysis dashboard.",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

@@ -107,13 +107,52 @@ All evaluations follow the rules defined in [AGENTS.md](AGENTS.md), which includ
 
 ## Architecture
 
-- **index.html** - Main web interface
+- **index.html** - Main web interface (repository analysis)
 - **analyzer.js** - Core analysis logic (repository classification, governance checks)
 - **app.js** - UI interactions and result rendering
-- **styles.css** - Responsive design with dark mode support
+- **maintenance.html** - Maintenance control plane dashboard (security visibility, Dependabot status)
+- **maintenance.js** - Maintenance dashboard rendering and rollup loading
+- **styles.css** / **maintenance.css** - Responsive design with dark mode support
 - **AGENTS.md** - Complete governance rules and standards
 
 All analysis runs client-side using the GitHub REST API. No backend required.
+
+## Maintenance Control Plane
+
+`maintenance.html` is a separate, deterministic dashboard for ongoing repository maintenance: security
+alert visibility, open Dependabot update PRs, and which updates are eligible for a low-risk merge path.
+It is **not** an autonomous coding system and does not merge anything itself — normal repository CI
+remains the merge gate for every change.
+
+### What this proves, and what it doesn't
+
+- It reports **evidence and policy-derived classifications**, not compliance or security guarantees.
+- A repository with zero alerts shown may simply have `not_available` or `unknown` coverage for that
+  signal (shown explicitly in the "Unavailable or unknown data" section) — absence of a finding is not
+  the same as absence of risk.
+- "Eligible for low-risk merge" means the policy in `maintenance-policy.yml` classifies the update as
+  low-risk *once required CI passes* — it is a routing decision, not a merge action.
+- No AI or LLM is involved in collecting evidence, classifying updates, or rendering this dashboard.
+
+### Policy and data model
+
+- **`maintenance-policy.yml`** (documented) / **`maintenance-policy.json`** (loaded) - versioned,
+  conservative policy: which repositories are in scope, their tier, and how dependency updates are
+  classified into risk states (`eligible`, `needs_review`, `needs_repair`, `blocked`, `ignored`). No
+  implicit allow-all: an update that cannot be classified is always `needs_review`.
+- **`policy/policy-engine.js`** - deterministic classifier (`classifyUpdate`) that applies the policy to
+  one dependency update. Pure function, no network access, fully unit tested.
+- **`policy/policy-validator.js`** - dependency-free JSON Schema validator used for both the policy file
+  and the rollup data file.
+- **`policy/policy.schema.json`** / **`policy/rollup.schema.json`** - the two schemas.
+- **`fixtures/maintenance-rollup.sample.json`** - static sample rollup so the dashboard can be reviewed
+  without any GitHub credentials. The scheduled workflow that will generate a live
+  `maintenance-rollup.json` is a later phase and does not exist yet.
+
+### Tests
+
+Run `npm test` (uses Node's built-in test runner, no dependencies) to run the policy engine, schema
+validator, and fixture-conformance test suites in `test/`.
 
 ## GitHub Actions Integration
 

@@ -146,10 +146,12 @@ GitHub's token exchange endpoint doesn't support CORS, so static sites need a pr
 
 ## Step 3: Configure tune-my-repos
 
+⚠️ **Before you commit `config.js`: `GITHUB_TOKEN` must be left as `''`.** This file is about to be pushed to a public repository and served as a static asset on GitHub Pages. `GITHUB_OAUTH_CLIENT_ID` is safe to commit (it is public by design), but a Personal Access Token in this file would be exposed to anyone who views the page source or clones the repo. Keep your PAT only in your local, gitignored `.env` or `config.js` — never in the copy you push for Pages deployment.
+
 1. **Edit `config.js`** in your repository:
    ```javascript
    const CONFIG = {
-       GITHUB_TOKEN: '',  // Leave empty for OAuth
+       GITHUB_TOKEN: '',  // Must stay empty in the committed file — see warning above
        GITHUB_OAUTH_CLIENT_ID: 'your_client_id_here',
        GITHUB_OAUTH_PROXY: 'https://your-worker.workers.dev/api/github/oauth/token'
    };

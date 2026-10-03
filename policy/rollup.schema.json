@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mgifford/tune-my-repos/policy/rollup.schema.json",
+  "title": "Maintenance Rollup",
+  "type": "object",
+  "required": ["schema_version", "run_timestamp", "policy_version", "repositories"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "run_timestamp": { "type": "string" },
+    "policy_version": { "type": "string" },
+    "repositories": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/repositoryEntry" }
+    }
+  },
+  "definitions": {
+    "availability": {
+      "type": "string",
+      "enum": ["available", "unknown", "not_available"]
+    },
+    "repositoryEntry": {
+      "type": "object",
+      "required": [
+        "full_name",
+        "default_branch",
+        "tier",
+        "policy_version",
+        "source_timestamp",
+        "coverage",
+        "security_alerts",
+        "dependabot_prs",
+        "failed_update_prs",
+        "recommended_action"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "full_name": { "type": "string" },
+        "default_branch": { "type": "string" },
+        "tier": { "type": "string", "enum": ["pilot", "standard", "archive", "manual"] },
+        "policy_version": { "type": "string" },
+        "source_timestamp": { "type": "string" },
+        "coverage": {
+          "type": "object",
+          "required": [
+            "dependency_graph",
+            "dependabot_alerts",
+            "dependabot_security_updates",
+            "secret_scanning",
+            "codeql_default_setup",
+            "branch_protection"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "dependency_graph": { "$ref": "#/definitions/availability" },
+            "dependabot_alerts": { "$ref": "#/definitions/availability" },
+            "dependabot_security_updates": { "$ref": "#/definitions/availability" },
+            "secret_scanning": { "$ref": "#/definitions/availability" },
+            "codeql_default_setup": { "$ref": "#/definitions/availability" },
+            "branch_protection": { "$ref": "#/definitions/availability" }
+          }
+        },
+        "security_alerts": {
+          "type": "object",
+          "required": ["critical", "high", "moderate", "low"],
+          "additionalProperties": false,
+          "properties": {
+            "critical": { "type": "integer", "minimum": 0 },
+            "high": { "type": "integer", "minimum": 0 },
+            "moderate": { "type": "integer", "minimum": 0 },
+            "low": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "dependabot_prs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/dependabotPr" }
+        },
+        "failed_update_prs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/failedUpdatePr" }
+        },
+        "recommended_action": {
+          "type": "object",
+          "required": ["action", "reason"],
+          "additionalProperties": false,
+          "properties": {
+            "action": { "type": "string" },
+            "reason": { "type": "string", "maxLength": 500 }
+          }
+        }
+      }
+    },
+    "dependabotPr": {
+      "type": "object",
+      "required": [
+        "number", "url", "ecosystem", "dependency_name", "version_from", "version_to",
+        "update_type", "dependency_class", "labels", "ci_status", "risk_state", "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "url": { "type": "string" },
+        "ecosystem": { "type": "string" },
+        "dependency_name": { "type": "string" },
+        "version_from": { "type": "string" },
+        "version_to": { "type": "string" },
+        "update_type": { "type": "string", "enum": ["patch", "minor", "major", "unknown"] },
+        "dependency_class": { "type": "string", "enum": ["github-actions", "development", "production", "major", "unknown"] },
+        "labels": { "type": "array", "items": { "type": "string" } },
+        "ci_status": { "type": "string", "enum": ["pending", "passing", "failing", "unknown"] },
+        "risk_state": { "type": "string", "enum": ["eligible", "needs_review", "needs_repair", "blocked", "ignored"] },
+        "reason": { "type": "string", "maxLength": 500 }
+      }
+    },
+    "failedUpdatePr": {
+      "type": "object",
+      "required": ["number", "url", "dependency_name", "failed_check_name", "failed_check_url", "failure_summary"],
+      "additionalProperties": false,
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "url": { "type": "string" },
+        "dependency_name": { "type": "string" },
+        "failed_check_name": { "type": "string" },
+        "failed_check_url": { "type": "string" },
+        "failure_summary": { "type": "string", "maxLength": 1000 }
+      }
+    }
+  }
+}
