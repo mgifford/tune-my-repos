@@ -1,0 +1,86 @@
+name: Maintenance Inventory
+
+# Deterministic, scheduled inventory of Dependabot alerts and update PRs for
+# repositories in maintenance-policy.json's scope. No AI involved. This
+# workflow only reads data and writes a redacted, bounded
+# maintenance-rollup.json artifact — it never mutates any repository.
+#
+# Modes:
+#   - Public dry-run (default): no secret required, runs with reduced
+#     coverage (Dependabot alerts require authentication even on public
+#     repos, so dry-run output will show "unknown" for that field).
+#   - Authenticated: set the MAINTENANCE_RO_TOKEN repository secret to a
+#     fine-grained PAT scoped to read-only Metadata + Dependabot alerts +
+#     Pull requests on the repositories in policy scope. The workflow still
+#     runs without this secret; it simply has less coverage.
+#
+# Third-party actions are pinned to a full commit SHA, not a tag, per
+# AGENTS.md supply-chain guidance.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: compute the rollup and print it, but do not publish an artifact"
+        type: boolean
+        default: true
+  schedule:
+    # Every Monday at 09:00 UTC.
+    - cron: '0 9 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: maintenance-inventory
+  cancel-in-progress: false
+
+jobs:
+  inventory:
+    name: Generate maintenance rollup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+
+      - name: Run policy and schema tests
+        run: npm test
+
+      - name: Determine dry-run mode
+        id: mode
+        run: |
+          # Scheduled runs are never dry-run (they need to publish an artifact to be useful).
+          # Manual (workflow_dispatch) runs default to dry-run unless explicitly disabled.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "false" ]; then
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "dry_run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate maintenance rollup
+        id: generate
+        env:
+          MAINTENANCE_RO_TOKEN: ${{ secrets.MAINTENANCE_RO_TOKEN }}
+        run: |
+          if [ "${{ steps.mode.outputs.dry_run }}" = "true" ]; then
+            node scripts/generate-maintenance-rollup.js --dry-run
+          else
+            node scripts/generate-maintenance-rollup.js
+          fi
+
+      - name: Upload rollup artifact
+        if: steps.mode.outputs.dry_run != 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: maintenance-rollup
+          path: maintenance-rollup.json
+          retention-days: 90
+          if-no-files-found: error

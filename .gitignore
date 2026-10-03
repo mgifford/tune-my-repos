@@ -20,3 +20,6 @@ npm-debug.log*
 # Temporary files
 *.tmp
 test-collapsible.html
+
+# Generated maintenance rollup (published as a workflow artifact, not committed)
+/maintenance-rollup.json

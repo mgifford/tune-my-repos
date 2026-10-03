@@ -146,13 +146,23 @@ remains the merge gate for every change.
   and the rollup data file.
 - **`policy/policy.schema.json`** / **`policy/rollup.schema.json`** - the two schemas.
 - **`fixtures/maintenance-rollup.sample.json`** - static sample rollup so the dashboard can be reviewed
-  without any GitHub credentials. The scheduled workflow that will generate a live
-  `maintenance-rollup.json` is a later phase and does not exist yet.
+  without any GitHub credentials.
+- **`scripts/generate-maintenance-rollup.js`** - calls the GitHub REST API read-only for every repository
+  in policy scope, classifies each open Dependabot PR through `policy/policy-engine.js`, redacts
+  anything token-shaped, caps text fields, and writes a schema-conformant `maintenance-rollup.json`.
+  Runs with reduced coverage (reported as `unknown`, never guessed) when no token is available.
+- **`.github/workflows/maintenance-inventory.yml`** - runs the script on a weekly schedule or on demand.
+  Defaults to dry-run on manual dispatch (prints the rollup, writes nothing); scheduled runs publish the
+  rollup as a 90-day workflow artifact. It never writes to, labels, comments on, or merges anything in
+  any repository — read-only end to end. Works with or without the optional `MAINTENANCE_RO_TOKEN`
+  repository secret (a fine-grained PAT scoped to read-only Metadata, Dependabot alerts, and Pull
+  requests); without it, Dependabot alert and branch-protection coverage report as `unknown` rather than
+  failing the run.
 
 ### Tests
 
 Run `npm test` (uses Node's built-in test runner, no dependencies) to run the policy engine, schema
-validator, and fixture-conformance test suites in `test/`.
+validator, rollup generator, and fixture-conformance test suites in `test/`.
 
 ## GitHub Actions Integration
 
