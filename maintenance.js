@@ -97,9 +97,12 @@ function renderRollup(rollup, sourceUrl, schema) {
             }
         }
 
-        const { critical, high } = repo.security_alerts;
-        if (critical > 0 || high > 0) {
-            urgentItems.push({ repo: repo.full_name, critical, high });
+        if (repo.security_alerts.has_urgent_alerts) {
+            // Deliberately reading only the boolean flag here, never
+            // critical/high directly: Dependabot security alerts are private
+            // on GitHub even for public repos, so exact counts must never be
+            // rendered on this public page. See rollup.schema.json.
+            urgentItems.push({ repo: repo.full_name });
         }
 
         for (const pr of repo.failed_update_prs) {
@@ -151,7 +154,16 @@ function renderUrgent(items) {
     for (const item of items) {
         const li = document.createElement('li');
         li.className = 'finding-card critical';
-        li.textContent = `${item.repo}: ${item.critical} critical, ${item.high} high severity alert(s) open`;
+
+        const text = document.createElement('span');
+        text.textContent = `${item.repo}: critical or high severity Dependabot alerts are open. `;
+        li.appendChild(text);
+
+        const link = document.createElement('a');
+        link.href = `https://github.com/${item.repo}/security/dependabot`;
+        link.textContent = 'View in GitHub Security tab';
+        li.appendChild(link);
+
         list.appendChild(li);
     }
 }
@@ -207,7 +219,7 @@ function renderReview(items) {
 
 function exportAsJSON() {
     if (!currentRollup) return;
-    const json = JSON.stringify(currentRollup, null, 2);
+    const json = JSON.stringify(window.PublicRedaction.redactExactAlertCounts(currentRollup), null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -224,7 +236,9 @@ function exportAsMarkdown() {
     for (const repo of currentRollup.repositories) {
         md += `## ${repo.full_name}\n\n`;
         md += `Tier: ${repo.tier}. Recommended action: **${repo.recommended_action.action}** — ${repo.recommended_action.reason}\n\n`;
-        md += `Security alerts: ${repo.security_alerts.critical} critical, ${repo.security_alerts.high} high, ${repo.security_alerts.moderate} moderate, ${repo.security_alerts.low} low.\n\n`;
+        md += repo.security_alerts.has_urgent_alerts
+            ? `Security alerts: critical or high severity alerts are open. See https://github.com/${repo.full_name}/security/dependabot for detail.\n\n`
+            : `Security alerts: no open critical or high severity alerts reported.\n\n`;
         if (repo.dependabot_prs.length > 0) {
             md += `### Dependabot PRs\n\n`;
             for (const pr of repo.dependabot_prs) {

@@ -35,6 +35,7 @@ This tool analyzes GitHub repositories against open source best-practice standar
 | `maintenance-policy.json` / `maintenance-policy.yml` | Versioned policy: dependency classification and merge eligibility rules. JSON is loaded; YAML is the documented source (same pattern as `priorities.json`/`priorities.yaml`) |
 | `policy/policy-engine.js` | Deterministic classifier (`classifyUpdate`) — pure function, no network access, no AI |
 | `policy/policy-validator.js`, `policy/*.schema.json` | Dependency-free JSON Schema validation for the policy file and the maintenance rollup data model |
+| `policy/public-redaction.js` | Strips exact Dependabot alert counts before rendering/export on the unauthenticated maintenance.html page — only `has_urgent_alerts` (boolean) is ever shown publicly; exact counts stay in the private workflow artifact |
 | `fixtures/maintenance-rollup.sample.json` | Static sample rollup so the maintenance dashboard works without credentials |
 | `scripts/generate-maintenance-rollup.js` | Read-only GitHub API inventory script; classifies PRs via the policy engine, redacts/caps output, writes `maintenance-rollup.json` (gitignored; published as a workflow artifact) |
 | `.github/workflows/maintenance-inventory.yml` | Scheduled/manual workflow running the inventory script. Dry-run by default on manual dispatch. Never writes to any repository. Third-party actions pinned by commit SHA |

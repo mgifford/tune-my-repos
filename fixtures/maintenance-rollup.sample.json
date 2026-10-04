@@ -21,7 +21,8 @@
         "critical": 1,
         "high": 2,
         "moderate": 0,
-        "low": 3
+        "low": 3,
+        "has_urgent_alerts": true
       },
       "dependabot_prs": [
         {

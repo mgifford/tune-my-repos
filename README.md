@@ -159,16 +159,27 @@ remains the merge gate for every change.
   requests); without it, Dependabot alert and branch-protection coverage report as `unknown` rather than
   failing the run.
 
-### Open decision: publishing the live rollup to GitHub Pages
+### Security alert visibility on the public dashboard
 
 The live `maintenance-rollup.json` is currently **only** a private workflow artifact (90-day retention,
 visible to repository collaborators via the Actions tab) — it is not published to the public
-`maintenance.html` page today. GitHub Pages for a public repo cannot require authentication, so before
-any future phase wires the live rollup into Pages publishing, the published version must be reduced to
-**alert counts by severity and PR risk states only** — not exact dependency names, versions, or detailed
-failure text — so the public page cannot be used as a ready-made map of this repo's known vulnerabilities.
-This has been decided but not yet implemented; do not publish the full rollup to Pages without applying
-this reduction first.
+`maintenance.html` page today. GitHub Pages for a public repo cannot require authentication, so this was
+designed with that constraint in mind from the start:
+
+- Dependabot *security alerts* are private on GitHub even for public repositories — only people with
+  repository access can see exact counts natively. `maintenance.html`, `scripts/generate-maintenance-rollup.js`'s
+  public-safe fields, and every export path (JSON, Markdown) therefore only ever expose a derived
+  `has_urgent_alerts` boolean (`policy/public-redaction.js`), never the exact `critical`/`high`/`moderate`/`low`
+  counts, and link out to `github.com/{repo}/security/dependabot` — GitHub's own page, with GitHub's own
+  access control — for anyone who needs the real numbers. The rollup JSON produced by the scheduled
+  workflow still *contains* exact counts (useful for the private 90-day artifact and any future
+  authenticated consumer); only the rendering and export paths strip them.
+- Dependabot *update PRs* (dependency names, versions) are already fully public on this repository's own
+  Pull Requests tab, so there is nothing to protect by hiding that detail in the rollup — it is shown as-is.
+- A client-side "sign in and check org membership" gate was considered and rejected: GitHub Pages has no
+  backend, so such a gate only changes what renders in a browser that runs the page's JavaScript honestly —
+  it does not stop anyone from fetching the underlying files directly. Given the reduction above already
+  removes the only genuinely private signal, no gate is needed.
 
 ### Tests
 
