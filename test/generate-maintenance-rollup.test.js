@@ -10,6 +10,7 @@ const {
   inferDependencyClass,
   computeRecommendedAction,
   computeHasUrgentAlerts,
+  filterDiscoveredRepos,
 } = require('../scripts/generate-maintenance-rollup.js');
 
 test('redact: masks a classic PAT', () => {
@@ -164,4 +165,36 @@ test('computeHasUrgentAlerts: false when only moderate/low alerts exist', () => 
 
 test('computeHasUrgentAlerts: false when there are no alerts at all', () => {
   assert.equal(computeHasUrgentAlerts({ critical: 0, high: 0, moderate: 0, low: 0 }), false);
+});
+
+test('filterDiscoveredRepos: excludes forks when exclude_forks is true', () => {
+  const repos = [
+    { full_name: 'mgifford/original', fork: false, archived: false, pushed_at: 'x' },
+    { full_name: 'mgifford/forked', fork: true, archived: false, pushed_at: 'x' },
+  ];
+  const result = filterDiscoveredRepos(repos, { exclude_forks: true, exclude_archived: false });
+  assert.deepEqual(result.map((r) => r.full_name), ['mgifford/original']);
+});
+
+test('filterDiscoveredRepos: excludes archived repos when exclude_archived is true', () => {
+  const repos = [
+    { full_name: 'mgifford/active', fork: false, archived: false, pushed_at: 'x' },
+    { full_name: 'mgifford/old', fork: false, archived: true, pushed_at: 'x' },
+  ];
+  const result = filterDiscoveredRepos(repos, { exclude_forks: false, exclude_archived: true });
+  assert.deepEqual(result.map((r) => r.full_name), ['mgifford/active']);
+});
+
+test('filterDiscoveredRepos: keeps forks and archived repos when both flags are false', () => {
+  const repos = [
+    { full_name: 'mgifford/forked-and-archived', fork: true, archived: true, pushed_at: 'x' },
+  ];
+  const result = filterDiscoveredRepos(repos, { exclude_forks: false, exclude_archived: false });
+  assert.deepEqual(result.map((r) => r.full_name), ['mgifford/forked-and-archived']);
+});
+
+test('filterDiscoveredRepos: projects down to full_name and pushed_at only', () => {
+  const repos = [{ full_name: 'mgifford/x', fork: false, archived: false, pushed_at: '2026-10-01T00:00:00Z', extra: 'ignored' }];
+  const result = filterDiscoveredRepos(repos, { exclude_forks: true, exclude_archived: true });
+  assert.deepEqual(result, [{ full_name: 'mgifford/x', pushed_at: '2026-10-01T00:00:00Z' }]);
 });

@@ -18,8 +18,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy } = require('../policy/policy-engine.js');
+const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.js');
 const { validatePolicySchema } = require('../policy/policy-validator.js');
+const { canSkipPrWork, recordScan, orderByStaleness } = require('../policy/scan-state.js');
 
 const MAX_FAILURE_SUMMARY_CHARS = 500;
 const MAX_REASON_CHARS = 500;
@@ -61,6 +62,68 @@ async function githubFetch(endpoint, { allow404 = false } = {}) {
     return { ok: false, status: response.status, data: null };
   }
   return { ok: true, status: response.status, data: await response.json() };
+}
+
+/**
+ * Fetches every page of a GitHub list endpoint. Used only for repository
+ * discovery, which can return hundreds of results for a busy owner/org —
+ * every other call in this script already fits in one page (per_page=100
+ * is enough for alerts/PRs on a single repository).
+ * @param {string} endpoint - path with query string, e.g. "/users/x/repos?per_page=100"
+ * @returns {Promise<{ok: boolean, data: object[]}>}
+ */
+async function githubFetchAllPages(endpoint) {
+  const results = [];
+  let page = 1;
+  // 10 pages * 100 per page = 1000 repos per owner, well above what any
+  // owner in discovery.owners has today; a hard cap avoids an unbounded
+  // loop if GitHub's pagination behaves unexpectedly.
+  const maxPages = 10;
+
+  while (page <= maxPages) {
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const result = await githubFetch(`${endpoint}${separator}page=${page}`, { allow404: true });
+    if (!result.ok || !Array.isArray(result.data) || result.data.length === 0) {
+      return { ok: page === 1 ? result.ok : true, data: results };
+    }
+    results.push(...result.data);
+    if (result.data.length < 100) break; // last page
+    page += 1;
+  }
+
+  return { ok: true, data: results };
+}
+
+/**
+ * Discovers candidate repositories for one owner (user or org login) via
+ * the GitHub API, applying discovery.exclude_forks / exclude_archived.
+ * Falls back to the user-repos endpoint if the org-repos endpoint 404s
+ * (the owner is a user, not an org) — this script never assumes which
+ * kind an owner is.
+ * @param {string} owner
+ * @param {{exclude_forks: boolean, exclude_archived: boolean}} options
+ * @returns {Promise<{full_name: string, pushed_at: string}[]>}
+ */
+/**
+ * Pure filter/map step, factored out for unit testing without a network
+ * call: applies discovery.exclude_forks / exclude_archived to a raw list
+ * of repo objects from the GitHub API and projects down to the two fields
+ * the rest of the script actually needs.
+ */
+function filterDiscoveredRepos(rawRepos, options) {
+  return rawRepos
+    .filter((repo) => !(options.exclude_forks && repo.fork))
+    .filter((repo) => !(options.exclude_archived && repo.archived))
+    .map((repo) => ({ full_name: repo.full_name, pushed_at: repo.pushed_at }));
+}
+
+async function discoverRepositoriesForOwner(owner, options) {
+  let result = await githubFetchAllPages(`/orgs/${encodeURIComponent(owner)}/repos?per_page=100&type=all`);
+  if (!result.ok || result.data.length === 0) {
+    result = await githubFetchAllPages(`/users/${encodeURIComponent(owner)}/repos?per_page=100&type=all`);
+  }
+
+  return filterDiscoveredRepos(result.data, options);
 }
 
 /**
@@ -172,15 +235,21 @@ async function fetchFailedCheckDetail(repoFullName, pr) {
   };
 }
 
-async function buildRepositoryEntry(policy, repoFullName) {
+async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, repoMeta: providedRepoMeta } = {}) {
   const tier = getRepositoryTier(policy, repoFullName);
-  const repoMeta = await fetchSecurityAndAnalysis(repoFullName);
+  // Callers that already fetched repo metadata to decide skipPrWork (see
+  // main()) pass it in via repoMeta to avoid fetching it twice.
+  const repoMeta = providedRepoMeta !== undefined ? providedRepoMeta : await fetchSecurityAndAnalysis(repoFullName);
   const defaultBranch = repoMeta?.default_branch || 'main';
 
+  // Alerts are always fetched (cheap, time-sensitive — a new CVE can
+  // appear with no new push). PR/CI-status work is the expensive part and
+  // is skipped when scan-state says this repo is unchanged and was
+  // recently scanned; see policy/scan-state.js.
   const [alertResult, branchProtectionAvailability, pulls] = await Promise.all([
     fetchDependabotAlerts(repoFullName),
     fetchBranchProtection(repoFullName, defaultBranch),
-    fetchDependabotPulls(repoFullName),
+    skipPrWork ? Promise.resolve([]) : fetchDependabotPulls(repoFullName),
   ]);
 
   const coverage = {
@@ -259,6 +328,9 @@ async function buildRepositoryEntry(policy, repoFullName) {
   const counts = alertResult.counts || { critical: 0, high: 0, moderate: 0, low: 0 };
 
   return {
+    // Not part of the public rollup schema — stripped before the entry is
+    // pushed into the rollup; used only by main() to update scan-state.
+    _pushed_at: repoMeta?.pushed_at || null,
     full_name: repoFullName,
     default_branch: defaultBranch,
     tier,
@@ -306,18 +378,82 @@ function computeRecommendedAction(alertResult, dependabotPrs, failedUpdatePrs) {
   return { action: 'none', reason: 'No open Dependabot alerts or update PRs requiring attention' };
 }
 
+/**
+ * Expands maintenance-policy.json's repositories.include into a concrete
+ * list of candidate repositories, resolving any "owner/*" glob via
+ * discovery.owners + the GitHub API, and applying discovery's
+ * exclude_forks/exclude_archived. Returns {full_name -> pushed_at} so
+ * callers can decide what to skip without a second API call per repo.
+ */
+async function resolveCandidateRepos(policy) {
+  const exactIncludes = policy.repositories.include.filter((p) => !p.includes('*'));
+  const hasGlob = policy.repositories.include.some((p) => p.includes('*'));
+
+  const pushedAtByRepo = new Map();
+  for (const name of exactIncludes) {
+    pushedAtByRepo.set(name, null); // unknown until buildRepositoryEntry fetches it
+  }
+
+  if (hasGlob) {
+    for (const owner of policy.discovery.owners) {
+      const discovered = await discoverRepositoriesForOwner(owner, policy.discovery);
+      for (const repo of discovered) {
+        if (isRepositoryInPolicy(policy, repo.full_name)) {
+          pushedAtByRepo.set(repo.full_name, repo.pushed_at);
+        }
+      }
+    }
+  }
+
+  // Exact includes that aren't already excluded by repositories.exclude.
+  for (const name of [...pushedAtByRepo.keys()]) {
+    if (!isRepositoryInPolicy(policy, name)) pushedAtByRepo.delete(name);
+  }
+
+  return pushedAtByRepo;
+}
+
 async function main() {
   const policy = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'maintenance-policy.json'), 'utf8'));
   const rollupSchema = JSON.parse(
     fs.readFileSync(path.join(__dirname, '..', 'policy', 'rollup.schema.json'), 'utf8')
   );
+  const scanStatePath = path.join(__dirname, '..', 'maintenance-scan-state.json');
+  let scanState = { schema_version: '1.0.0', repositories: {} };
+  if (fs.existsSync(scanStatePath)) {
+    scanState = JSON.parse(fs.readFileSync(scanStatePath, 'utf8'));
+  }
 
-  const candidateRepos = policy.repositories.include.filter((p) => !p.includes('*'));
-  const scopedRepos = candidateRepos.filter((repo) => isRepositoryInPolicy(policy, repo));
+  const pushedAtByRepo = await resolveCandidateRepos(policy);
+  const orderedRepos = orderByStaleness(scanState, [...pushedAtByRepo.keys()]);
+  const reposThisRun = orderedRepos.slice(0, policy.discovery.max_repos_per_run);
 
   const repositories = [];
-  for (const repoFullName of scopedRepos) {
-    repositories.push(await buildRepositoryEntry(policy, repoFullName));
+  for (const repoFullName of reposThisRun) {
+    // Repo metadata is fetched once here (rather than inside
+    // buildRepositoryEntry) because its pushed_at is needed up front to
+    // decide skipPrWork, including for an exact (non-glob)
+    // repositories.include entry, which discovery never saw.
+    const repoMeta = await fetchSecurityAndAnalysis(repoFullName);
+    const knownPushedAt = pushedAtByRepo.get(repoFullName) ?? repoMeta?.pushed_at ?? null;
+    const skipPrWork = knownPushedAt !== null && canSkipPrWork(
+      scanState,
+      repoFullName,
+      knownPushedAt,
+      policy.discovery.rescan_prs_after_days
+    );
+
+    const entry = await buildRepositoryEntry(policy, repoFullName, { skipPrWork, repoMeta });
+    const pushedAtForState = knownPushedAt ?? entry._pushed_at;
+    delete entry._pushed_at;
+    repositories.push(entry);
+    if (pushedAtForState) {
+      scanState = recordScan(scanState, repoFullName, pushedAtForState);
+    }
+  }
+
+  if (!dryRun) {
+    fs.writeFileSync(scanStatePath, JSON.stringify(scanState, null, 2) + '\n');
   }
 
   const rollup = {
@@ -353,6 +489,7 @@ module.exports = {
   inferDependencyClass,
   computeRecommendedAction,
   computeHasUrgentAlerts,
+  filterDiscoveredRepos,
 };
 
 if (require.main === module) {

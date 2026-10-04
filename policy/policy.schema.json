@@ -3,12 +3,24 @@
   "$id": "https://github.com/mgifford/tune-my-repos/policy/policy.schema.json",
   "title": "Maintenance Policy",
   "type": "object",
-  "required": ["policy_version", "repositories", "tiers", "dependency_classes", "special_cases", "attention_thresholds", "overrides"],
+  "required": ["policy_version", "discovery", "repositories", "tiers", "dependency_classes", "special_cases", "attention_thresholds", "overrides"],
   "additionalProperties": false,
   "properties": {
     "policy_version": {
       "type": "string",
       "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "discovery": {
+      "type": "object",
+      "required": ["owners", "exclude_forks", "exclude_archived", "max_repos_per_run", "rescan_prs_after_days"],
+      "additionalProperties": false,
+      "properties": {
+        "owners": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "exclude_forks": { "type": "boolean" },
+        "exclude_archived": { "type": "boolean" },
+        "max_repos_per_run": { "type": "integer", "minimum": 1 },
+        "rescan_prs_after_days": { "type": "integer", "minimum": 1 }
+      }
     },
     "repositories": {
       "type": "object",

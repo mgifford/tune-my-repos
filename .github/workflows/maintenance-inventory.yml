@@ -2,8 +2,11 @@ name: Maintenance Inventory
 
 # Deterministic, scheduled inventory of Dependabot alerts and update PRs for
 # repositories in maintenance-policy.json's scope. No AI involved. This
-# workflow only reads data and writes a redacted, bounded
-# maintenance-rollup.json artifact — it never mutates any repository.
+# workflow reads data and writes a redacted, bounded maintenance-rollup.json
+# artifact; it never mutates any repository it scans. The one exception is
+# this repository's own maintenance-scan-state.json (committed back to main
+# after a non-dry-run), which is why this workflow has contents: write — see
+# "Scan-state persistence" below.
 #
 # Modes:
 #   - Public dry-run (default): no secret required, runs with reduced
@@ -13,6 +16,18 @@ name: Maintenance Inventory
 #     fine-grained PAT scoped to read-only Metadata + Dependabot alerts +
 #     Pull requests on the repositories in policy scope. The workflow still
 #     runs without this secret; it simply has less coverage.
+#
+# Scan-state persistence:
+#   maintenance-scan-state.json tracks when each discovered repository was
+#   last scanned, so repeat runs can skip the expensive PR/CI-status work
+#   for repositories unchanged since their last scan (always rechecking
+#   Dependabot alerts regardless — see policy/scan-state.js). A non-dry-run
+#   that changed this file opens a small pull request containing only that
+#   one file, waits for its own required "npm test" check (the same ruleset
+#   that applies to every other change to main), and merges it — using the
+#   workflow's own GITHUB_TOKEN, no external secret. This keeps the required
+#   check meaningful for every change to main, including this automated one,
+#   rather than granting the workflow a ruleset bypass.
 #
 # Third-party actions are pinned to a full commit SHA, not a tag, per
 # AGENTS.md supply-chain guidance.
@@ -29,7 +44,8 @@ on:
     - cron: '0 9 * * 1'
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 concurrency:
   group: maintenance-inventory
@@ -84,3 +100,33 @@ jobs:
           path: maintenance-rollup.json
           retention-days: 90
           if-no-files-found: error
+
+      - name: Commit updated scan-state via a PR (passes through the required check like any other change)
+        if: steps.mode.outputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- maintenance-scan-state.json; then
+            echo "maintenance-scan-state.json unchanged; nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="maintenance-scan-state-update-${{ github.run_id }}"
+          git checkout -b "$BRANCH"
+          git add maintenance-scan-state.json
+          git commit -m "Update maintenance scan state (automated, run ${{ github.run_id }})"
+          git push origin "$BRANCH"
+
+          gh pr create --title "Update maintenance scan state" \
+            --body "Automated scan-state update from the Maintenance Inventory workflow (run ${{ github.run_id }}). Contains only maintenance-scan-state.json." \
+            --base main --head "$BRANCH"
+
+          # Wait for this PR's own required "npm test" check, same as any
+          # other change — no ruleset bypass. Up to ~5 minutes; the job
+          # timeout above provides a backstop if a check hangs.
+          gh pr checks "$BRANCH" --watch --required
+
+          gh pr merge "$BRANCH" --squash --delete-branch
