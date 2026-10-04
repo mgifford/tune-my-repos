@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: github/accessibility-scanner@v2
+      - uses: github/accessibility-scanner@v3
         with:
           # The URL below uses the standard GitHub Pages pattern:
           #   https://<owner>.github.io/<repo>/
