@@ -22,7 +22,7 @@ discovery:
   # authenticated token may have access to many more orgs than this.
   owners:
     - "mgifford"
-    - "CivicActions"
+    # - "CivicActions" # add once mgifford's own repos are reviewed and confirmed working
   exclude_forks: true
   exclude_archived: true
   # At most this many repositories are scanned (alerts + PRs + CI status)
@@ -46,7 +46,7 @@ discovery:
 # pilot repository.
 repositories:
   include:
-    - "mgifford/tune-my-repos"
+    - "mgifford/*"
   exclude: []
 
 # Repository tiers control how much autonomy a repo's workflow may use.
