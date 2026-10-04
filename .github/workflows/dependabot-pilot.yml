@@ -52,6 +52,8 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
           sparse-checkout: |
             policy
+            scripts
+            .github/scripts/
             maintenance-policy.json
           sparse-checkout-cone-mode: false
 
@@ -91,6 +93,8 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
           sparse-checkout: |
             policy
+            scripts
+            .github/scripts/
             maintenance-policy.json
           sparse-checkout-cone-mode: false
 
