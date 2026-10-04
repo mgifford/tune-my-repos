@@ -27,16 +27,18 @@
         <section class="input-section" aria-labelledby="dataSourceHeading">
             <h2 id="dataSourceHeading">Data source</h2>
             <p>
-                This dashboard reads a <code>maintenance-rollup.json</code> file produced by a scheduled,
-                deterministic GitHub Actions workflow (see Phase 2). No AI is involved in generating or
-                classifying this data. Until that workflow is enabled, a static sample fixture is shown
-                below so the interface can be reviewed without credentials.
+                This dashboard reads a <code>maintenance-rollup.public.json</code> file produced by a
+                scheduled, deterministic GitHub Actions workflow. No AI is involved in generating or
+                classifying this data. The published file never contains exact Dependabot alert counts
+                (see README.md); for exact counts, sign in and check a repository's own GitHub Security
+                tab. A static sample fixture is also available below for reviewing the interface without
+                live data.
             </p>
             <div class="form-group">
                 <label for="rollupSource">Rollup data file</label>
                 <select id="rollupSource">
-                    <option value="fixtures/maintenance-rollup.sample.json" selected>Sample fixture (no credentials required)</option>
-                    <option value="maintenance-rollup.json">Live rollup (maintenance-rollup.json, if published)</option>
+                    <option value="maintenance-rollup.public.json" selected>Live rollup (maintenance-rollup.public.json)</option>
+                    <option value="fixtures/maintenance-rollup.sample.json">Sample fixture (no credentials required)</option>
                 </select>
             </div>
             <p id="rollupMeta" class="rollup-meta" role="status"></p>

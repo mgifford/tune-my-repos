@@ -62,7 +62,7 @@
         },
         "security_alerts": {
           "type": "object",
-          "required": ["critical", "high", "moderate", "low", "has_urgent_alerts"],
+          "required": ["has_urgent_alerts"],
           "additionalProperties": false,
           "properties": {
             "critical": { "type": "integer", "minimum": 0 },
@@ -71,7 +71,7 @@
             "low": { "type": "integer", "minimum": 0 },
             "has_urgent_alerts": {
               "type": "boolean",
-              "description": "Derived from critical/high > 0. The only security_alerts field safe to render on a public page: GitHub's Dependabot security alerts are private even on public repos, so exact counts (critical/high/moderate/low) must never be displayed outside an authenticated context. This file may still be distributed privately (e.g. the maintenance-inventory workflow artifact) with exact counts intact for that authenticated use."
+              "description": "Derived from critical/high > 0. The only security_alerts field safe to render on a public page: GitHub's Dependabot security alerts are private even on public repos, so exact counts (critical/high/moderate/low) must never be displayed outside an authenticated context. critical/high/moderate/low are OPTIONAL in this schema specifically so the public rollup (maintenance-rollup.public.json, published to Pages) can omit them entirely via policy/public-redaction.js; the private rollup (maintenance-rollup.json, workflow artifact only) always includes them."
             }
           }
         },
