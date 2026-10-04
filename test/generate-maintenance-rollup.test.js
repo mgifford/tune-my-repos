@@ -9,6 +9,7 @@ const {
   inferUpdateType,
   inferDependencyClass,
   computeRecommendedAction,
+  computeHasUrgentAlerts,
 } = require('../scripts/generate-maintenance-rollup.js');
 
 test('redact: masks a classic PAT', () => {
@@ -147,4 +148,20 @@ test('computeRecommendedAction: none when there is nothing to report', () => {
 test('computeRecommendedAction: missing alert counts (unavailable coverage) does not crash and does not claim urgency', () => {
   const result = computeRecommendedAction({ counts: null }, [], []);
   assert.equal(result.action, 'none');
+});
+
+test('computeHasUrgentAlerts: true when critical count is positive', () => {
+  assert.equal(computeHasUrgentAlerts({ critical: 1, high: 0, moderate: 0, low: 0 }), true);
+});
+
+test('computeHasUrgentAlerts: true when high count is positive', () => {
+  assert.equal(computeHasUrgentAlerts({ critical: 0, high: 1, moderate: 0, low: 0 }), true);
+});
+
+test('computeHasUrgentAlerts: false when only moderate/low alerts exist', () => {
+  assert.equal(computeHasUrgentAlerts({ critical: 0, high: 0, moderate: 5, low: 5 }), false);
+});
+
+test('computeHasUrgentAlerts: false when there are no alerts at all', () => {
+  assert.equal(computeHasUrgentAlerts({ critical: 0, high: 0, moderate: 0, low: 0 }), false);
 });

@@ -105,6 +105,16 @@ function inferDependencyClass(pr, ecosystem) {
   return 'unknown';
 }
 
+/**
+ * Derives the only security_alerts field safe to render on an
+ * unauthenticated page. Dependabot security alerts are private on GitHub
+ * even for public repos, so exact counts must never be displayed outside
+ * an authenticated context — see rollup.schema.json.
+ */
+function computeHasUrgentAlerts(counts) {
+  return counts.critical > 0 || counts.high > 0;
+}
+
 async function fetchDependabotAlerts(repoFullName) {
   const result = await githubFetch(`/repos/${repoFullName}/dependabot/alerts?state=open&per_page=100`, {
     allow404: true,
@@ -246,6 +256,7 @@ async function buildRepositoryEntry(policy, repoFullName) {
   }
 
   const recommendedAction = computeRecommendedAction(alertResult, dependabotPrs, failedUpdatePrs);
+  const counts = alertResult.counts || { critical: 0, high: 0, moderate: 0, low: 0 };
 
   return {
     full_name: repoFullName,
@@ -254,7 +265,10 @@ async function buildRepositoryEntry(policy, repoFullName) {
     policy_version: policy.policy_version,
     source_timestamp: new Date().toISOString(),
     coverage,
-    security_alerts: alertResult.counts || { critical: 0, high: 0, moderate: 0, low: 0 },
+    // Exact counts are retained here for the private workflow artifact and
+    // any other authenticated consumer. has_urgent_alerts is the only field
+    // safe to render on a public page — see rollup.schema.json.
+    security_alerts: { ...counts, has_urgent_alerts: computeHasUrgentAlerts(counts) },
     dependabot_prs: dependabotPrs,
     failed_update_prs: failedUpdatePrs,
     recommended_action: recommendedAction,
@@ -338,6 +352,7 @@ module.exports = {
   inferUpdateType,
   inferDependencyClass,
   computeRecommendedAction,
+  computeHasUrgentAlerts,
 };
 
 if (require.main === module) {
