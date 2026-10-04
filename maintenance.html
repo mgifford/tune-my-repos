@@ -7,6 +7,9 @@
     <title>Maintenance Dashboard - Tune My Repos</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="maintenance.css">
+    <script src="config.js"></script>
+    <script src="env-loader.js"></script>
+    <script src="auth.js"></script>
 </head>
 <body>
     <header>
@@ -24,6 +27,23 @@
     </header>
 
     <main class="container">
+        <section id="accessGateSection" class="input-section" aria-labelledby="accessGateHeading">
+            <h2 id="accessGateHeading">Sign in required</h2>
+            <p>
+                This dashboard shows internal maintenance signals (security alert counts, dependency
+                update status) for repositories in the policy scope. To view it, sign in with GitHub and
+                confirm you are a member of the <code id="accessGateOrgName"></code> organization.
+            </p>
+            <p>
+                <strong>Note:</strong> this check happens in your browser and is a visibility convenience,
+                not a security boundary — the underlying files are still publicly reachable at their URL
+                for anyone who has it. See <a href="README.md">README.md</a> for the full explanation.
+            </p>
+            <button id="accessGateSignInBtn" class="secondary-btn" type="button">Sign in with GitHub</button>
+            <p id="accessGateStatus" class="rollup-meta" role="status"></p>
+        </section>
+
+        <div id="dashboardContent" hidden>
         <section class="input-section" aria-labelledby="dataSourceHeading">
             <h2 id="dataSourceHeading">Data source</h2>
             <p>
@@ -86,6 +106,7 @@
                 <button id="exportMarkdownBtn" class="secondary-btn" type="button">Export Markdown</button>
             </div>
         </section>
+        </div>
     </main>
 
     <script src="policy/policy-engine.js"></script>

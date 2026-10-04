@@ -11,6 +11,11 @@ const rollupSourceSelect = document.getElementById('rollupSource');
 const rollupMeta = document.getElementById('rollupMeta');
 const exportJsonBtn = document.getElementById('exportJsonBtn');
 const exportMarkdownBtn = document.getElementById('exportMarkdownBtn');
+const accessGateSection = document.getElementById('accessGateSection');
+const accessGateOrgName = document.getElementById('accessGateOrgName');
+const accessGateSignInBtn = document.getElementById('accessGateSignInBtn');
+const accessGateStatus = document.getElementById('accessGateStatus');
+const dashboardContent = document.getElementById('dashboardContent');
 
 let currentRollup = null;
 let rollupSchema = null;
@@ -255,4 +260,46 @@ rollupSourceSelect.addEventListener('change', () => {
 exportJsonBtn.addEventListener('click', exportAsJSON);
 exportMarkdownBtn.addEventListener('click', exportAsMarkdown);
 
-loadRollup(rollupSourceSelect.value);
+/**
+ * This is a client-side visibility convenience, not an access-control
+ * boundary: the HTML, JS, and any published rollup file remain fetchable
+ * by anyone who has the URL. See README.md "Open decision: publishing the
+ * live rollup to GitHub Pages" for the actual security boundary (data
+ * minimization of what gets published), which this gate does not replace.
+ */
+async function getScopedOrg() {
+    const response = await fetch('maintenance-policy.json');
+    const policy = await response.json();
+    const firstRepo = policy.repositories.include.find((p) => !p.includes('*')) || '';
+    return firstRepo.split('/')[0] || '';
+}
+
+async function checkAccess() {
+    const org = await getScopedOrg();
+    accessGateOrgName.textContent = org || '(unknown)';
+
+    if (!window.githubAuth || !window.githubAuth.isAuthenticated()) {
+        accessGateStatus.textContent = '';
+        return;
+    }
+
+    accessGateStatus.textContent = 'Checking organization membership…';
+    const isMember = await window.githubAuth.isOrgMember(org);
+
+    if (isMember) {
+        accessGateSection.hidden = true;
+        dashboardContent.hidden = false;
+        loadRollup(rollupSourceSelect.value);
+    } else {
+        accessGateStatus.textContent =
+            `Signed in, but your account is not a visible member of the ${org} organization. ` +
+            `If you are a member, your membership may be set to private — see your organization ` +
+            `membership settings on GitHub.`;
+    }
+}
+
+accessGateSignInBtn.addEventListener('click', () => {
+    window.githubAuth.login('public_repo read:org');
+});
+
+checkAccess();

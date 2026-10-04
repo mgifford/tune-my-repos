@@ -198,26 +198,30 @@ class GitHubAuth {
     
     /**
      * Initiate GitHub OAuth flow
+     * @param {string} [scope] - OAuth scope to request. Defaults to the
+     *   minimal public_repo scope; pass 'public_repo read:org' when the
+     *   caller also needs to check the user's organization membership
+     *   (e.g. maintenance.html's org-gated view).
      */
-    login() {
+    login(scope = 'public_repo') {
         if (!this.clientId) {
             // No OAuth App configured — fall back to the PAT input modal
             this.showPATModal();
             return;
         }
-        
+
         // Generate random state for CSRF protection
         const state = this.generateRandomState();
         sessionStorage.setItem(this.stateKey, state);
-        
+
         // Build OAuth authorization URL
         const params = new URLSearchParams({
             client_id: this.clientId,
             redirect_uri: this.redirectUri,
-            scope: 'public_repo', // Minimal scope for public repo analysis
+            scope: scope,
             state: state
         });
-        
+
         // Redirect to GitHub OAuth
         window.location.href = `https://github.com/login/oauth/authorize?${params.toString()}`;
     }
@@ -337,6 +341,41 @@ class GitHubAuth {
         } catch (error) {
             console.error('Failed to get user info:', error);
             return null;
+        }
+    }
+
+    /**
+     * Check whether the signed-in user is an active member of the given
+     * GitHub organization. Requires a token with the read:org scope — see
+     * login(scope). Returns false on any error (expired token, missing
+     * scope, not a member, org doesn't exist) rather than throwing, since
+     * every caller treats "could not confirm membership" the same as
+     * "not a member" for access purposes.
+     * @param {string} org - organization login, e.g. "mgifford"
+     * @returns {Promise<boolean>}
+     */
+    async isOrgMember(org) {
+        const token = this.getToken();
+        if (!token || !org) return false;
+
+        try {
+            const response = await fetch(`https://api.github.com/user/memberships/orgs/${encodeURIComponent(org)}`, {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) this.clearToken();
+                return false;
+            }
+
+            const membership = await response.json();
+            return membership.state === 'active';
+        } catch (error) {
+            console.error('Failed to check organization membership:', error);
+            return false;
         }
     }
 }

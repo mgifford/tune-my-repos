@@ -26,7 +26,7 @@ This tool analyzes GitHub repositories against open source best-practice standar
 | `analyzer.js` | Core logic: repo classification, governance checks, fork analysis |
 | `app.js` | UI rendering, event handling, caching orchestration, debug mode |
 | `styles.css` | Responsive layout with dark-mode support |
-| `auth.js` | GitHub OAuth and Personal Access Token handling |
+| `auth.js` | GitHub OAuth and Personal Access Token handling. Also exposes `isOrgMember(org)` for maintenance.html's sign-in gate (visibility convenience only, not real access control — see README.md) |
 | `cache.js` | localStorage-backed 1-hour result cache |
 | `env-loader.js` | Loads `.env` on localhost/`file://` only; no-op in production |
 | `config.js` | GitHub token and OAuth config (not committed; see `config.example.js`) |

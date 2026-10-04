@@ -170,6 +170,25 @@ failure text — so the public page cannot be used as a ready-made map of this r
 This has been decided but not yet implemented; do not publish the full rollup to Pages without applying
 this reduction first.
 
+### Org-membership sign-in gate on the maintenance dashboard
+
+`maintenance.html` requires signing in with GitHub (OAuth, scope `public_repo read:org`) and confirming
+the signed-in account is an active member of the organization in `maintenance-policy.json`'s scope
+before it renders any content (`auth.js`'s `isOrgMember()`, called from `maintenance.js`).
+
+**This is a visibility convenience, not a security boundary.** GitHub Pages for a public repository has
+no backend, so nothing can stop a visitor from fetching `maintenance.html`, `maintenance.js`,
+`maintenance-policy.json`, or a published `maintenance-rollup.json` directly by URL — the sign-in gate
+only changes what renders in a browser that ran the page's JavaScript honestly. The actual security
+boundary for sensitive data remains the data-minimization decision above (publish counts and risk
+states only, never dependency names/versions/failure detail). Do not treat this gate as a reason to
+publish more detailed data than that decision allows.
+
+If real access control is ever needed (not just a casual-visibility deterrent), the options are: make
+the repository and its Pages site private (GitHub-enforced, but the whole project stops being public),
+or add a server/proxy that checks membership before serving anything (which conflicts with this
+project's no-backend constraint). Neither is implemented.
+
 ### Tests
 
 Run `npm test` (uses Node's built-in test runner, no dependencies) to run the policy engine, schema
