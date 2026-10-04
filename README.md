@@ -175,6 +175,43 @@ this reduction first.
 Run `npm test` (uses Node's built-in test runner, no dependencies) to run the policy engine, schema
 validator, rollup generator, and fixture-conformance test suites in `test/`.
 
+### Phase 3 pilot: Dependabot auto-merge (tune-my-repos only)
+
+`tune-my-repos` is currently the **only** repository running the Dependabot pilot
+(`.github/workflows/dependabot-pilot.yml` + `.github/dependabot.yml`, scoped to the `github-actions`
+ecosystem only — this repo has no other dependencies today). The pilot:
+
+- Labels every Dependabot PR with its computed dependency class, update type, and risk state
+  (`maintenance:github-actions`, `maintenance:patch`, `maintenance:eligible`, etc.)
+- Requires branch protection on `main` with `npm test` as a required status check (configured via a
+  repository ruleset; this was a prerequisite, not something this workflow sets up itself)
+- Only *requests* GitHub's native auto-merge (`gh pr merge --auto`) for PRs the policy classifies as
+  `eligible` — it never bypasses or overrides the required check; GitHub itself still waits for `npm test`
+  to pass before merging anything
+- Is **off by default**: auto-merge only activates when the repository variable
+  `MAINTENANCE_AUTOMERGE_ENABLED` is set to `true` in Settings → Secrets and variables → Actions → Variables.
+  Labeling runs regardless, so you can review classifications before opting in to auto-merge.
+- Never auto-merges: major updates, anything outside policy scope, anything the title parser can't
+  classify, or anything a human hasn't enabled auto-merge for at the repository level.
+
+#### Rollout checklist for additional pilot repositories
+
+Before copying this pilot to another repository:
+
+1. [ ] Add the repository to `maintenance-policy.yml`'s `repositories.include` and to the `pilot` tier
+   (or `standard`, once past the pilot stage), and regenerate `maintenance-policy.json` to match.
+2. [ ] Confirm the repository's actual dependency ecosystems (npm, pip, etc.) and write a
+   `.github/dependabot.yml` scoped to what's really there — do not copy this repo's github-actions-only
+   config blindly.
+3. [ ] Set up branch protection / a ruleset on the repository's default branch requiring at least one
+   real CI check to pass (the repository's own test suite, not `tune-my-repos`' `npm test`).
+4. [ ] Copy `.github/workflows/dependabot-pilot.yml` and `.github/scripts/classify-dependabot-pr.js`,
+   updating the policy file path if the repository structure differs.
+5. [ ] Leave `MAINTENANCE_AUTOMERGE_ENABLED` unset (auto-merge off) for at least one full review cycle of
+   labeled-but-not-merged PRs before enabling it.
+6. [ ] Confirm with the repository's actual maintainer(s) — not just `mgifford` — before enabling
+   auto-merge on a repository with other contributors.
+
 ## GitHub Actions Integration
 
 Use the provided workflow to analyze repositories automatically:
