@@ -39,6 +39,9 @@ This tool analyzes GitHub repositories against open source best-practice standar
 | `fixtures/maintenance-rollup.sample.json` | Static sample rollup so the maintenance dashboard works without credentials |
 | `scripts/generate-maintenance-rollup.js` | Read-only GitHub API inventory script; classifies PRs via the policy engine, redacts/caps output, writes `maintenance-rollup.json` (gitignored; published as a workflow artifact) |
 | `.github/workflows/maintenance-inventory.yml` | Scheduled/manual workflow running the inventory script. Dry-run by default on manual dispatch. Never writes to any repository. Third-party actions pinned by commit SHA |
+| `.github/workflows/ci.yml` | Runs `npm test` on PRs and pushes to main — the required status check enforced by the `main` branch ruleset |
+| `.github/dependabot.yml` | Dependabot config for this repo, scoped to `github-actions` only (no other dependencies exist today) |
+| `.github/workflows/dependabot-pilot.yml`, `.github/scripts/classify-dependabot-pr.js` | Phase 3 pilot (tune-my-repos only): labels Dependabot PRs deterministically; requests GitHub's native auto-merge only for policy-eligible updates, only when the `MAINTENANCE_AUTOMERGE_ENABLED` repo variable is `true`. Never bypasses the required `npm test` check |
 | `test/*.test.js` | Unit tests (Node's built-in `node:test`, run via `npm test`) for the policy engine, schema validator, rollup generator, and fixture conformance |
 | `AGENTS.md` | **Full governance ruleset — read before every task** |
 
