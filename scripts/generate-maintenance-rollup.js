@@ -21,6 +21,7 @@ const path = require('node:path');
 const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.js');
 const { validatePolicySchema } = require('../policy/policy-validator.js');
 const { canSkipPrWork, recordScan, orderByStaleness } = require('../policy/scan-state.js');
+const { redactExactAlertCounts } = require('../policy/public-redaction.js');
 
 const MAX_FAILURE_SUMMARY_CHARS = 500;
 const MAX_REASON_CHARS = 500;
@@ -471,12 +472,23 @@ async function main() {
   }
 
   const outPath = path.join(__dirname, '..', 'maintenance-rollup.json');
+  // The full rollup (exact alert counts) is for the private 90-day
+  // workflow artifact only. The public file is the one actually published
+  // to GitHub Pages — see policy/public-redaction.js and README.md
+  // "Security alert visibility on the public dashboard" for why this
+  // reduction exists and must never be skipped for a published file.
+  const publicOutPath = path.join(__dirname, '..', 'maintenance-rollup.public.json');
+  const publicRollup = redactExactAlertCounts(rollup);
+
   if (dryRun) {
     console.log(`[dry-run] would write ${outPath}:`);
     console.log(JSON.stringify(rollup, null, 2));
+    console.log(`[dry-run] would write ${publicOutPath}:`);
+    console.log(JSON.stringify(publicRollup, null, 2));
   } else {
     fs.writeFileSync(outPath, JSON.stringify(rollup, null, 2) + '\n');
-    console.log(`Wrote ${outPath} (${repositories.length} repositor${repositories.length === 1 ? 'y' : 'ies'})`);
+    fs.writeFileSync(publicOutPath, JSON.stringify(publicRollup, null, 2) + '\n');
+    console.log(`Wrote ${outPath} and ${publicOutPath} (${repositories.length} repositor${repositories.length === 1 ? 'y' : 'ies'})`);
   }
 }
 

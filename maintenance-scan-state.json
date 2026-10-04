@@ -1,4 +1,205 @@
 {
   "schema_version": "1.0.0",
-  "repositories": {}
+  "repositories": {
+    "mgifford/a11y-contracting": {
+      "last_scanned": "2026-10-04T18:25:58.616Z",
+      "last_pushed_at": "2023-12-07T16:27:47Z"
+    },
+    "mgifford/a11y-courses": {
+      "last_scanned": "2026-10-04T18:25:59.187Z",
+      "last_pushed_at": "2020-03-06T14:25:35Z"
+    },
+    "mgifford/a11y-maps": {
+      "last_scanned": "2026-10-04T18:25:59.827Z",
+      "last_pushed_at": "2026-09-15T12:13:24Z"
+    },
+    "mgifford/a11y-mermaid-studio": {
+      "last_scanned": "2026-10-04T18:26:00.384Z",
+      "last_pushed_at": "2026-06-16T11:57:05Z"
+    },
+    "mgifford/a11y-svg": {
+      "last_scanned": "2026-10-04T18:26:01.221Z",
+      "last_pushed_at": "2026-09-15T12:14:22Z"
+    },
+    "mgifford/a11y-voting": {
+      "last_scanned": "2026-10-04T18:26:01.844Z",
+      "last_pushed_at": "2021-09-20T12:23:27Z"
+    },
+    "mgifford/A11yFirst-CKEditor5-Plugin": {
+      "last_scanned": "2026-10-04T18:26:02.454Z",
+      "last_pushed_at": "2026-05-18T00:33:21Z"
+    },
+    "mgifford/Accessibility-Resources-1": {
+      "last_scanned": "2026-10-04T18:26:03.003Z",
+      "last_pushed_at": "2021-09-23T12:29:14Z"
+    },
+    "mgifford/accessibility-sandbox": {
+      "last_scanned": "2026-10-04T18:26:03.564Z",
+      "last_pushed_at": "2026-09-17T13:26:44Z"
+    },
+    "mgifford/accessibility-skills": {
+      "last_scanned": "2026-10-04T18:26:04.139Z",
+      "last_pushed_at": "2026-09-15T12:25:37Z"
+    },
+    "mgifford/ACCESSIBILITY.md": {
+      "last_scanned": "2026-10-04T18:26:04.756Z",
+      "last_pushed_at": "2026-10-01T05:59:48Z"
+    },
+    "mgifford/accessible-buildings": {
+      "last_scanned": "2026-10-04T18:26:05.335Z",
+      "last_pushed_at": "2026-10-02T06:18:11Z"
+    },
+    "mgifford/ai-browser-test": {
+      "last_scanned": "2026-10-04T18:26:05.906Z",
+      "last_pushed_at": "2026-09-17T13:30:39Z"
+    },
+    "mgifford/AirScript": {
+      "last_scanned": "2026-10-04T18:26:06.802Z",
+      "last_pushed_at": "2026-09-15T12:32:46Z"
+    },
+    "mgifford/airtime2": {
+      "last_scanned": "2026-10-04T18:26:07.431Z",
+      "last_pushed_at": "2026-09-16T21:54:06Z"
+    },
+    "mgifford/alt-text-scan": {
+      "last_scanned": "2026-10-04T18:26:08.325Z",
+      "last_pushed_at": "2026-10-01T08:41:40Z"
+    },
+    "mgifford/apca-wcag2": {
+      "last_scanned": "2026-10-04T18:26:08.929Z",
+      "last_pushed_at": "2026-07-13T23:56:37Z"
+    },
+    "mgifford/arrm-checklist": {
+      "last_scanned": "2026-10-04T18:26:09.544Z",
+      "last_pushed_at": "2025-08-15T17:46:35Z"
+    },
+    "mgifford/audio-news": {
+      "last_scanned": "2026-10-04T18:26:10.288Z",
+      "last_pushed_at": "2026-09-14T00:41:54Z"
+    },
+    "mgifford/bellwether": {
+      "last_scanned": "2026-10-04T18:26:11.131Z",
+      "last_pushed_at": "2026-09-15T12:27:45Z"
+    },
+    "mgifford/caart": {
+      "last_scanned": "2026-10-04T18:26:11.751Z",
+      "last_pushed_at": "2025-07-29T22:02:20Z"
+    },
+    "mgifford/checker-suite": {
+      "last_scanned": "2026-10-04T18:26:12.665Z",
+      "last_pushed_at": "2021-01-13T17:07:55Z"
+    },
+    "mgifford/content-first-wireframe": {
+      "last_scanned": "2026-10-04T18:26:13.241Z",
+      "last_pushed_at": "2026-09-15T12:28:49Z"
+    },
+    "mgifford/contractwatch": {
+      "last_scanned": "2026-10-04T18:26:13.791Z",
+      "last_pushed_at": "2026-06-23T11:55:15Z"
+    },
+    "mgifford/contrast-plus": {
+      "last_scanned": "2026-10-04T18:26:14.700Z",
+      "last_pushed_at": "2026-10-01T16:16:07Z"
+    },
+    "mgifford/d5-charter": {
+      "last_scanned": "2026-10-04T18:26:15.222Z",
+      "last_pushed_at": "2017-10-21T17:25:33Z"
+    },
+    "mgifford/daily-cap": {
+      "last_scanned": "2026-10-04T18:26:15.786Z",
+      "last_pushed_at": "2026-09-30T02:13:56Z"
+    },
+    "mgifford/daily-dap": {
+      "last_scanned": "2026-10-04T18:26:16.588Z",
+      "last_pushed_at": "2026-10-04T15:25:16Z"
+    },
+    "mgifford/daily-hhs": {
+      "last_scanned": "2026-10-04T18:26:17.846Z",
+      "last_pushed_at": "2026-10-04T16:44:50Z"
+    },
+    "mgifford/design-system-scan": {
+      "last_scanned": "2026-10-04T18:26:18.560Z",
+      "last_pushed_at": "2026-04-28T14:50:16Z"
+    },
+    "mgifford/DiDay": {
+      "last_scanned": "2026-10-04T18:26:19.194Z",
+      "last_pushed_at": "2026-09-29T11:49:44Z"
+    },
+    "mgifford/digitalbuyingguide.org": {
+      "last_scanned": "2026-10-04T18:26:19.766Z",
+      "last_pushed_at": "2025-10-29T15:18:59Z"
+    },
+    "mgifford/DigitalPolicies": {
+      "last_scanned": "2026-10-04T18:26:20.345Z",
+      "last_pushed_at": "2026-06-01T19:21:20Z"
+    },
+    "mgifford/ditap-1-pager": {
+      "last_scanned": "2026-10-04T18:26:21.154Z",
+      "last_pushed_at": "2026-09-15T12:31:34Z"
+    },
+    "mgifford/dot-gov-scans": {
+      "last_scanned": "2026-10-04T18:26:22.057Z",
+      "last_pushed_at": "2026-10-04T11:07:24Z"
+    },
+    "mgifford/dpg-dpi-govstack-map": {
+      "last_scanned": "2026-10-04T18:26:23.022Z",
+      "last_pushed_at": "2026-10-01T08:40:48Z"
+    },
+    "mgifford/Drupal-Accessibility-Quicksheet": {
+      "last_scanned": "2026-10-04T18:26:23.551Z",
+      "last_pushed_at": "2018-01-01T22:51:35Z"
+    },
+    "mgifford/Drupal-CLF-2.0-Theme": {
+      "last_scanned": "2026-10-04T18:26:24.149Z",
+      "last_pushed_at": "2009-08-19T00:34:11Z"
+    },
+    "mgifford/drupal-cms": {
+      "last_scanned": "2026-10-04T18:26:25.526Z",
+      "last_pushed_at": "2026-07-13T23:47:30Z"
+    },
+    "mgifford/drupal-core": {
+      "last_scanned": "2026-10-04T18:26:26.939Z",
+      "last_pushed_at": "2026-10-01T08:21:44Z"
+    },
+    "mgifford/drupal-core-lab": {
+      "last_scanned": "2026-10-04T18:26:27.493Z",
+      "last_pushed_at": "2026-10-04T09:00:12Z"
+    },
+    "mgifford/drupal-diff": {
+      "last_scanned": "2026-10-04T18:26:28.307Z",
+      "last_pushed_at": "2026-06-04T16:24:11Z"
+    },
+    "mgifford/Drupal-docs": {
+      "last_scanned": "2026-10-04T18:26:29.909Z",
+      "last_pushed_at": "2026-07-13T23:34:30Z"
+    },
+    "mgifford/drupal-open-dash": {
+      "last_scanned": "2026-10-04T18:26:30.809Z",
+      "last_pushed_at": "2026-10-04T03:37:16Z"
+    },
+    "mgifford/EchoLocate": {
+      "last_scanned": "2026-10-04T18:26:31.405Z",
+      "last_pushed_at": "2026-07-27T15:16:37Z"
+    },
+    "mgifford/edu-scans": {
+      "last_scanned": "2026-10-04T18:26:32.006Z",
+      "last_pushed_at": "2026-10-04T11:06:13Z"
+    },
+    "mgifford/eiii_crawler": {
+      "last_scanned": "2026-10-04T18:26:32.600Z",
+      "last_pushed_at": "2021-01-13T17:12:39Z"
+    },
+    "mgifford/eu-plus-government-scans": {
+      "last_scanned": "2026-10-04T18:26:33.185Z",
+      "last_pushed_at": "2026-10-04T17:28:08Z"
+    },
+    "mgifford/federal-contracting-skills": {
+      "last_scanned": "2026-10-04T18:26:33.758Z",
+      "last_pushed_at": "2026-04-17T02:24:17Z"
+    },
+    "mgifford/Find-Overlays": {
+      "last_scanned": "2026-10-04T18:26:34.365Z",
+      "last_pushed_at": "2026-05-23T07:57:38Z"
+    }
+  }
 }

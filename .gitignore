@@ -21,5 +21,7 @@ npm-debug.log*
 *.tmp
 test-collapsible.html
 
-# Generated maintenance rollup (published as a workflow artifact, not committed)
+# Full rollup with exact Dependabot alert counts: private workflow artifact
+# only, never committed. maintenance-rollup.public.json (the reduced,
+# published version) is intentionally NOT listed here — it is committed.
 /maintenance-rollup.json
