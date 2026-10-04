@@ -34,6 +34,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  issues: write # required to create a missing "maintenance:*" label; see ensure-maintenance-labels.sh
 
 concurrency:
   group: dependabot-pilot-${{ github.event.pull_request.number }}
@@ -70,6 +71,11 @@ jobs:
           PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
           REPO_FULL_NAME: ${{ github.repository }}
         run: node .github/scripts/classify-dependabot-pr.js
+
+      - name: Ensure maintenance:* labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/ensure-maintenance-labels.sh
 
       - name: Apply labels
         env:
