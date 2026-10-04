@@ -1,5 +1,12 @@
 {
   "policy_version": "1.0.0",
+  "discovery": {
+    "owners": ["mgifford", "CivicActions"],
+    "exclude_forks": true,
+    "exclude_archived": true,
+    "max_repos_per_run": 50,
+    "rescan_prs_after_days": 7
+  },
   "repositories": {
     "include": ["mgifford/tune-my-repos"],
     "exclude": []

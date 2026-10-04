@@ -10,9 +10,40 @@
 
 policy_version: "1.0.0"
 
+# Controls auto-discovery of repositories via the GitHub API (scripts/
+# generate-maintenance-rollup.js), as an alternative to listing every
+# repository by hand in repositories.include below. Discovery finds
+# candidate repositories; repositories.include/exclude (below) is still
+# applied afterward as the final filter, so an owner being listed here does
+# not bypass an explicit exclude pattern there.
+discovery:
+  # Only repositories owned by one of these GitHub users/orgs are
+  # considered. This is the actual restriction on scan scope: the
+  # authenticated token may have access to many more orgs than this.
+  owners:
+    - "mgifford"
+    - "CivicActions"
+  exclude_forks: true
+  exclude_archived: true
+  # At most this many repositories are scanned (alerts + PRs + CI status)
+  # in a single workflow run, oldest-last-scanned first. Keeps each
+  # scheduled run fast and rate-limit-safe even when discovery finds
+  # hundreds of candidate repositories; coverage builds up over several
+  # runs via maintenance-scan-state.json rather than all at once.
+  max_repos_per_run: 50
+  # A repository whose pushed_at is unchanged since its last full scan
+  # skips the expensive PR/CI-status work, but its Dependabot alerts are
+  # always re-checked regardless (cheap, and a new CVE can appear against
+  # an already-installed version with no new push).
+  rescan_prs_after_days: 7
+
 # Repositories this policy applies to. "include" patterns are evaluated
 # first; "exclude" patterns remove matches afterward. Patterns are
-# "owner/repo" exact strings or "owner/*" glob-style prefixes.
+# "owner/repo" exact strings or "owner/*" glob-style prefixes. Discovery
+# results (above) still pass through this filter, so widening discovery.owners
+# alone does not expand what actually gets scanned — include must be widened
+# too (e.g. to "mgifford/*", "CivicActions/*") once ready to scan beyond the
+# pilot repository.
 repositories:
   include:
     - "mgifford/tune-my-repos"

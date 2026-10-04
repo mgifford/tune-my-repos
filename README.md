@@ -148,16 +148,36 @@ remains the merge gate for every change.
 - **`fixtures/maintenance-rollup.sample.json`** - static sample rollup so the dashboard can be reviewed
   without any GitHub credentials.
 - **`scripts/generate-maintenance-rollup.js`** - calls the GitHub REST API read-only for every repository
-  in policy scope, classifies each open Dependabot PR through `policy/policy-engine.js`, redacts
-  anything token-shaped, caps text fields, and writes a schema-conformant `maintenance-rollup.json`.
-  Runs with reduced coverage (reported as `unknown`, never guessed) when no token is available.
+  in policy scope (every API call it makes to a *scanned* repository is a read), classifies each open
+  Dependabot PR through `policy/policy-engine.js`, redacts anything token-shaped, caps text fields, and
+  writes a schema-conformant `maintenance-rollup.json`. Runs with reduced coverage (reported as
+  `unknown`, never guessed) when no token is available.
+- **Repository discovery and scan scope** (`maintenance-policy.yml`'s `discovery` section) - when
+  `repositories.include` contains an `"owner/*"` glob, candidate repositories are discovered via the
+  GitHub API across `discovery.owners` (default: `mgifford`, `CivicActions`) rather than listed by hand.
+  `discovery.exclude_forks` / `exclude_archived` (both default `true`) drop noise before anything is
+  scanned; `repositories.include`/`exclude` patterns are still applied afterward as the final filter, so
+  widening `discovery.owners` alone does not widen what is actually scanned. **As of this writing,
+  `repositories.include` is still the single exact entry `mgifford/tune-my-repos`** — discovery across
+  the full `mgifford`/`CivicActions` owner set is built and tested but not yet turned on; widening
+  `repositories.include` to `"mgifford/*"` / `"CivicActions/*"` is a deliberate follow-up decision, not
+  a side effect of this change.
+- **`maintenance-scan-state.json`** (committed) / **`policy/scan-state.js`** - tracks when each
+  repository was last scanned. A repository whose `pushed_at` is unchanged since its last scan skips the
+  expensive PR/CI-status work (`discovery.rescan_prs_after_days`, default 7, forces a rescan regardless)
+  — but Dependabot alerts are always re-checked every run, since a new alert can appear against an
+  unchanged dependency with no new push. `discovery.max_repos_per_run` (default 50) caps how many
+  repositories one run processes, oldest-scanned-first, so coverage across a large owner builds up over
+  several scheduled runs instead of one very long/expensive run.
 - **`.github/workflows/maintenance-inventory.yml`** - runs the script on a weekly schedule or on demand.
   Defaults to dry-run on manual dispatch (prints the rollup, writes nothing); scheduled runs publish the
   rollup as a 90-day workflow artifact. It never writes to, labels, comments on, or merges anything in
-  any repository — read-only end to end. Works with or without the optional `MAINTENANCE_RO_TOKEN`
-  repository secret (a fine-grained PAT scoped to read-only Metadata, Dependabot alerts, and Pull
-  requests); without it, Dependabot alert and branch-protection coverage report as `unknown` rather than
-  failing the run.
+  any repository it *scans*. It does commit one file in *this* repository —
+  `maintenance-scan-state.json` — and does so through a small pull request that must pass the same
+  required `npm test` check as any other change to `main`, rather than bypassing branch protection.
+  Works with or without the optional `MAINTENANCE_RO_TOKEN` repository secret (a fine-grained PAT scoped
+  to read-only Metadata, Dependabot alerts, and Pull requests); without it, Dependabot alert and
+  branch-protection coverage report as `unknown` rather than failing the run.
 
 ### Security alert visibility on the public dashboard
 
