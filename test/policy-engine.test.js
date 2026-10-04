@@ -71,8 +71,8 @@ test('isRepositoryInPolicy: included repo is in scope', () => {
   assert.equal(isRepositoryInPolicy(policy, 'mgifford/tune-my-repos'), true);
 });
 
-test('isRepositoryInPolicy: repo not listed is out of scope', () => {
-  assert.equal(isRepositoryInPolicy(policy, 'mgifford/not-in-policy'), false);
+test('isRepositoryInPolicy: repo under a different owner is out of scope', () => {
+  assert.equal(isRepositoryInPolicy(policy, 'someoneelse/not-in-policy'), false);
 });
 
 test('isRepositoryInPolicy: excluded repo overrides an include glob', () => {
@@ -132,8 +132,8 @@ test('findActiveOverride: ignores an expired override', () => {
   assert.equal(found, null);
 });
 
-test('classifyUpdate: repo outside policy scope is ignored', () => {
-  const result = classifyUpdate(policy, baseUpdate({ repository: 'mgifford/not-in-policy' }));
+test('classifyUpdate: repo under a different owner outside policy scope is ignored', () => {
+  const result = classifyUpdate(policy, baseUpdate({ repository: 'someoneelse/not-in-policy' }));
   assert.equal(result.risk_state, 'ignored');
 });
 

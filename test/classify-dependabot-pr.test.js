@@ -30,11 +30,11 @@ test('classifyPrMetadata: a major github-actions bump always needs review', () =
   assert.equal(result.risk_state, 'needs_review');
 });
 
-test('classifyPrMetadata: a repository outside policy scope is ignored, never eligible', () => {
+test('classifyPrMetadata: a repository under a different owner outside policy scope is ignored, never eligible', () => {
   const result = classifyPrMetadata(policy, {
     title: 'Bump actions/setup-node from 7.0.0 to 7.0.1',
     labelNames: ['dependencies', 'github-actions'],
-    repository: 'mgifford/not-in-policy',
+    repository: 'someoneelse/not-in-policy',
   });
   assert.equal(result.risk_state, 'ignored');
 });
