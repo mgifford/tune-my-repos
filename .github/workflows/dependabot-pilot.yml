@@ -1,0 +1,117 @@
+name: Dependabot Pilot
+
+# Pilot workflow for tune-my-repos only (see rollout checklist in
+# PRIORITIES_CONFIG.md / README.md before copying to another repository).
+#
+# Two independent jobs, both restricted to PRs opened by dependabot[bot]:
+#
+#   1. label: deterministically labels a Dependabot PR with its ecosystem,
+#      update type, and dependency class, using the same parsing logic as
+#      scripts/generate-maintenance-rollup.js. Read PR metadata only; never
+#      checks out or executes the PR's own branch content.
+#
+#   2. auto-merge: requests GitHub's native auto-merge (which itself waits
+#      for the branch ruleset's required "npm test" check) ONLY when:
+#        - the repository variable MAINTENANCE_AUTOMERGE_ENABLED is "true"
+#          (opt-in, disabled by default)
+#        - policy/policy-engine.js classifies the update as "eligible"
+#      Every update the policy marks as needs_review / needs_repair /
+#      blocked / ignored is left untouched for a human to merge manually.
+#      This workflow never bypasses or overrides required checks: it asks
+#      GitHub to merge automatically once they pass, same as a human
+#      clicking "Enable auto-merge" would.
+#
+# Uses pull_request_target deliberately so the workflow has write access to
+# label/merge even though Dependabot PRs may run with restricted
+# permissions, but it never checks out, builds, or executes any code from
+# the pull request branch itself — only PR metadata (title, labels, head
+# SHA) is read, and that SHA is used solely to pass to `gh pr merge`.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: dependabot-pilot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  label:
+    name: Label Dependabot PR
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout policy files from base branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: |
+            policy
+            maintenance-policy.json
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+
+      - name: Classify and label
+        id: classify
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          REPO_FULL_NAME: ${{ github.repository }}
+        run: node .github/scripts/classify-dependabot-pr.js
+
+      - name: Apply labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit "${{ github.event.pull_request.number }}" \
+            --add-label "maintenance:${{ steps.classify.outputs.dependency_class }}" \
+            --add-label "maintenance:${{ steps.classify.outputs.update_type }}" \
+            --add-label "maintenance:${{ steps.classify.outputs.risk_state }}"
+
+  auto-merge:
+    name: Request auto-merge if eligible
+    needs: label
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && vars.MAINTENANCE_AUTOMERGE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout policy files from base branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: |
+            policy
+            maintenance-policy.json
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+
+      - name: Classify
+        id: classify
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          REPO_FULL_NAME: ${{ github.repository }}
+        run: node .github/scripts/classify-dependabot-pr.js
+
+      - name: Enable auto-merge for eligible updates only
+        if: steps.classify.outputs.risk_state == 'eligible'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge --auto --squash \
+            --match-head-commit "${{ github.event.pull_request.head.sha }}" \
+            "${{ github.event.pull_request.number }}"
