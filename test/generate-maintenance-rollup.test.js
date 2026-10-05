@@ -7,7 +7,9 @@ const {
   parseDependabotTitle,
   semverParts,
   inferUpdateType,
-  inferDependencyClass,
+  inferDependencyClassFromLabels,
+  classifyFromPackageJson,
+  detectEcosystemFromFiles,
   computeRecommendedAction,
   computeHasUrgentAlerts,
   filterDiscoveredRepos,
@@ -93,16 +95,55 @@ test('inferUpdateType: returns unknown when versions are not parseable', () => {
   assert.equal(inferUpdateType('latest', 'next'), 'unknown');
 });
 
-test('inferDependencyClass: github_actions ecosystem is always github-actions', () => {
-  assert.equal(inferDependencyClass({ labels: [] }, 'github_actions'), 'github-actions');
+test('inferDependencyClassFromLabels: a devDependencies label maps to development', () => {
+  assert.equal(inferDependencyClassFromLabels({ labels: [{ name: 'devDependencies' }] }), 'development');
 });
 
-test('inferDependencyClass: a devDependencies label maps to development', () => {
-  assert.equal(inferDependencyClass({ labels: [{ name: 'devDependencies' }] }, 'npm'), 'development');
+test('inferDependencyClassFromLabels: no identifying label returns null, not a guess', () => {
+  assert.equal(inferDependencyClassFromLabels({ labels: [{ name: 'dependencies' }] }), null);
 });
 
-test('inferDependencyClass: no identifying label is unknown, not a guess', () => {
-  assert.equal(inferDependencyClass({ labels: [{ name: 'dependencies' }] }, 'npm'), 'unknown');
+test('inferDependencyClassFromLabels: no labels at all returns null', () => {
+  assert.equal(inferDependencyClassFromLabels({ labels: [] }), null);
+});
+
+test('classifyFromPackageJson: a dependency listed in devDependencies is development', () => {
+  const pkg = { devDependencies: { eslint: '^8.0.0' }, dependencies: {} };
+  assert.equal(classifyFromPackageJson(pkg, 'eslint'), 'development');
+});
+
+test('classifyFromPackageJson: a dependency listed in dependencies is production', () => {
+  const pkg = { devDependencies: {}, dependencies: { express: '^4.0.0' } };
+  assert.equal(classifyFromPackageJson(pkg, 'express'), 'production');
+});
+
+test('classifyFromPackageJson: a transitive dependency not listed directly returns null, not a guess', () => {
+  const pkg = { devDependencies: { svgo: '^3.0.0' }, dependencies: {} };
+  assert.equal(classifyFromPackageJson(pkg, 'js-yaml'), null);
+});
+
+test('classifyFromPackageJson: a missing/unparseable package.json returns null', () => {
+  assert.equal(classifyFromPackageJson(null, 'eslint'), null);
+});
+
+test('detectEcosystemFromFiles: a workflow file change is github_actions', () => {
+  assert.equal(detectEcosystemFromFiles(['.github/workflows/ci.yml']), 'github_actions');
+});
+
+test('detectEcosystemFromFiles: a lockfile-only change is npm', () => {
+  assert.equal(detectEcosystemFromFiles(['package-lock.json']), 'npm');
+});
+
+test('detectEcosystemFromFiles: a nested package.json change is npm', () => {
+  assert.equal(detectEcosystemFromFiles(['packages/app/package.json']), 'npm');
+});
+
+test('detectEcosystemFromFiles: a composer lockfile change is composer', () => {
+  assert.equal(detectEcosystemFromFiles(['composer.lock']), 'composer');
+});
+
+test('detectEcosystemFromFiles: an unrecognized file set is unknown', () => {
+  assert.equal(detectEcosystemFromFiles(['README.md']), 'unknown');
 });
 
 test('computeRecommendedAction: urgent security alerts take priority over everything else', () => {

@@ -157,15 +157,72 @@ function inferUpdateType(versionFrom, versionTo) {
   return 'patch';
 }
 
-function inferDependencyClass(pr, ecosystem) {
-  if (ecosystem === 'github_actions') return 'github-actions';
+function inferDependencyClassFromLabels(pr) {
   const labels = (pr.labels || []).map((l) => l.name.toLowerCase());
   if (labels.some((l) => ['devdependencies', 'development', 'test', 'lint'].includes(l))) {
     return 'development';
   }
-  // Without manifest inspection we cannot reliably tell production from
-  // development for ecosystems that don't label it. Declare unknown rather
-  // than guessing — the policy routes unknown to needs_review by default.
+  return null;
+}
+
+/**
+ * Looks up a dependency name in a parsed package.json's dependencies /
+ * devDependencies maps. Pure function, no network access. Returns null
+ * (not "unknown") for a transitive dependency that isn't listed directly
+ * — the caller must fall back to "unknown" explicitly, since this
+ * function cannot distinguish "not found because transitive" from
+ * "not found because it's the wrong manifest".
+ * @param {object} packageJson - parsed package.json content
+ * @param {string} dependencyName
+ * @returns {'production'|'development'|null}
+ */
+function classifyFromPackageJson(packageJson, dependencyName) {
+  if (packageJson?.devDependencies && dependencyName in packageJson.devDependencies) {
+    return 'development';
+  }
+  if (packageJson?.dependencies && dependencyName in packageJson.dependencies) {
+    return 'production';
+  }
+  return null;
+}
+
+async function fetchPackageJson(repoFullName, ref) {
+  const result = await githubFetch(
+    `/repos/${repoFullName}/contents/package.json?ref=${encodeURIComponent(ref)}`,
+    { allow404: true }
+  );
+  if (!result.ok || !result.data?.content) return null;
+  try {
+    const decoded = Buffer.from(result.data.content, 'base64').toString('utf8');
+    return JSON.parse(decoded);
+  } catch {
+    return null; // malformed or unexpectedly-shaped content; never throw on untrusted repo data
+  }
+}
+
+/**
+ * Determines a PR's dependency class: labels first (cheap, already
+ * fetched), falling back to reading the base branch's package.json for
+ * npm PRs when no identifying label exists. A direct dependency not found
+ * in the manifest is assumed transitive and left "unknown" rather than
+ * guessed — see classifyFromPackageJson.
+ */
+async function inferDependencyClass(pr, ecosystem, repoFullName, dependencyName, baseRef) {
+  if (ecosystem === 'github_actions') return 'github-actions';
+
+  const fromLabel = inferDependencyClassFromLabels(pr);
+  if (fromLabel) return fromLabel;
+
+  if (ecosystem === 'npm' && dependencyName !== 'unknown') {
+    const packageJson = await fetchPackageJson(repoFullName, baseRef);
+    const fromManifest = classifyFromPackageJson(packageJson, dependencyName);
+    if (fromManifest) return fromManifest;
+  }
+
+  // Without a label or a direct manifest entry (e.g. a transitive
+  // dependency, or an ecosystem without manifest support yet), we cannot
+  // reliably classify. Declare unknown rather than guessing — the policy
+  // routes unknown to needs_review by default.
   return 'unknown';
 }
 
@@ -224,6 +281,26 @@ async function fetchRequiredChecksStatus(repoFullName, pr) {
   return 'pending';
 }
 
+async function fetchChangedFiles(repoFullName, pr) {
+  const result = await githubFetch(`/repos/${repoFullName}/pulls/${pr.number}/files?per_page=100`, { allow404: true });
+  if (!result.ok) return [];
+  return result.data.map((f) => f.filename);
+}
+
+/**
+ * Pure: maps a PR's changed file names to a package ecosystem. Dependabot
+ * always changes a recognizable manifest/lockfile for the ecosystem it's
+ * updating, so this is a reliable signal independent of labels.
+ * @param {string[]} filenames
+ * @returns {string} one of 'npm', 'github_actions', 'composer', 'unknown'
+ */
+function detectEcosystemFromFiles(filenames) {
+  if (filenames.some((f) => f.startsWith('.github/workflows/'))) return 'github_actions';
+  if (filenames.some((f) => /(^|\/)(package\.json|package-lock\.json|yarn\.lock|pnpm-lock\.yaml)$/.test(f))) return 'npm';
+  if (filenames.some((f) => /(^|\/)(composer\.json|composer\.lock)$/.test(f))) return 'composer';
+  return 'unknown';
+}
+
 async function fetchFailedCheckDetail(repoFullName, pr) {
   const result = await githubFetch(`/repos/${repoFullName}/commits/${pr.head.sha}/check-runs`, { allow404: true });
   if (!result.ok) return null;
@@ -270,15 +347,14 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
   const failedUpdatePrs = [];
 
   for (const pr of pulls) {
-    const ecosystem = (pr.labels || []).some((l) => l.name === 'github_actions' || l.name === 'github-actions')
-      ? 'github_actions'
-      : 'unknown';
+    const changedFiles = await fetchChangedFiles(repoFullName, pr);
+    const ecosystem = detectEcosystemFromFiles(changedFiles);
     const parsed = parseDependabotTitle(pr.title);
     const dependencyName = parsed?.dependencyName || 'unknown';
     const versionFrom = parsed?.versionFrom || 'unknown';
     const versionTo = parsed?.versionTo || 'unknown';
     const updateType = parsed ? inferUpdateType(versionFrom, versionTo) : 'unknown';
-    const dependencyClass = inferDependencyClass(pr, ecosystem);
+    const dependencyClass = await inferDependencyClass(pr, ecosystem, repoFullName, dependencyName, pr.base.ref);
 
     const ciStatus = await fetchRequiredChecksStatus(repoFullName, pr);
     const requiredCheckFailed = ciStatus === 'failing';
@@ -499,6 +575,9 @@ module.exports = {
   semverParts,
   inferUpdateType,
   inferDependencyClass,
+  inferDependencyClassFromLabels,
+  classifyFromPackageJson,
+  detectEcosystemFromFiles,
   computeRecommendedAction,
   computeHasUrgentAlerts,
   filterDiscoveredRepos,
