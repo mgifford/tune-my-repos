@@ -7,7 +7,11 @@
  * so labeling and the rollup can never disagree.
  *
  * Reads only PR metadata (title, labels) passed in via env vars — never
- * executes or inspects the PR branch's own code.
+ * executes or inspects the PR branch's own code. Deliberately uses
+ * label-only dependency-class detection (not the manifest-content lookup
+ * scripts/generate-maintenance-rollup.js also supports): this runs
+ * per-PR on every labeled event, and the repository this pilots on today
+ * already has the labels it needs — see maintenance-label-names.js.
  */
 
 const fs = require('node:fs');
@@ -16,7 +20,7 @@ const path = require('node:path');
 const {
   parseDependabotTitle,
   inferUpdateType,
-  inferDependencyClass,
+  inferDependencyClassFromLabels,
 } = require('../../scripts/generate-maintenance-rollup.js');
 const { classifyUpdate } = require('../../policy/policy-engine.js');
 
@@ -38,7 +42,9 @@ function classifyPrMetadata(policy, pr) {
   const versionFrom = parsed?.versionFrom || 'unknown';
   const versionTo = parsed?.versionTo || 'unknown';
   const updateType = parsed ? inferUpdateType(versionFrom, versionTo) : 'unknown';
-  const dependencyClass = inferDependencyClass({ labels }, ecosystem);
+  const dependencyClass = ecosystem === 'github_actions'
+    ? 'github-actions'
+    : inferDependencyClassFromLabels({ labels }) || 'unknown';
 
   // IMPORTANT: risk_state here answers "is this class of update ever
   // eligible for auto-merge" (a policy question, computed as if CI had
