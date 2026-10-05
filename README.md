@@ -167,8 +167,13 @@ remains the merge gate for every change.
   expensive PR/CI-status work (`discovery.rescan_prs_after_days`, default 7, forces a rescan regardless)
   — but Dependabot alerts are always re-checked every run, since a new alert can appear against an
   unchanged dependency with no new push. `discovery.max_repos_per_run` (default 50) caps how many
-  repositories one run processes, oldest-scanned-first, so coverage across a large owner builds up over
-  several scheduled runs instead of one very long/expensive run.
+  repositories one run processes. Ordering (`orderByActivityThenStaleness`) prioritizes coverage first
+  (never-scanned repositories always come before already-scanned ones) and, within each of those two
+  groups, more recently pushed-to repositories before long-dormant ones — so actively maintained work
+  surfaces issues first, while coverage of everything still builds up over several scheduled runs rather
+  than one very long/expensive run. Forks and archived repositories are excluded entirely before this
+  ordering ever runs (`discovery.exclude_forks` / `exclude_archived`, both default `true`) — this
+  project's own work takes priority over code merely hosted in the same account.
 - **`.github/workflows/maintenance-inventory.yml`** - runs the script on a weekly schedule or on demand.
   Defaults to dry-run on manual dispatch (prints the rollup, writes nothing); scheduled runs publish the
   rollup as a 90-day workflow artifact. It never writes to, labels, comments on, or merges anything in
@@ -236,12 +241,28 @@ Before copying this pilot to another repository:
    config blindly.
 3. [ ] Set up branch protection / a ruleset on the repository's default branch requiring at least one
    real CI check to pass (the repository's own test suite, not `tune-my-repos`' `npm test`).
-4. [ ] Copy `.github/workflows/dependabot-pilot.yml` and `.github/scripts/classify-dependabot-pr.js`,
-   updating the policy file path if the repository structure differs.
+4. [ ] Copy `.github/workflows/dependabot-pilot.yml`, `.github/scripts/classify-dependabot-pr.js`,
+   `.github/scripts/ensure-maintenance-labels.sh`, and `.github/scripts/maintenance-label-names.js` as-is
+   — no path edits needed. The workflow fetches a fresh, read-only copy of the policy engine (`policy/`,
+   `scripts/`, `maintenance-policy.json`) from `mgifford/tune-my-repos` on every run (see
+   `POLICY_ROOT` in `classify-dependabot-pr.js`), so these four files are the only things that live in
+   the pilot repository itself; a future policy or bug fix in `tune-my-repos` takes effect on the next PR
+   event with no manual re-sync.
 5. [ ] Leave `MAINTENANCE_AUTOMERGE_ENABLED` unset (auto-merge off) for at least one full review cycle of
    labeled-but-not-merged PRs before enabling it.
 6. [ ] Confirm with the repository's actual maintainer(s) — not just `mgifford` — before enabling
    auto-merge on a repository with other contributors.
+
+### Tracked follow-up: package-swap suggestions (not built yet)
+
+Idea, not yet designed or built: suggest (never automatically apply) swapping a poorly-supported
+dependency for a better-supported alternative in the same role — e.g. a package with no release in
+years and a pile of open security advisories, versus a well-maintained equivalent. This is explicitly
+a **suggestion surfaced to a human**, never an automated action; nothing in this policy model may ever
+choose a replacement dependency on its own. Needs real design before building: what signals indicate
+"better supported" (release recency, maintainer count, open advisory count — some combination, pulled
+from where), where the suggestion surfaces (a new rollup field? a separate report?), and how false
+positives are avoided (a less-active package is not automatically worse — some are simply stable).
 
 ## GitHub Actions Integration
 

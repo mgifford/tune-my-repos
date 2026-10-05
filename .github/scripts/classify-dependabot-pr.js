@@ -12,17 +12,28 @@
  * scripts/generate-maintenance-rollup.js also supports): this runs
  * per-PR on every labeled event, and the repository this pilots on today
  * already has the labels it needs — see maintenance-label-names.js.
+ *
+ * POLICY_ROOT env var: the directory containing policy/, scripts/, and
+ * maintenance-policy.json. Defaults to this script's own repo root (the
+ * tune-my-repos pilot, where those files live alongside this one). A
+ * pilot repo other than tune-my-repos sets POLICY_ROOT to wherever its
+ * workflow checked out a read-only copy of tune-my-repos (the single
+ * source of truth for policy logic — see dependabot-pilot.yml's
+ * "Checkout shared policy engine" step) rather than duplicating these
+ * files into every pilot repo.
  */
 
 const fs = require('node:fs');
 const path = require('node:path');
 
+const policyRoot = process.env.POLICY_ROOT || path.join(__dirname, '..', '..');
+
 const {
   parseDependabotTitle,
   inferUpdateType,
   inferDependencyClassFromLabels,
-} = require('../../scripts/generate-maintenance-rollup.js');
-const { classifyUpdate } = require('../../policy/policy-engine.js');
+} = require(path.join(policyRoot, 'scripts', 'generate-maintenance-rollup.js'));
+const { classifyUpdate } = require(path.join(policyRoot, 'policy', 'policy-engine.js'));
 
 /**
  * Pure classification step, factored out for unit testing.
@@ -77,7 +88,7 @@ function classifyPrMetadata(policy, pr) {
 
 function main() {
   const policy = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '..', '..', 'maintenance-policy.json'), 'utf8')
+    fs.readFileSync(path.join(policyRoot, 'maintenance-policy.json'), 'utf8')
   );
 
   const result = classifyPrMetadata(policy, {

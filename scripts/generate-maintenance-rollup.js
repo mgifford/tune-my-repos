@@ -20,7 +20,7 @@ const path = require('node:path');
 
 const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.js');
 const { validatePolicySchema } = require('../policy/policy-validator.js');
-const { canSkipPrWork, recordScan, orderByStaleness } = require('../policy/scan-state.js');
+const { canSkipPrWork, recordScan, orderByActivityThenStaleness } = require('../policy/scan-state.js');
 const { redactExactAlertCounts } = require('../policy/public-redaction.js');
 
 const MAX_FAILURE_SUMMARY_CHARS = 500;
@@ -502,7 +502,7 @@ async function main() {
   }
 
   const pushedAtByRepo = await resolveCandidateRepos(policy);
-  const orderedRepos = orderByStaleness(scanState, [...pushedAtByRepo.keys()]);
+  const orderedRepos = orderByActivityThenStaleness(scanState, [...pushedAtByRepo.keys()], pushedAtByRepo);
   const reposThisRun = orderedRepos.slice(0, policy.discovery.max_repos_per_run);
 
   const repositories = [];
