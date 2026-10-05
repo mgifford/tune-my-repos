@@ -74,7 +74,47 @@ function orderByStaleness(state, repoFullNames) {
   });
 }
 
-const ScanState = { DEFAULT_STATE, getRepoState, canSkipPrWork, recordScan, orderByStaleness };
+/**
+ * Orders candidate repositories for a scan run, prioritizing the user's
+ * own actively-maintained work over long-dormant ones within the same
+ * coverage tier. Never-scanned repositories still come before
+ * already-scanned ones (coverage first), but within each of those two
+ * groups, more recently pushed-to repositories sort first — surfacing
+ * issues on code being actively worked on ahead of code that hasn't
+ * changed in years. forks and archived repositories are excluded well
+ * before this function runs (see discovery.exclude_forks /
+ * exclude_archived in maintenance-policy.yml), so "recently pushed"
+ * here is a proxy for "actively maintained by the user", not a
+ * substitute for that exclusion.
+ * @param {object} state - scan state, as orderByStaleness takes
+ * @param {string[]} repoFullNames
+ * @param {Map<string, string|null>} pushedAtByRepo - repo full_name -> pushed_at ISO string (or null if unknown)
+ * @returns {string[]}
+ */
+function orderByActivityThenStaleness(state, repoFullNames, pushedAtByRepo) {
+  const pushedAtMs = (name) => {
+    const iso = pushedAtByRepo.get(name);
+    return iso ? new Date(iso).getTime() : -Infinity; // unknown pushed_at sorts as least-recent
+  };
+
+  return [...repoFullNames].sort((a, b) => {
+    const aScanned = Boolean(getRepoState(state, a)?.last_scanned);
+    const bScanned = Boolean(getRepoState(state, b)?.last_scanned);
+    if (aScanned !== bScanned) return aScanned ? 1 : -1; // never-scanned group comes first
+
+    // Within the same coverage tier, more recently pushed-to sorts first.
+    return pushedAtMs(b) - pushedAtMs(a);
+  });
+}
+
+const ScanState = {
+  DEFAULT_STATE,
+  getRepoState,
+  canSkipPrWork,
+  recordScan,
+  orderByStaleness,
+  orderByActivityThenStaleness,
+};
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = ScanState;

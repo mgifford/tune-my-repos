@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { getRepoState, canSkipPrWork, recordScan, orderByStaleness } = require('../policy/scan-state.js');
+const { getRepoState, canSkipPrWork, recordScan, orderByStaleness, orderByActivityThenStaleness } = require('../policy/scan-state.js');
 
 function stateWith(entries) {
   return { schema_version: '1.0.0', repositories: entries };
@@ -81,4 +81,55 @@ test('orderByStaleness: does not mutate the input array', () => {
   const input = ['mgifford/b', 'mgifford/a'];
   orderByStaleness(state, input);
   assert.deepEqual(input, ['mgifford/b', 'mgifford/a']);
+});
+
+test('orderByActivityThenStaleness: never-scanned repos come before already-scanned ones regardless of push recency', () => {
+  const state = stateWith({ 'mgifford/scanned': { last_scanned: '2026-10-01T00:00:00Z', last_pushed_at: 'x' } });
+  const pushedAt = new Map([
+    ['mgifford/scanned', '2026-10-04T00:00:00Z'], // very recently pushed, but already scanned
+    ['mgifford/never-scanned', '2020-01-01T00:00:00Z'], // dormant, but never scanned
+  ]);
+  const ordered = orderByActivityThenStaleness(state, ['mgifford/scanned', 'mgifford/never-scanned'], pushedAt);
+  assert.deepEqual(ordered, ['mgifford/never-scanned', 'mgifford/scanned']);
+});
+
+test('orderByActivityThenStaleness: among never-scanned repos, more recently pushed sorts first', () => {
+  const state = stateWith({});
+  const pushedAt = new Map([
+    ['mgifford/dormant', '2020-01-01T00:00:00Z'],
+    ['mgifford/active', '2026-10-01T00:00:00Z'],
+  ]);
+  const ordered = orderByActivityThenStaleness(state, ['mgifford/dormant', 'mgifford/active'], pushedAt);
+  assert.deepEqual(ordered, ['mgifford/active', 'mgifford/dormant']);
+});
+
+test('orderByActivityThenStaleness: among already-scanned repos, more recently pushed sorts first', () => {
+  const state = stateWith({
+    'mgifford/dormant': { last_scanned: '2026-10-01T00:00:00Z', last_pushed_at: 'x' },
+    'mgifford/active': { last_scanned: '2026-10-01T00:00:00Z', last_pushed_at: 'x' },
+  });
+  const pushedAt = new Map([
+    ['mgifford/dormant', '2020-01-01T00:00:00Z'],
+    ['mgifford/active', '2026-10-01T00:00:00Z'],
+  ]);
+  const ordered = orderByActivityThenStaleness(state, ['mgifford/dormant', 'mgifford/active'], pushedAt);
+  assert.deepEqual(ordered, ['mgifford/active', 'mgifford/dormant']);
+});
+
+test('orderByActivityThenStaleness: an unknown pushed_at sorts as least-recent, not crash', () => {
+  const state = stateWith({});
+  const pushedAt = new Map([
+    ['mgifford/known', '2026-10-01T00:00:00Z'],
+    ['mgifford/unknown', null],
+  ]);
+  const ordered = orderByActivityThenStaleness(state, ['mgifford/unknown', 'mgifford/known'], pushedAt);
+  assert.deepEqual(ordered, ['mgifford/known', 'mgifford/unknown']);
+});
+
+test('orderByActivityThenStaleness: does not mutate the input array', () => {
+  const state = stateWith({});
+  const pushedAt = new Map([['mgifford/a', '2026-10-01T00:00:00Z'], ['mgifford/b', '2026-10-02T00:00:00Z']]);
+  const input = ['mgifford/a', 'mgifford/b'];
+  orderByActivityThenStaleness(state, input, pushedAt);
+  assert.deepEqual(input, ['mgifford/a', 'mgifford/b']);
 });
