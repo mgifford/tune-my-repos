@@ -14,6 +14,65 @@
     margin-bottom: calc(var(--spacing) / 2);
 }
 
+.accordion-item {
+    margin-bottom: var(--spacing);
+}
+
+.accordion-heading {
+    margin: 0;
+}
+
+.accordion-trigger {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) / 2);
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    min-height: 44px;
+}
+
+.accordion-trigger:hover {
+    background: none;
+    color: var(--primary-color);
+}
+
+.accordion-icon {
+    flex-shrink: 0;
+    width: 0.6em;
+    height: 0.6em;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.15s ease;
+}
+
+.accordion-trigger[aria-expanded="false"] .accordion-icon {
+    transform: rotate(-45deg);
+}
+
+.accordion-panel {
+    margin-top: var(--spacing);
+}
+
+.accordion-panel[hidden] {
+    display: none;
+}
+
+.accordion-controls {
+    display: flex;
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+}
+
 .section-note {
     color: var(--text-secondary);
     margin-bottom: var(--spacing);
