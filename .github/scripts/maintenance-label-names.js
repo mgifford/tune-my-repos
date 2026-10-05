@@ -9,9 +9,14 @@
  *
  * Deterministic, pure, no network access. Printed one name per line when
  * run directly, for ensure-maintenance-labels.sh to consume.
+ *
+ * POLICY_ROOT env var: see classify-dependabot-pr.js for the full
+ * explanation. Defaults to this script's own repo root.
  */
 
-const { VALID_DEPENDENCY_CLASSES, VALID_UPDATE_TYPES, VALID_RISK_STATES } = require('../../policy/policy-engine.js');
+const path = require('node:path');
+const policyRoot = process.env.POLICY_ROOT || path.join(__dirname, '..', '..');
+const { VALID_DEPENDENCY_CLASSES, VALID_UPDATE_TYPES, VALID_RISK_STATES } = require(path.join(policyRoot, 'policy', 'policy-engine.js'));
 
 function getMaintenanceLabelNames() {
   const updateTypesIncludingUnknown = [...new Set([...VALID_UPDATE_TYPES, 'unknown'])];
