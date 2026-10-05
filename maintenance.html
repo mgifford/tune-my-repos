@@ -44,38 +44,80 @@
             <p id="rollupMeta" class="rollup-meta" role="status"></p>
         </section>
 
-        <section id="unavailableSection" class="maintenance-section" aria-labelledby="unavailableHeading" hidden>
-            <h2 id="unavailableHeading">⚪ Unavailable or unknown data</h2>
-            <p class="section-note">
-                These coverage gaps mean a signal could not be verified — they are not evidence that a
-                repository is insecure or non-compliant.
-            </p>
-            <ul id="unavailableList" class="finding-list"></ul>
+        <div class="accordion" id="findingsAccordion">
+        <section id="unavailableSection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="unavailablePanel" id="unavailableHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    ⚪ Unavailable or unknown data
+                </button>
+            </h2>
+            <div id="unavailablePanel" class="accordion-panel" role="region" aria-labelledby="unavailableHeading">
+                <p class="section-note">
+                    These coverage gaps mean a signal could not be verified — they are not evidence that a
+                    repository is insecure or non-compliant.
+                </p>
+                <ul id="unavailableList" class="finding-list"></ul>
+            </div>
         </section>
 
-        <section id="urgentSection" class="maintenance-section" aria-labelledby="urgentHeading" hidden>
-            <h2 id="urgentHeading">🔴 Urgent security work</h2>
-            <p class="section-note">Open Dependabot alerts at critical or high severity.</p>
-            <ul id="urgentList" class="finding-list"></ul>
+        <section id="urgentSection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="urgentPanel" id="urgentHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    🔴 Urgent security work
+                </button>
+            </h2>
+            <div id="urgentPanel" class="accordion-panel" role="region" aria-labelledby="urgentHeading">
+                <p class="section-note">Open Dependabot alerts at critical or high severity.</p>
+                <ul id="urgentList" class="finding-list"></ul>
+            </div>
         </section>
 
-        <section id="failedSection" class="maintenance-section" aria-labelledby="failedHeading" hidden>
-            <h2 id="failedHeading">🟠 Failed maintenance PRs</h2>
-            <p class="section-note">Dependabot update PRs that failed a required CI check and need repair.</p>
-            <ul id="failedList" class="finding-list"></ul>
+        <section id="failedSection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="failedPanel" id="failedHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    🟠 Failed maintenance PRs
+                </button>
+            </h2>
+            <div id="failedPanel" class="accordion-panel" role="region" aria-labelledby="failedHeading">
+                <p class="section-note">Dependabot update PRs that failed a required CI check and need repair.</p>
+                <ul id="failedList" class="finding-list"></ul>
+            </div>
         </section>
 
-        <section id="eligibleSection" class="maintenance-section" aria-labelledby="eligibleHeading" hidden>
-            <h2 id="eligibleHeading">🟢 Eligible for low-risk merge</h2>
-            <p class="section-note">Updates the policy classifies as eligible once required checks pass. Normal repository CI remains the merge gate — this dashboard does not merge anything.</p>
-            <ul id="eligibleList" class="finding-list"></ul>
+        <section id="eligibleSection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="eligiblePanel" id="eligibleHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    🟢 Eligible for low-risk merge
+                </button>
+            </h2>
+            <div id="eligiblePanel" class="accordion-panel" role="region" aria-labelledby="eligibleHeading">
+                <p class="section-note">Updates the policy classifies as eligible once required checks pass. Normal repository CI remains the merge gate — this dashboard does not merge anything.</p>
+                <ul id="eligibleList" class="finding-list"></ul>
+            </div>
         </section>
 
-        <section id="reviewSection" class="maintenance-section" aria-labelledby="reviewHeading" hidden>
-            <h2 id="reviewHeading">🟡 Needs human decision</h2>
-            <p class="section-note">Production, major, lockfile-only, or unclassified updates that always require review.</p>
-            <ul id="reviewList" class="finding-list"></ul>
+        <section id="reviewSection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="reviewPanel" id="reviewHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    🟡 Needs human decision
+                </button>
+            </h2>
+            <div id="reviewPanel" class="accordion-panel" role="region" aria-labelledby="reviewHeading">
+                <p class="section-note">Production, major, lockfile-only, or unclassified updates that always require review.</p>
+                <ul id="reviewList" class="finding-list"></ul>
+            </div>
         </section>
+        </div>
+
+        <div class="accordion-controls">
+            <button type="button" id="expandAllBtn" class="secondary-btn">Expand all</button>
+            <button type="button" id="collapseAllBtn" class="secondary-btn">Collapse all</button>
+        </div>
 
         <section id="emptyState" class="maintenance-section" hidden>
             <p>No maintenance data loaded yet.</p>

@@ -269,4 +269,31 @@ rollupSourceSelect.addEventListener('change', () => {
 exportJsonBtn.addEventListener('click', exportAsJSON);
 exportMarkdownBtn.addEventListener('click', exportAsMarkdown);
 
+/**
+ * Accordion: each trigger button toggles its own panel via aria-expanded
+ * and the hidden attribute. Native <button> already gives Space/Enter
+ * activation and keyboard focus for free (WAI-ARIA APG disclosure
+ * pattern) — no custom key handling needed.
+ */
+function setTriggerExpanded(trigger, expanded) {
+    trigger.setAttribute('aria-expanded', String(expanded));
+    const panel = document.getElementById(trigger.getAttribute('aria-controls'));
+    if (panel) panel.hidden = !expanded;
+}
+
+const accordionTriggers = Array.from(document.querySelectorAll('.accordion-trigger'));
+for (const trigger of accordionTriggers) {
+    trigger.addEventListener('click', () => {
+        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+        setTriggerExpanded(trigger, !isExpanded);
+    });
+}
+
+document.getElementById('expandAllBtn').addEventListener('click', () => {
+    for (const trigger of accordionTriggers) setTriggerExpanded(trigger, true);
+});
+document.getElementById('collapseAllBtn').addEventListener('click', () => {
+    for (const trigger of accordionTriggers) setTriggerExpanded(trigger, false);
+});
+
 loadRollup(rollupSourceSelect.value);
