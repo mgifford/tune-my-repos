@@ -13,7 +13,7 @@ const {
   computeRecommendedAction,
   computeHasUrgentAlerts,
   filterDiscoveredRepos,
-} = require('../scripts/generate-maintenance-rollup.js');
+} = require('../scripts/generate-maintenance-rollup.cjs');
 
 test('redact: masks a classic PAT', () => {
   const text = `token is ghp_${'a'.repeat(36)} in the log`;

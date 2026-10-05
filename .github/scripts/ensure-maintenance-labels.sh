@@ -6,7 +6,7 @@
 # Idempotent: existing labels are left untouched, no --force overwrite.
 set -euo pipefail
 
-LABEL_NAMES=$(node "$(dirname "$0")/maintenance-label-names.js")
+LABEL_NAMES=$(node "$(dirname "$0")/maintenance-label-names.cjs")
 EXISTING=$(gh label list --json name -q '.[].name')
 
 while IFS= read -r name; do

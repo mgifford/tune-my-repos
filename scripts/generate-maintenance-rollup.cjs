@@ -2,14 +2,14 @@
 /**
  * Generates maintenance-rollup.json by calling the GitHub REST API for each
  * repository in maintenance-policy.json's scope, classifying every open
- * Dependabot PR through policy/policy-engine.js, and writing a bounded,
+ * Dependabot PR through policy/policy-engine.cjs, and writing a bounded,
  * redacted, schema-conformant rollup file.
  *
  * Deterministic: no AI, no inference beyond the explicit rules below. Any
  * signal that cannot be read (missing scope, 403, 404) is recorded as
  * "not_available" or "unknown" — never silently omitted, never guessed.
  *
- * Usage: node scripts/generate-maintenance-rollup.js [--dry-run]
+ * Usage: node scripts/generate-maintenance-rollup.cjs [--dry-run]
  * Env:   GITHUB_TOKEN or MAINTENANCE_RO_TOKEN - read-only PAT (optional;
  *        without one, only public, unauthenticated-rate-limited data is
  *        fetched, and alert/branch-protection coverage will read "unknown")
@@ -18,10 +18,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.js');
-const { validatePolicySchema } = require('../policy/policy-validator.js');
-const { canSkipPrWork, recordScan, orderByActivityThenStaleness } = require('../policy/scan-state.js');
-const { redactExactAlertCounts } = require('../policy/public-redaction.js');
+const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.cjs');
+const { validatePolicySchema } = require('../policy/policy-validator.cjs');
+const { canSkipPrWork, recordScan, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
+const { redactExactAlertCounts } = require('../policy/public-redaction.cjs');
 
 const MAX_FAILURE_SUMMARY_CHARS = 500;
 const MAX_REASON_CHARS = 500;
@@ -323,7 +323,7 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
   // Alerts are always fetched (cheap, time-sensitive — a new CVE can
   // appear with no new push). PR/CI-status work is the expensive part and
   // is skipped when scan-state says this repo is unchanged and was
-  // recently scanned; see policy/scan-state.js.
+  // recently scanned; see policy/scan-state.cjs.
   const [alertResult, branchProtectionAvailability, pulls] = await Promise.all([
     fetchDependabotAlerts(repoFullName),
     fetchBranchProtection(repoFullName, defaultBranch),
@@ -550,7 +550,7 @@ async function main() {
   const outPath = path.join(__dirname, '..', 'maintenance-rollup.json');
   // The full rollup (exact alert counts) is for the private 90-day
   // workflow artifact only. The public file is the one actually published
-  // to GitHub Pages — see policy/public-redaction.js and README.md
+  // to GitHub Pages — see policy/public-redaction.cjs and README.md
   // "Security alert visibility on the public dashboard" for why this
   // reduction exists and must never be skipped for a published file.
   const publicOutPath = path.join(__dirname, '..', 'maintenance-rollup.public.json');
