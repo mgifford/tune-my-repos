@@ -142,7 +142,16 @@ function renderUnavailable(items) {
     for (const item of items) {
         const li = document.createElement('li');
         li.className = 'finding-card';
-        li.textContent = `${item.repo}: ${item.field.replace(/_/g, ' ')} is ${item.status.replace(/_/g, ' ')}`;
+
+        const text = document.createElement('span');
+        text.textContent = `${item.repo}: ${item.field.replace(/_/g, ' ')} is ${item.status.replace(/_/g, ' ')} `;
+        li.appendChild(text);
+
+        const link = document.createElement('a');
+        link.href = `https://github.com/${item.repo}`;
+        link.textContent = 'View repository';
+        li.appendChild(link);
+
         list.appendChild(li);
     }
 }
@@ -200,7 +209,16 @@ function renderEligible(items) {
     for (const { repo, pr } of items) {
         const li = document.createElement('li');
         li.className = 'finding-card success';
-        li.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to} (${pr.update_type}). ${pr.reason}`;
+
+        const text = document.createElement('span');
+        text.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to} (${pr.update_type}). ${pr.reason} `;
+        li.appendChild(text);
+
+        const link = document.createElement('a');
+        link.href = pr.url;
+        link.textContent = `View PR #${pr.number}`;
+        li.appendChild(link);
+
         list.appendChild(li);
     }
 }
@@ -212,7 +230,16 @@ function renderReview(items) {
     for (const { repo, pr } of items) {
         const li = document.createElement('li');
         li.className = 'finding-card recommended';
-        li.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to} (${pr.update_type}, ${pr.risk_state}). ${pr.reason}`;
+
+        const text = document.createElement('span');
+        text.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to} (${pr.update_type}, ${pr.risk_state}). ${pr.reason} `;
+        li.appendChild(text);
+
+        const link = document.createElement('a');
+        link.href = pr.url;
+        link.textContent = `View PR #${pr.number}`;
+        li.appendChild(link);
+
         list.appendChild(li);
     }
 }
