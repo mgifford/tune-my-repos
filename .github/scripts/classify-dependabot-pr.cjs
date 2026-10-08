@@ -3,13 +3,13 @@
  * Classifies a single Dependabot PR (from environment variables set by the
  * dependabot-pilot workflow) and writes dependency_class, update_type, and
  * risk_state to $GITHUB_OUTPUT. Reuses the exact same parsing and policy
- * logic as scripts/generate-maintenance-rollup.js and policy/policy-engine.js
+ * logic as scripts/generate-maintenance-rollup.cjs and policy/policy-engine.cjs
  * so labeling and the rollup can never disagree.
  *
  * Reads only PR metadata (title, labels) passed in via env vars — never
  * executes or inspects the PR branch's own code. Deliberately uses
  * label-only dependency-class detection (not the manifest-content lookup
- * scripts/generate-maintenance-rollup.js also supports): this runs
+ * scripts/generate-maintenance-rollup.cjs also supports): this runs
  * per-PR on every labeled event, and the repository this pilots on today
  * already has the labels it needs — see maintenance-label-names.js.
  *
@@ -32,8 +32,8 @@ const {
   parseDependabotTitle,
   inferUpdateType,
   inferDependencyClassFromLabels,
-} = require(path.join(policyRoot, 'scripts', 'generate-maintenance-rollup.js'));
-const { classifyUpdate } = require(path.join(policyRoot, 'policy', 'policy-engine.js'));
+} = require(path.join(policyRoot, 'scripts', 'generate-maintenance-rollup.cjs'));
+const { classifyUpdate } = require(path.join(policyRoot, 'policy', 'policy-engine.cjs'));
 
 /**
  * Pure classification step, factored out for unit testing.

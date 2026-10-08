@@ -140,16 +140,16 @@ remains the merge gate for every change.
   conservative policy: which repositories are in scope, their tier, and how dependency updates are
   classified into risk states (`eligible`, `needs_review`, `needs_repair`, `blocked`, `ignored`). No
   implicit allow-all: an update that cannot be classified is always `needs_review`.
-- **`policy/policy-engine.js`** - deterministic classifier (`classifyUpdate`) that applies the policy to
+- **`policy/policy-engine.cjs`** - deterministic classifier (`classifyUpdate`) that applies the policy to
   one dependency update. Pure function, no network access, fully unit tested.
-- **`policy/policy-validator.js`** - dependency-free JSON Schema validator used for both the policy file
+- **`policy/policy-validator.cjs`** - dependency-free JSON Schema validator used for both the policy file
   and the rollup data file.
 - **`policy/policy.schema.json`** / **`policy/rollup.schema.json`** - the two schemas.
 - **`fixtures/maintenance-rollup.sample.json`** - static sample rollup so the dashboard can be reviewed
   without any GitHub credentials.
-- **`scripts/generate-maintenance-rollup.js`** - calls the GitHub REST API read-only for every repository
+- **`scripts/generate-maintenance-rollup.cjs`** - calls the GitHub REST API read-only for every repository
   in policy scope (every API call it makes to a *scanned* repository is a read), classifies each open
-  Dependabot PR through `policy/policy-engine.js`, redacts anything token-shaped, caps text fields, and
+  Dependabot PR through `policy/policy-engine.cjs`, redacts anything token-shaped, caps text fields, and
   writes a schema-conformant `maintenance-rollup.json`. Runs with reduced coverage (reported as
   `unknown`, never guessed) when no token is available.
 - **Repository discovery and scan scope** (`maintenance-policy.yml`'s `discovery` section) - when
@@ -162,7 +162,7 @@ remains the merge gate for every change.
   the full `mgifford`/`CivicActions` owner set is built and tested but not yet turned on; widening
   `repositories.include` to `"mgifford/*"` / `"CivicActions/*"` is a deliberate follow-up decision, not
   a side effect of this change.
-- **`maintenance-scan-state.json`** (committed) / **`policy/scan-state.js`** - tracks when each
+- **`maintenance-scan-state.json`** (committed) / **`policy/scan-state.cjs`** - tracks when each
   repository was last scanned. A repository whose `pushed_at` is unchanged since its last scan skips the
   expensive PR/CI-status work (`discovery.rescan_prs_after_days`, default 7, forces a rescan regardless)
   — but Dependabot alerts are always re-checked every run, since a new alert can appear against an
@@ -192,9 +192,9 @@ visible to repository collaborators via the Actions tab) — it is not published
 designed with that constraint in mind from the start:
 
 - Dependabot *security alerts* are private on GitHub even for public repositories — only people with
-  repository access can see exact counts natively. `maintenance.html`, `scripts/generate-maintenance-rollup.js`'s
+  repository access can see exact counts natively. `maintenance.html`, `scripts/generate-maintenance-rollup.cjs`'s
   public-safe fields, and every export path (JSON, Markdown) therefore only ever expose a derived
-  `has_urgent_alerts` boolean (`policy/public-redaction.js`), never the exact `critical`/`high`/`moderate`/`low`
+  `has_urgent_alerts` boolean (`policy/public-redaction.cjs`), never the exact `critical`/`high`/`moderate`/`low`
   counts, and link out to `github.com/{repo}/security/dependabot` — GitHub's own page, with GitHub's own
   access control — for anyone who needs the real numbers. The rollup JSON produced by the scheduled
   workflow still *contains* exact counts (useful for the private 90-day artifact and any future

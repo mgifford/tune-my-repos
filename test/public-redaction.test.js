@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { redactExactAlertCounts } = require('../policy/public-redaction.js');
+const { redactExactAlertCounts } = require('../policy/public-redaction.cjs');
 
 function sampleRollup(hasUrgent) {
   return {

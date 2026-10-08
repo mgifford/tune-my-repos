@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { getRepoState, canSkipPrWork, recordScan, orderByStaleness, orderByActivityThenStaleness } = require('../policy/scan-state.js');
+const { getRepoState, canSkipPrWork, recordScan, orderByStaleness, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
 
 function stateWith(entries) {
   return { schema_version: '1.0.0', repositories: entries };

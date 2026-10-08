@@ -2,29 +2,29 @@ name: Dependabot Pilot
 
 # Pilot workflow, reusable across repositories in maintenance-policy.yml's
 # tiers.pilot list (see the rollout checklist in README.md before copying
-# this file + .github/scripts/classify-dependabot-pr.js +
+# this file + .github/scripts/classify-dependabot-pr.cjs +
 # .github/scripts/ensure-maintenance-labels.sh +
-# .github/scripts/maintenance-label-names.js to another repository).
+# .github/scripts/maintenance-label-names.cjs to another repository).
 #
 # The policy engine itself (policy/, scripts/, maintenance-policy.json) is
 # NOT duplicated into each pilot repo. Every run fetches a fresh, read-only
 # copy from mgifford/tune-my-repos (public, no token needed) via the
 # "Checkout shared policy engine" step below, so a policy or bug fix there
 # takes effect on every pilot repo's next PR event without any manual
-# re-sync. See .github/scripts/classify-dependabot-pr.js's POLICY_ROOT.
+# re-sync. See .github/scripts/classify-dependabot-pr.cjs's POLICY_ROOT.
 #
 # Two independent jobs, both restricted to PRs opened by dependabot[bot]:
 #
 #   1. label: deterministically labels a Dependabot PR with its ecosystem,
 #      update type, and dependency class, using the same parsing logic as
-#      scripts/generate-maintenance-rollup.js. Read PR metadata only; never
+#      scripts/generate-maintenance-rollup.cjs. Read PR metadata only; never
 #      checks out or executes the PR's own branch content.
 #
 #   2. auto-merge: requests GitHub's native auto-merge (which itself waits
 #      for this repository's own required status check) ONLY when:
 #        - the repository variable MAINTENANCE_AUTOMERGE_ENABLED is "true"
 #          (opt-in, disabled by default)
-#        - policy/policy-engine.js classifies the update as "eligible"
+#        - policy/policy-engine.cjs classifies the update as "eligible"
 #      Every update the policy marks as needs_review / needs_repair /
 #      blocked / ignored is left untouched for a human to merge manually.
 #      This workflow never bypasses or overrides required checks: it asks
@@ -104,7 +104,7 @@ jobs:
           PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
           REPO_FULL_NAME: ${{ github.repository }}
           POLICY_ROOT: ${{ github.workspace }}/.tune-my-repos-policy
-        run: node .github/scripts/classify-dependabot-pr.js
+        run: node .github/scripts/classify-dependabot-pr.cjs
 
       - name: Ensure maintenance:* labels exist
         env:
@@ -171,7 +171,7 @@ jobs:
           PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
           REPO_FULL_NAME: ${{ github.repository }}
           POLICY_ROOT: ${{ github.workspace }}/.tune-my-repos-policy
-        run: node .github/scripts/classify-dependabot-pr.js
+        run: node .github/scripts/classify-dependabot-pr.cjs
 
       - name: Enable auto-merge for eligible updates only
         if: steps.classify.outputs.risk_state == 'eligible'
