@@ -102,6 +102,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.sha }}
           REPO_FULL_NAME: ${{ github.repository }}
           POLICY_ROOT: ${{ github.workspace }}/.tune-my-repos-policy
         run: node .github/scripts/classify-dependabot-pr.cjs
@@ -167,8 +169,11 @@ jobs:
       - name: Classify
         id: classify
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.sha }}
           REPO_FULL_NAME: ${{ github.repository }}
           POLICY_ROOT: ${{ github.workspace }}/.tune-my-repos-policy
         run: node .github/scripts/classify-dependabot-pr.cjs
