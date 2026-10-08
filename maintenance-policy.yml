@@ -54,6 +54,7 @@ repositories:
 tiers:
   pilot:
     - "mgifford/tune-my-repos"
+    - "mgifford/a11y-svg"
   standard: []
   archive: []
   manual: []
