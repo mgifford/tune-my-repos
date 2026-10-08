@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { classifyPrMetadata } = require('../.github/scripts/classify-dependabot-pr.js');
+const { classifyPrMetadata } = require('../.github/scripts/classify-dependabot-pr.cjs');
 
 const policy = JSON.parse(
   fs.readFileSync(path.join(__dirname, '..', 'maintenance-policy.json'), 'utf8')

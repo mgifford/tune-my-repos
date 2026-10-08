@@ -21,10 +21,10 @@ name: Maintenance Inventory
 #   maintenance-scan-state.json tracks when each discovered repository was
 #   last scanned, so repeat runs can skip the expensive PR/CI-status work
 #   for repositories unchanged since their last scan (always rechecking
-#   Dependabot alerts regardless — see policy/scan-state.js).
+#   Dependabot alerts regardless — see policy/scan-state.cjs).
 #
 #   maintenance-rollup.public.json is the reduced rollup (see
-#   policy/public-redaction.js) actually served by GitHub Pages at
+#   policy/public-redaction.cjs) actually served by GitHub Pages at
 #   maintenance.html — it never contains exact Dependabot alert counts,
 #   only the has_urgent_alerts boolean, which is why it is safe to publish
 #   even though this page has no authentication. The full rollup with exact
@@ -97,9 +97,9 @@ jobs:
           MAINTENANCE_RO_TOKEN: ${{ secrets.MAINTENANCE_RO_TOKEN }}
         run: |
           if [ "${{ steps.mode.outputs.dry_run }}" = "true" ]; then
-            node scripts/generate-maintenance-rollup.js --dry-run
+            node scripts/generate-maintenance-rollup.cjs --dry-run
           else
-            node scripts/generate-maintenance-rollup.js
+            node scripts/generate-maintenance-rollup.cjs
           fi
 
       - name: Upload full rollup artifact (private, exact alert counts)
@@ -131,7 +131,7 @@ jobs:
           git push origin "$BRANCH"
 
           gh pr create --title "Update maintenance rollup" \
-            --body "Automated update from the Maintenance Inventory workflow (run ${{ github.run_id }}). Contains only maintenance-scan-state.json and maintenance-rollup.public.json (no exact alert counts — see policy/public-redaction.js)." \
+            --body "Automated update from the Maintenance Inventory workflow (run ${{ github.run_id }}). Contains only maintenance-scan-state.json and maintenance-rollup.public.json (no exact alert counts — see policy/public-redaction.cjs)." \
             --base main --head "$BRANCH"
 
           # Wait for this PR's own required "npm test" check, same as any

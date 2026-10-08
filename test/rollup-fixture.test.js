@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { validatePolicySchema } = require('../policy/policy-validator.js');
-const { classifyUpdate } = require('../policy/policy-engine.js');
+const { validatePolicySchema } = require('../policy/policy-validator.cjs');
+const { classifyUpdate } = require('../policy/policy-engine.cjs');
 
 const rollupSchema = JSON.parse(
   fs.readFileSync(path.join(__dirname, '..', 'policy', 'rollup.schema.json'), 'utf8')

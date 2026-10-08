@@ -1,8 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { getMaintenanceLabelNames } = require('../.github/scripts/maintenance-label-names.js');
-const { VALID_DEPENDENCY_CLASSES, VALID_UPDATE_TYPES, VALID_RISK_STATES } = require('../policy/policy-engine.js');
+const { getMaintenanceLabelNames } = require('../.github/scripts/maintenance-label-names.cjs');
+const { VALID_DEPENDENCY_CLASSES, VALID_UPDATE_TYPES, VALID_RISK_STATES } = require('../policy/policy-engine.cjs');
 
 test('getMaintenanceLabelNames: includes a label for every dependency class', () => {
   const names = getMaintenanceLabelNames();

@@ -10,7 +10,7 @@ const {
   getRepositoryTier,
   findActiveOverride,
   classifyUpdate,
-} = require('../policy/policy-engine.js');
+} = require('../policy/policy-engine.cjs');
 
 const policy = JSON.parse(
   fs.readFileSync(path.join(__dirname, '..', 'maintenance-policy.json'), 'utf8')

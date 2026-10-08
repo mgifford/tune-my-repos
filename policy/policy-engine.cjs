@@ -13,7 +13,7 @@ const VALID_UPDATE_TYPES = ['patch', 'minor', 'major'];
 /**
  * Validate a parsed policy object against structural invariants that go
  * beyond JSON Schema (e.g. cross-field consistency). Call validatePolicySchema
- * (policy-validator.js) first for full schema conformance.
+ * (policy-validator.cjs) first for full schema conformance.
  * @returns {string[]} list of error messages; empty if valid
  */
 function validatePolicyInvariants(policy) {

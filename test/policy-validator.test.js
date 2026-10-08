@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { validatePolicySchema } = require('../policy/policy-validator.js');
+const { validatePolicySchema } = require('../policy/policy-validator.cjs');
 
 const schema = JSON.parse(
   fs.readFileSync(path.join(__dirname, '..', 'policy', 'policy.schema.json'), 'utf8')
