@@ -6,12 +6,16 @@
  * logic as scripts/generate-maintenance-rollup.cjs and policy/policy-engine.cjs
  * so labeling and the rollup can never disagree.
  *
- * Reads only PR metadata (title, labels) passed in via env vars — never
- * executes or inspects the PR branch's own code. Deliberately uses
- * label-only dependency-class detection (not the manifest-content lookup
- * scripts/generate-maintenance-rollup.cjs also supports): this runs
- * per-PR on every labeled event, and the repository this pilots on today
- * already has the labels it needs — see maintenance-label-names.js.
+ * Reads PR metadata (title, labels) from env vars plus the PR's actually
+ * changed files (fetched live via the GitHub API) to classify ecosystem
+ * and dependency class — the same manifest-aware logic
+ * scripts/generate-maintenance-rollup.cjs uses, not a label-only
+ * shortcut. This matters because different repositories use different
+ * label conventions (tune-my-repos uses "devDependencies"; a11y-svg uses
+ * "javascript" for the same thing), so label-only detection silently
+ * failed to classify anything as "development" outside tune-my-repos.
+ * Still never executes or inspects the PR branch's own code — only
+ * reads file names and package.json content via the API.
  *
  * POLICY_ROOT env var: the directory containing policy/, scripts/, and
  * maintenance-policy.json. Defaults to this script's own repo root (the
@@ -21,6 +25,10 @@
  * source of truth for policy logic — see dependabot-pilot.yml's
  * "Checkout shared policy engine" step) rather than duplicating these
  * files into every pilot repo.
+ *
+ * GITHUB_TOKEN / GH_TOKEN env var: used for the changed-files and
+ * package.json API calls (read-only). Falls back to "unknown"
+ * ecosystem/class if absent rather than failing the whole run.
  */
 
 const fs = require('node:fs');
@@ -31,31 +39,33 @@ const policyRoot = process.env.POLICY_ROOT || path.join(__dirname, '..', '..');
 const {
   parseDependabotTitle,
   inferUpdateType,
-  inferDependencyClassFromLabels,
+  inferDependencyClass,
+  detectEcosystemFromFiles,
 } = require(path.join(policyRoot, 'scripts', 'generate-maintenance-rollup.cjs'));
 const { classifyUpdate } = require(path.join(policyRoot, 'policy', 'policy-engine.cjs'));
 
 /**
  * Pure classification step, factored out for unit testing.
  * @param {object} policy - parsed maintenance-policy.json
- * @param {{title: string, labelNames: string[], repository: string}} pr
- * @returns {{dependency_class: string, update_type: string, risk_state: string}}
+ * @param {{title: string, labelNames: string[], repository: string, changedFiles: string[], baseRef: string, prNumber: number}} pr
+ * @returns {Promise<{dependency_class: string, update_type: string, risk_state: string}>}
  */
-function classifyPrMetadata(policy, pr) {
+async function classifyPrMetadata(policy, pr) {
   const labels = pr.labelNames.map((name) => ({ name }));
-
-  const ecosystem = labels.some((l) => l.name === 'github_actions' || l.name === 'github-actions')
-    ? 'github_actions'
-    : 'unknown';
+  const ecosystem = detectEcosystemFromFiles(pr.changedFiles || []);
 
   const parsed = parseDependabotTitle(pr.title);
   const dependencyName = parsed?.dependencyName || 'unknown';
   const versionFrom = parsed?.versionFrom || 'unknown';
   const versionTo = parsed?.versionTo || 'unknown';
   const updateType = parsed ? inferUpdateType(versionFrom, versionTo) : 'unknown';
-  const dependencyClass = ecosystem === 'github_actions'
-    ? 'github-actions'
-    : inferDependencyClassFromLabels({ labels }) || 'unknown';
+  const dependencyClass = await inferDependencyClass(
+    { labels },
+    ecosystem,
+    pr.repository,
+    dependencyName,
+    pr.baseRef
+  );
 
   // IMPORTANT: risk_state here answers "is this class of update ever
   // eligible for auto-merge" (a policy question, computed as if CI had
@@ -86,15 +96,34 @@ function classifyPrMetadata(policy, pr) {
   };
 }
 
-function main() {
+async function fetchChangedFiles(repoFullName, prNumber, token) {
+  const headers = { Accept: 'application/vnd.github+json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const response = await fetch(
+    `https://api.github.com/repos/${repoFullName}/pulls/${prNumber}/files?per_page=100`,
+    { headers }
+  );
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.map((f) => f.filename);
+}
+
+async function main() {
   const policy = JSON.parse(
     fs.readFileSync(path.join(policyRoot, 'maintenance-policy.json'), 'utf8')
   );
 
-  const result = classifyPrMetadata(policy, {
+  const repository = process.env.REPO_FULL_NAME || '';
+  const prNumber = parseInt(process.env.PR_NUMBER || '0', 10);
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
+  const changedFiles = prNumber ? await fetchChangedFiles(repository, prNumber, token) : [];
+
+  const result = await classifyPrMetadata(policy, {
     title: process.env.PR_TITLE || '',
     labelNames: JSON.parse(process.env.PR_LABELS || '[]'),
-    repository: process.env.REPO_FULL_NAME || '',
+    repository,
+    changedFiles,
+    baseRef: process.env.PR_BASE_REF || 'main',
   });
 
   const lines = [
@@ -113,5 +142,8 @@ function main() {
 module.exports = { classifyPrMetadata };
 
 if (require.main === module) {
-  main();
+  main().catch((error) => {
+    console.error('Failed to classify Dependabot PR:', error.message);
+    process.exit(1);
+  });
 }
