@@ -238,20 +238,41 @@ Before copying this pilot to another repository:
    (or `standard`, once past the pilot stage), and regenerate `maintenance-policy.json` to match.
 2. [ ] Confirm the repository's actual dependency ecosystems (npm, pip, etc.) and write a
    `.github/dependabot.yml` scoped to what's really there — do not copy this repo's github-actions-only
-   config blindly.
+   config blindly. (A repository relying on GitHub's native Dependabot security-updates toggle instead
+   of a scheduled `dependabot.yml` works too; the pilot doesn't require one specifically.)
 3. [ ] Set up branch protection / a ruleset on the repository's default branch requiring at least one
-   real CI check to pass (the repository's own test suite, not `tune-my-repos`' `npm test`).
-4. [ ] Copy `.github/workflows/dependabot-pilot.yml`, `.github/scripts/classify-dependabot-pr.js`,
-   `.github/scripts/ensure-maintenance-labels.sh`, and `.github/scripts/maintenance-label-names.js` as-is
+   real CI check to pass (the repository's own test suite, not `tune-my-repos`' `npm test`). Use the
+   check's exact reported name (visible on any past PR's checks list or via
+   `gh api repos/OWNER/REPO/commits/BRANCH/check-runs`) — a close-but-not-exact name (e.g. a job's
+   display label instead of its real check-run name) will never be satisfied and silently blocks every
+   merge on the repository. Also pin the ruleset to the correct repository — editing a ruleset on the
+   wrong repo's settings page is an easy, hard-to-notice mistake, confirm the URL first.
+4. [ ] Copy `.github/workflows/dependabot-pilot.yml`, `.github/scripts/classify-dependabot-pr.cjs`,
+   `.github/scripts/ensure-maintenance-labels.sh`, and `.github/scripts/maintenance-label-names.cjs` as-is
    — no path edits needed. The workflow fetches a fresh, read-only copy of the policy engine (`policy/`,
    `scripts/`, `maintenance-policy.json`) from `mgifford/tune-my-repos` on every run (see
-   `POLICY_ROOT` in `classify-dependabot-pr.js`), so these four files are the only things that live in
+   `POLICY_ROOT` in `classify-dependabot-pr.cjs`), so these four files are the only things that live in
    the pilot repository itself; a future policy or bug fix in `tune-my-repos` takes effect on the next PR
    event with no manual re-sync.
-5. [ ] Leave `MAINTENANCE_AUTOMERGE_ENABLED` unset (auto-merge off) for at least one full review cycle of
+5. [ ] Two GitHub repository settings are required for auto-merge to actually complete, separate from
+   everything above, and both default to **off** on every repository — confirm or set both before
+   expecting auto-merge to work, or every attempt will fail with a `GraphQL: Resource not accessible by
+   integration` error that looks like a permissions bug in the workflow itself (it is not):
+   - **Settings → General → Pull Requests → "Allow auto-merge"** (`allow_auto_merge` via the API)
+   - **Settings → Actions → General → Workflow permissions → "Allow GitHub Actions to create and
+     approve pull requests"** (`can_approve_pull_request_reviews` via the API) — without this, the
+     workflow's own token can label and request auto-merge but can never actually complete a merge,
+     regardless of any permissions set in the workflow YAML itself.
+6. [ ] Leave `MAINTENANCE_AUTOMERGE_ENABLED` unset (auto-merge off) for at least one full review cycle of
    labeled-but-not-merged PRs before enabling it.
-6. [ ] Confirm with the repository's actual maintainer(s) — not just `mgifford` — before enabling
+7. [ ] Confirm with the repository's actual maintainer(s) — not just `mgifford` — before enabling
    auto-merge on a repository with other contributors.
+8. [ ] A PR already open before the pilot workflow was added (or before the workflow itself changes
+   later) has its required checks pinned to its own stale base commit, and will keep failing even after
+   a fix is merged to the default branch until its branch is explicitly updated
+   (`gh api -X PUT repos/OWNER/REPO/pulls/NUMBER/update-branch`, or the "Update branch" button in the
+   GitHub UI). This is normal GitHub behavior, not a bug — expect to do this once per already-open PR
+   the first time the pilot is enabled on a repository.
 
 ### Tracked follow-up: package-swap suggestions (not built yet)
 
