@@ -4,6 +4,13 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # One grouped PR per week instead of one PR per action.
+    # Major version bumps are kept in their own PRs for manual review.
+    groups:
+      actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "github-actions"
