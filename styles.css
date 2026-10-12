@@ -16,6 +16,20 @@
     --spacing: 16px;
     --radius: 6px;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    --link: #0969da;
+    --link-visited: #6639ba;
+    --info-bg: #ddf4ff;
+    --info-border: #54aeff;
+    --info-text: #0a3069;
+    --info-heading: #0550ae;
+}
+
+a:link {
+    color: var(--link);
+}
+
+a:visited {
+    color: var(--link-visited);
 }
 
 * {
@@ -249,20 +263,26 @@ button:disabled {
 }
 
 .info-section {
-    background: #e6f7ff;
-    border: 1px solid #91d5ff;
+    background: var(--info-bg);
+    border: 1px solid var(--info-border);
     border-radius: var(--radius);
     padding: calc(var(--spacing) * 1.5);
     margin-bottom: calc(var(--spacing) * 2);
+    color: var(--info-text);
 }
 
 .info-section h3 {
-    color: #1890ff;
+    color: var(--info-heading);
     margin-bottom: calc(var(--spacing) / 2);
 }
 
-.info-section a {
-    color: #1890ff;
+.info-section p {
+    color: var(--info-text);
+}
+
+.info-section a:link,
+.info-section a:visited {
+    color: var(--info-heading);
     text-decoration: underline;
 }
 
@@ -708,6 +728,12 @@ footer a:hover {
         --border: #30363d;
         --text: #c9d1d9;
         --text-secondary: #8b949e;
+        --link: #58a6ff;
+        --link-visited: #bc8cff;
+        --info-bg: #0c2d6b;
+        --info-border: #1f6feb;
+        --info-text: #e6edf3;
+        --info-heading: #a5d6ff;
     }
     
     .error-section {
