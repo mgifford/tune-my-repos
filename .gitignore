@@ -25,3 +25,4 @@ test-collapsible.html
 # only, never committed. maintenance-rollup.public.json (the reduced,
 # published version) is intentionally NOT listed here — it is committed.
 /maintenance-rollup.json
+dependabot-proposals/
