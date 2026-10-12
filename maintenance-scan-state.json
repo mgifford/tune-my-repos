@@ -200,6 +200,206 @@
     "mgifford/Find-Overlays": {
       "last_scanned": "2026-10-04T18:26:34.365Z",
       "last_pushed_at": "2026-05-23T07:57:38Z"
+    },
+    "mgifford/vital-core": {
+      "last_scanned": "2026-10-12T18:47:11.690Z",
+      "last_pushed_at": "2026-10-12T18:42:21Z"
+    },
+    "mgifford/mgifford.github.io": {
+      "last_scanned": "2026-10-12T18:47:12.920Z",
+      "last_pushed_at": "2026-10-12T15:32:32Z"
+    },
+    "mgifford/wcag-spine": {
+      "last_scanned": "2026-10-12T18:47:13.316Z",
+      "last_pushed_at": "2026-10-12T08:33:07Z"
+    },
+    "mgifford/tune-my-repos": {
+      "last_scanned": "2026-10-12T18:47:13.768Z",
+      "last_pushed_at": "2026-10-12T08:18:40Z"
+    },
+    "mgifford/open-scans": {
+      "last_scanned": "2026-10-12T18:47:14.102Z",
+      "last_pushed_at": "2026-10-12T06:20:58Z"
+    },
+    "mgifford/EchoDeMontolieu": {
+      "last_scanned": "2026-10-12T18:47:14.500Z",
+      "last_pushed_at": "2026-10-12T04:38:04Z"
+    },
+    "mgifford/top-task-finder": {
+      "last_scanned": "2026-10-12T18:47:14.850Z",
+      "last_pushed_at": "2026-10-12T00:25:48Z"
+    },
+    "mgifford/smart-cookbook": {
+      "last_scanned": "2026-10-12T18:47:15.913Z",
+      "last_pushed_at": "2026-10-11T16:15:54Z"
+    },
+    "mgifford/open-susty-scans": {
+      "last_scanned": "2026-10-12T18:47:16.247Z",
+      "last_pushed_at": "2026-10-11T16:13:19Z"
+    },
+    "mgifford/inclusive-emergency-readiness": {
+      "last_scanned": "2026-10-12T18:47:16.594Z",
+      "last_pushed_at": "2026-10-11T16:12:56Z"
+    },
+    "mgifford/wai-yaml-ld": {
+      "last_scanned": "2026-10-12T18:47:17.574Z",
+      "last_pushed_at": "2026-10-11T09:01:01Z"
+    },
+    "mgifford/w3c-a11y-maturity-model": {
+      "last_scanned": "2026-10-12T18:47:20.008Z",
+      "last_pushed_at": "2026-10-11T08:54:32Z"
+    },
+    "mgifford/pdf-crawler": {
+      "last_scanned": "2026-10-12T18:47:21.143Z",
+      "last_pushed_at": "2026-10-11T08:50:24Z"
+    },
+    "mgifford/gh-open-dash": {
+      "last_scanned": "2026-10-12T18:47:22.171Z",
+      "last_pushed_at": "2026-10-11T08:47:00Z"
+    },
+    "mgifford/ox.ca": {
+      "last_scanned": "2026-10-12T18:47:22.512Z",
+      "last_pushed_at": "2026-10-11T08:44:12Z"
+    },
+    "mgifford/neighbourhood-solar": {
+      "last_scanned": "2026-10-12T18:47:22.875Z",
+      "last_pushed_at": "2026-10-10T21:31:10Z"
+    },
+    "mgifford/wayback-extractor": {
+      "last_scanned": "2026-10-12T18:47:23.793Z",
+      "last_pushed_at": "2026-10-05T22:13:25Z"
+    },
+    "mgifford/SUSTAINABILITY.md": {
+      "last_scanned": "2026-10-12T18:47:24.143Z",
+      "last_pushed_at": "2026-10-01T12:01:14Z"
+    },
+    "mgifford/wai-linkedobjects": {
+      "last_scanned": "2026-10-12T18:47:25.101Z",
+      "last_pushed_at": "2026-10-01T00:53:31Z"
+    },
+    "mgifford/FOSDEM-website": {
+      "last_scanned": "2026-10-12T18:47:25.520Z",
+      "last_pushed_at": "2026-09-30T06:34:55Z"
+    },
+    "mgifford/gh-summary": {
+      "last_scanned": "2026-10-12T18:47:25.863Z",
+      "last_pushed_at": "2026-09-30T04:58:43Z"
+    },
+    "mgifford/whisper-slides": {
+      "last_scanned": "2026-10-12T18:47:26.939Z",
+      "last_pushed_at": "2026-09-29T22:17:37Z"
+    },
+    "mgifford/markdown-slides-editor": {
+      "last_scanned": "2026-10-12T18:47:27.340Z",
+      "last_pushed_at": "2026-09-24T12:58:37Z"
+    },
+    "mgifford/openapi-reference": {
+      "last_scanned": "2026-10-12T18:47:28.508Z",
+      "last_pushed_at": "2026-09-21T09:08:31Z"
+    },
+    "mgifford/wsg-mooc": {
+      "last_scanned": "2026-10-12T18:47:28.933Z",
+      "last_pushed_at": "2026-09-21T09:05:27Z"
+    },
+    "mgifford/open-accessibility-workbench": {
+      "last_scanned": "2026-10-12T18:47:29.293Z",
+      "last_pushed_at": "2026-09-20T15:26:27Z"
+    },
+    "mgifford/OpenWealth": {
+      "last_scanned": "2026-10-12T18:47:30.849Z",
+      "last_pushed_at": "2026-09-15T12:31:46Z"
+    },
+    "mgifford/unosw.plus": {
+      "last_scanned": "2026-10-12T18:47:31.280Z",
+      "last_pushed_at": "2026-09-15T12:30:07Z"
+    },
+    "mgifford/open-site-review": {
+      "last_scanned": "2026-10-12T18:47:31.604Z",
+      "last_pushed_at": "2026-09-15T12:26:38Z"
+    },
+    "mgifford/firefox-energy-scanner": {
+      "last_scanned": "2026-10-12T18:47:32.057Z",
+      "last_pushed_at": "2026-09-15T12:13:05Z"
+    },
+    "mgifford/open-data-guide": {
+      "last_scanned": "2026-10-12T18:47:32.414Z",
+      "last_pushed_at": "2026-09-13T16:26:52Z"
+    },
+    "mgifford/sunclipse": {
+      "last_scanned": "2026-10-12T18:47:32.766Z",
+      "last_pushed_at": "2026-09-13T15:18:24Z"
+    },
+    "mgifford/ontario-home-energy-futures": {
+      "last_scanned": "2026-10-12T18:47:33.106Z",
+      "last_pushed_at": "2026-08-12T05:29:44Z"
+    },
+    "mgifford/upstream-first": {
+      "last_scanned": "2026-10-12T18:47:33.471Z",
+      "last_pushed_at": "2026-07-29T20:45:16Z"
+    },
+    "mgifford/wsg-webmcp-experiment": {
+      "last_scanned": "2026-10-12T18:47:33.805Z",
+      "last_pushed_at": "2026-07-27T07:09:02Z"
+    },
+    "mgifford/Hex-Bicup-Rotor": {
+      "last_scanned": "2026-10-12T18:47:34.203Z",
+      "last_pushed_at": "2026-07-23T21:04:17Z"
+    },
+    "mgifford/generated_content_a11y": {
+      "last_scanned": "2026-10-12T18:47:34.546Z",
+      "last_pushed_at": "2026-07-21T01:29:12Z"
+    },
+    "mgifford/perception": {
+      "last_scanned": "2026-10-12T18:47:35.495Z",
+      "last_pushed_at": "2026-07-13T23:58:33Z"
+    },
+    "mgifford/susty-house": {
+      "last_scanned": "2026-10-12T18:47:35.870Z",
+      "last_pushed_at": "2026-06-08T14:10:57Z"
+    },
+    "mgifford/timezone-helper": {
+      "last_scanned": "2026-10-12T18:47:36.243Z",
+      "last_pushed_at": "2026-05-23T18:22:18Z"
+    },
+    "mgifford/find-publiccode.yml": {
+      "last_scanned": "2026-10-12T18:47:36.599Z",
+      "last_pushed_at": "2026-05-23T07:48:25Z"
+    },
+    "mgifford/STYLES.md": {
+      "last_scanned": "2026-10-12T18:47:36.951Z",
+      "last_pushed_at": "2026-04-25T18:52:10Z"
+    },
+    "mgifford/TraceA11y": {
+      "last_scanned": "2026-10-12T18:47:37.277Z",
+      "last_pushed_at": "2026-04-25T02:03:41Z"
+    },
+    "mgifford/python-acr": {
+      "last_scanned": "2026-10-12T18:47:37.608Z",
+      "last_pushed_at": "2026-04-17T02:55:18Z"
+    },
+    "mgifford/pen-archive": {
+      "last_scanned": "2026-10-12T18:47:37.959Z",
+      "last_pushed_at": "2026-04-06T02:40:48Z"
+    },
+    "mgifford/html2html": {
+      "last_scanned": "2026-10-12T18:47:38.286Z",
+      "last_pushed_at": "2026-04-04T17:22:43Z"
+    },
+    "mgifford/mermaid-graphs": {
+      "last_scanned": "2026-10-12T18:47:38.617Z",
+      "last_pushed_at": "2026-03-05T20:30:05Z"
+    },
+    "mgifford/procurement-ld": {
+      "last_scanned": "2026-10-12T18:47:38.947Z",
+      "last_pushed_at": "2026-02-28T22:55:17Z"
+    },
+    "mgifford/We4Authors": {
+      "last_scanned": "2026-10-12T18:47:39.351Z",
+      "last_pushed_at": "2026-01-20T22:00:52Z"
+    },
+    "mgifford/risky-weather": {
+      "last_scanned": "2026-10-12T18:47:39.674Z",
+      "last_pushed_at": "2026-01-06T15:00:42Z"
     }
   }
 }
