@@ -107,8 +107,9 @@
     flex-wrap: wrap;
 }
 
-nav[aria-label="Dashboards"] a {
-    color: var(--primary-color);
+nav[aria-label="Dashboards"] a:link,
+nav[aria-label="Dashboards"] a:visited {
+    color: var(--link);
     text-decoration: none;
     font-weight: 600;
 }

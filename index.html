@@ -52,6 +52,9 @@
                     <input 
                         type="text" 
                         id="targetInput" 
+                        autocapitalize="none"
+                        autocorrect="off"
+                        spellcheck="false"
                         placeholder="e.g., mgifford or civicactions or mgifford/tune-my-repos"
                         required
                         aria-describedby="targetHelp"
@@ -98,7 +101,7 @@
         </section>
 
         <section id="infoSection" class="hidden info-section" role="status">
-            <h3>ℹ️ Note</h3>
+            <h3><span aria-hidden="true">ℹ️</span> Note</h3>
             <p id="infoMessage"></p>
         </section>
 

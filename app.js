@@ -642,6 +642,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         // Analyze each repo
         const batchResults = [];
         let failedCount = 0;
+        let rateLimited = false;
         for (let i = 0; i < repos.length; i++) {
             const repo = repos[i];
             const percent = Math.round(((i + 1) / repos.length) * 100);
@@ -659,6 +660,12 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
                 console.error(`Error analyzing ${repo.full_name}:`, error);
                 errorLog(`Failed to analyze ${repo.full_name}`, error);
                 failedCount++;
+                // Stop early once the API quota is exhausted; remaining requests would only fail
+                if (/rate limit/i.test(error.message || '')) {
+                    rateLimited = true;
+                    failedCount += repos.length - (i + 1);
+                    break;
+                }
                 // Continue with other repos even if one fails
             }
         }
@@ -692,7 +699,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         // Show warning if there were partial failures
         if (failedCount > 0) {
             const token = getGitHubToken();
-            let warningMessage = `⚠️ Partial analysis: ${batchResults.length} repositories analyzed successfully, but ${failedCount} failed. `;
+            let warningMessage = `⚠️ Partial analysis: ${batchResults.length} of ${repos.length} repositories analyzed. ${failedCount} ${rateLimited ? 'were not analyzed because the GitHub API rate limit was reached' : 'failed'}. The summary below covers only the analyzed repositories. `;
             if (!token) {
                 warningMessage += `You are not authenticated. Without authentication, you are limited to ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour. <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Get a Personal Access Token</a> for ${GITHUB_RATE_LIMITS.authenticated.toLocaleString()} requests/hour, or click "Sign in with GitHub" above.`;
             } else {
