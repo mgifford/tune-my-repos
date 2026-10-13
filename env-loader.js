@@ -20,7 +20,7 @@ if (typeof CONFIG === 'undefined') {
                          location.protocol === 'file:';
     
     if (!isDevelopment) {
-        // In production, rely on config.js or OAuth authentication
+        // In production there is no token: the published site is unauthenticated
         return;
     }
     

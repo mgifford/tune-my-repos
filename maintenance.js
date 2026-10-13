@@ -148,6 +148,8 @@ function renderUnavailable(items) {
     const { section, list } = sections.unavailable;
     if (items.length === 0) return;
     section.hidden = false;
+    // Collapsed by default, so the count tells you whether it is worth opening
+    document.getElementById('unavailableCount').textContent = `(${items.length})`;
     for (const item of items) {
         const li = document.createElement('li');
         li.className = 'finding-card';
