@@ -239,3 +239,12 @@ test('filterDiscoveredRepos: projects down to full_name and pushed_at only', () 
   const result = filterDiscoveredRepos(repos, { exclude_forks: true, exclude_archived: true });
   assert.deepEqual(result, [{ full_name: 'mgifford/x', pushed_at: '2026-10-01T00:00:00Z' }]);
 });
+
+test('filterDiscoveredRepos: always excludes private repositories, whatever the options', () => {
+  const repos = [
+    { full_name: 'mgifford/public', private: false, fork: false, archived: false, pushed_at: 'x' },
+    { full_name: 'mgifford/secret', private: true, fork: false, archived: false, pushed_at: 'x' },
+  ];
+  const result = filterDiscoveredRepos(repos, { exclude_forks: false, exclude_archived: false });
+  assert.deepEqual(result.map((r) => r.full_name), ['mgifford/public']);
+});

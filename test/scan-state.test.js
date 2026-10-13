@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { getRepoState, canSkipPrWork, recordScan, orderByStaleness, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
+const { getRepoState, canSkipPrWork, recordScan, pruneToRepositories, orderByStaleness, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
 
 function stateWith(entries) {
   return { schema_version: '1.0.0', repositories: entries };
@@ -132,4 +132,11 @@ test('orderByActivityThenStaleness: does not mutate the input array', () => {
   const input = ['mgifford/a', 'mgifford/b'];
   orderByActivityThenStaleness(state, input, pushedAt);
   assert.deepEqual(input, ['mgifford/a', 'mgifford/b']);
+});
+
+test('pruneToRepositories: keeps only listed repositories and does not mutate input', () => {
+  const state = stateWith({ 'o/keep': { last_scanned: 'a' }, 'o/private-now': { last_scanned: 'b' } });
+  const pruned = pruneToRepositories(state, ['o/keep', 'o/never-scanned']);
+  assert.deepEqual(Object.keys(pruned.repositories), ['o/keep']);
+  assert.ok('o/private-now' in state.repositories);
 });
