@@ -28,6 +28,7 @@ const sections = {
     failed: { section: document.getElementById('failedSection'), list: document.getElementById('failedList') },
     eligible: { section: document.getElementById('eligibleSection'), list: document.getElementById('eligibleList') },
     review: { section: document.getElementById('reviewSection'), list: document.getElementById('reviewList') },
+    openPrs: { section: document.getElementById('openPrsSection'), list: document.getElementById('openPrsBody') },
 };
 const emptyState = document.getElementById('emptyState');
 
@@ -121,15 +122,19 @@ function renderRollup(rollup, sourceUrl, schema) {
     renderUnavailable(unavailableItems);
     renderUrgent(urgentItems);
     renderFailed(failedItems);
-    renderEligible(eligibleItems);
-    renderReview(reviewItems);
+    const now = new Date();
+    renderEligible(window.PrView.sortForReview(eligibleItems, now), now);
+    renderReview(window.PrView.sortForReview(reviewItems, now), now);
+    const openPrRows = window.PrView.reposWithOpenPrs(rollup.repositories);
+    renderOpenPrs(openPrRows);
 
     if (
         unavailableItems.length === 0 &&
         urgentItems.length === 0 &&
         failedItems.length === 0 &&
         eligibleItems.length === 0 &&
-        reviewItems.length === 0
+        reviewItems.length === 0 &&
+        openPrRows.length === 0
     ) {
         showEmptyState();
     }
@@ -202,45 +207,73 @@ function renderFailed(items) {
     }
 }
 
-function renderEligible(items) {
+function describeAge(pr, now) {
+    const days = window.PrView.ageInDays(pr.opened_at, now);
+    if (days === null) return 'age unknown';
+    return days === 1 ? 'open 1 day' : `open ${days} days`;
+}
+
+function renderPrCard(list, className, repo, pr, now) {
+    const li = document.createElement('li');
+    li.className = `finding-card ${className}`;
+
+    const title = document.createElement('strong');
+    title.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to}`;
+    li.appendChild(title);
+
+    const meta = document.createElement('p');
+    meta.className = 'pr-meta';
+    meta.textContent = `${pr.update_type} update · ${pr.dependency_class.replace(/-/g, ' ')} · CI: ${pr.ci_status} · ${describeAge(pr, now)}`;
+    li.appendChild(meta);
+
+    const blocker = window.PrView.mergeBlocker(pr);
+    const why = document.createElement('p');
+    why.textContent = blocker ? `Not merging on its own: ${blocker}` : 'Nothing blocking: eligible under policy and CI is passing.';
+    li.appendChild(why);
+
+    const link = document.createElement('a');
+    link.href = pr.url;
+    link.textContent = `View PR #${pr.number}`;
+    li.appendChild(link);
+
+    list.appendChild(li);
+}
+
+function renderEligible(items, now) {
     const { section, list } = sections.eligible;
     if (items.length === 0) return;
     section.hidden = false;
-    for (const { repo, pr } of items) {
-        const li = document.createElement('li');
-        li.className = 'finding-card success';
-
-        const text = document.createElement('span');
-        text.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to} (${pr.update_type}). ${pr.reason} `;
-        li.appendChild(text);
-
-        const link = document.createElement('a');
-        link.href = pr.url;
-        link.textContent = `View PR #${pr.number}`;
-        li.appendChild(link);
-
-        list.appendChild(li);
-    }
+    for (const { repo, pr } of items) renderPrCard(list, 'success', repo, pr, now);
 }
 
-function renderReview(items) {
+function renderReview(items, now) {
     const { section, list } = sections.review;
     if (items.length === 0) return;
     section.hidden = false;
-    for (const { repo, pr } of items) {
-        const li = document.createElement('li');
-        li.className = 'finding-card recommended';
+    for (const { repo, pr } of items) renderPrCard(list, 'recommended', repo, pr, now);
+}
 
-        const text = document.createElement('span');
-        text.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to} (${pr.update_type}, ${pr.risk_state}). ${pr.reason} `;
-        li.appendChild(text);
-
+function renderOpenPrs(rows) {
+    const { section, list } = sections.openPrs;
+    if (rows.length === 0) return;
+    section.hidden = false;
+    for (const row of rows) {
+        const tr = document.createElement('tr');
+        const th = document.createElement('th');
+        th.scope = 'row';
         const link = document.createElement('a');
-        link.href = pr.url;
-        link.textContent = `View PR #${pr.number}`;
-        li.appendChild(link);
-
-        list.appendChild(li);
+        link.href = `https://github.com/${row.repo}/pulls`;
+        // <wbr> lets narrow screens wrap after "owner/" instead of mid-word
+        const slash = row.repo.indexOf('/') + 1;
+        link.append(row.repo.slice(0, slash), document.createElement('wbr'), row.repo.slice(slash));
+        th.appendChild(link);
+        tr.appendChild(th);
+        for (const value of [row.dependabot, row.other, row.total]) {
+            const td = document.createElement('td');
+            td.textContent = String(value);
+            tr.appendChild(td);
+        }
+        list.appendChild(tr);
     }
 }
 
@@ -269,7 +302,7 @@ function exportAsMarkdown() {
         if (repo.dependabot_prs.length > 0) {
             md += `### Dependabot PRs\n\n`;
             for (const pr of repo.dependabot_prs) {
-                md += `- [#${pr.number}](${pr.url}) ${pr.dependency_name} ${pr.version_from} → ${pr.version_to}: **${pr.risk_state}** — ${pr.reason}\n`;
+                md += `- [#${pr.number}](${pr.url}) ${pr.dependency_name} ${pr.version_from} → ${pr.version_to}: **${pr.risk_state}**, CI ${pr.ci_status}, ${describeAge(pr, new Date())} — ${pr.reason}\n`;
             }
             md += `\n`;
         }

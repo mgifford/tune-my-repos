@@ -95,7 +95,7 @@
                 </button>
             </h2>
             <div id="eligiblePanel" class="accordion-panel" role="region" aria-labelledby="eligibleHeading">
-                <p class="section-note">Updates the policy classifies as eligible once required checks pass. Normal repository CI remains the merge gate — this dashboard does not merge anything.</p>
+                <p class="section-note">Oldest first. Updates the policy classifies as eligible once required checks pass. Normal repository CI remains the merge gate — this dashboard does not merge anything.</p>
                 <ul id="eligibleList" class="finding-list"></ul>
             </div>
         </section>
@@ -108,8 +108,34 @@
                 </button>
             </h2>
             <div id="reviewPanel" class="accordion-panel" role="region" aria-labelledby="reviewHeading">
-                <p class="section-note">Production, major, lockfile-only, or unclassified updates that always require review.</p>
+                <p class="section-note">Oldest first. Production, major, lockfile-only, or unclassified updates that always require review. Each card says why it is not merging on its own.</p>
                 <ul id="reviewList" class="finding-list"></ul>
+            </div>
+        </section>
+
+        <section id="openPrsSection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="openPrsPanel" id="openPrsHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    📬 Repositories with open pull requests
+                </button>
+            </h2>
+            <div id="openPrsPanel" class="accordion-panel" role="region" aria-labelledby="openPrsHeading">
+                <p class="section-note">All open PRs, not only Dependabot's. Repositories whose PRs were not scanned in this run are not listed.</p>
+                <div class="table-scroll">
+                    <table id="openPrsTable" class="open-prs-table">
+                        <caption class="visually-hidden">Open pull requests by repository</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Repository</th>
+                                <th scope="col">Dependabot</th>
+                                <th scope="col">Other</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="openPrsBody"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
         </div>
@@ -135,6 +161,7 @@
     <script src="policy/policy-engine.cjs"></script>
     <script src="policy/policy-validator.cjs"></script>
     <script src="policy/public-redaction.cjs"></script>
+    <script src="policy/pr-view.cjs"></script>
     <script src="maintenance.js"></script>
 </body>
 </html>
