@@ -248,3 +248,23 @@ test('filterDiscoveredRepos: always excludes private repositories, whatever the 
   const result = filterDiscoveredRepos(repos, { exclude_forks: false, exclude_archived: false });
   assert.deepEqual(result.map((r) => r.full_name), ['mgifford/public']);
 });
+
+const { effectiveMaxRepos, ownerMismatchWarning } = require('../scripts/generate-maintenance-rollup.cjs');
+
+test('effectiveMaxRepos: configured cap with a token, small cap without', () => {
+  assert.equal(effectiveMaxRepos(200, true), 200);
+  assert.equal(effectiveMaxRepos(200, false), 8);
+  assert.equal(effectiveMaxRepos(5, false), 5);
+});
+
+test('ownerMismatchWarning: silent for the configured owner (any case) or outside Actions', () => {
+  const policy = { discovery: { owners: ['mgifford'] } };
+  assert.equal(ownerMismatchWarning(policy, 'MGifford'), null);
+  assert.equal(ownerMismatchWarning(policy, undefined), null);
+});
+
+test('ownerMismatchWarning: names both accounts when a copy still points at the original owner', () => {
+  const warning = ownerMismatchWarning({ discovery: { owners: ['mgifford'] } }, 'someone-else');
+  assert.match(warning, /someone-else/);
+  assert.match(warning, /mgifford/);
+});

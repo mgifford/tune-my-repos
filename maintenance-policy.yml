@@ -29,8 +29,10 @@ discovery:
   # in a single workflow run, oldest-last-scanned first. Keeps each
   # scheduled run fast and rate-limit-safe even when discovery finds
   # hundreds of candidate repositories; coverage builds up over several
-  # runs via maintenance-scan-state.json rather than all at once.
-  max_repos_per_run: 50
+  # runs via maintenance-scan-state.json rather than all at once. Without
+  # a token, the scan caps itself much lower to fit GitHub's 60
+  # requests/hour unauthenticated limit.
+  max_repos_per_run: 200
   # A repository whose pushed_at is unchanged since its last full scan
   # skips the expensive PR/CI-status work, but its Dependabot alerts are
   # always re-checked regardless (cheap, and a new CVE can appear against

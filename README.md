@@ -151,11 +151,8 @@ remains the merge gate for every change.
   GitHub API across `discovery.owners` (default: `mgifford`, `CivicActions`) rather than listed by hand.
   `discovery.exclude_forks` / `exclude_archived` (both default `true`) drop noise before anything is
   scanned; `repositories.include`/`exclude` patterns are still applied afterward as the final filter, so
-  widening `discovery.owners` alone does not widen what is actually scanned. **As of this writing,
-  `repositories.include` is still the single exact entry `mgifford/tune-my-repos`** — discovery across
-  the full `mgifford`/`CivicActions` owner set is built and tested but not yet turned on; widening
-  `repositories.include` to `"mgifford/*"` / `"CivicActions/*"` is a deliberate follow-up decision, not
-  a side effect of this change.
+  widening `discovery.owners` alone does not widen what is actually scanned. The shipped policy scans
+  `"mgifford/*"` (public, non-fork, non-archived), up to `max_repos_per_run` (200) per run.
 - **`maintenance-scan-state.json`** (committed) / **`policy/scan-state.cjs`** - tracks when each
   repository was last scanned. A repository whose `pushed_at` is unchanged since its last scan skips the
   expensive PR/CI-status work (`discovery.rescan_prs_after_days`, default 7, forces a rescan regardless)
@@ -197,6 +194,28 @@ page. A read-only, fine-grained token fills them in:
 
 The "Unavailable or unknown data" section on the Maintenance page groups every remaining gap and names
 the permission or setting that would fill it. These instructions are also on that page.
+
+### Use it for your own account
+
+Nothing in the code is tied to one account; the account to scan is configuration.
+
+1. **Fork or copy this repository** under your user or organization.
+2. **Point the policy at your account:** in both `maintenance-policy.json` (read by the code) and
+   `maintenance-policy.yml` (its documented mirror), set `discovery.owners` to your login and
+   `repositories.include` to `"<your-login>/*"`. Replace the example `tiers.pilot` entries with your
+   own repositories, or leave the list empty. The scan prints a warning on the Actions run if it is
+   running under an account the policy does not name.
+3. **Optional token:** add `MAINTENANCE_RO_TOKEN` as described above. Without it, each run scans at
+   most 8 repositories to stay inside GitHub's 60 requests/hour unauthenticated limit.
+4. **Enable GitHub Pages** (Settings → Pages, deploy from the default branch) to publish the dashboards.
+5. **Add a branch ruleset** on the default branch requiring the `npm test` check, so the scan's
+   automated data PRs, and any Dependabot auto-merge, are gated by tests.
+6. **Dependabot pilot in other repositories (optional):** copy `.github/workflows/dependabot-pilot.yml`
+   and `.github/scripts/` into a repository, then set the repository variable
+   `MAINTENANCE_POLICY_REPO` to your copy (for example `your-login/tune-my-repos`). Otherwise it reads
+   the policy from `mgifford/tune-my-repos`. Setting `MAINTENANCE_POLICY_REF` to a tag or commit SHA
+   pins the policy, so a later change to the policy repository cannot change what auto-merges until
+   you move the pin.
 
 ### Security alert visibility on the public dashboard
 
