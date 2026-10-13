@@ -8,10 +8,18 @@ name: Dependabot Pilot
 #
 # The policy engine itself (policy/, scripts/, maintenance-policy.json) is
 # NOT duplicated into each pilot repo. Every run fetches a fresh, read-only
-# copy from mgifford/tune-my-repos (public, no token needed) via the
+# copy from the policy repository (public, no token needed) via the
 # "Checkout shared policy engine" step below, so a policy or bug fix there
 # takes effect on every pilot repo's next PR event without any manual
 # re-sync. See .github/scripts/classify-dependabot-pr.cjs's POLICY_ROOT.
+#
+# Which policy repository: the repository variable MAINTENANCE_POLICY_REPO
+# (owner/name), defaulting to mgifford/tune-my-repos. Set it to your own
+# copy so your policy, not someone else's, decides what auto-merges.
+# MAINTENANCE_POLICY_REF optionally pins a tag or commit SHA (recommended:
+# a pinned ref means a change to the policy repository cannot alter this
+# repository's merge behaviour until you move the pin); empty means the
+# default branch.
 #
 # Two independent jobs, both restricted to PRs opened by dependabot[bot]:
 #
@@ -67,11 +75,12 @@ jobs:
             .github/scripts/
           sparse-checkout-cone-mode: false
 
-      - name: Checkout shared policy engine (read-only, from mgifford/tune-my-repos)
-        if: github.repository != 'mgifford/tune-my-repos'
+      - name: Checkout shared policy engine (read-only, from the policy repository)
+        if: github.repository != (vars.MAINTENANCE_POLICY_REPO || 'mgifford/tune-my-repos')
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: mgifford/tune-my-repos
+          repository: ${{ vars.MAINTENANCE_POLICY_REPO || 'mgifford/tune-my-repos' }}
+          ref: ${{ vars.MAINTENANCE_POLICY_REF || '' }}
           path: .tune-my-repos-policy
           sparse-checkout: |
             policy
@@ -79,8 +88,8 @@ jobs:
             maintenance-policy.json
           sparse-checkout-cone-mode: false
 
-      - name: Checkout this repository's own policy engine (tune-my-repos only)
-        if: github.repository == 'mgifford/tune-my-repos'
+      - name: Checkout this repository's own policy engine (when this IS the policy repository)
+        if: github.repository == (vars.MAINTENANCE_POLICY_REPO || 'mgifford/tune-my-repos')
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.sha }}
@@ -138,11 +147,12 @@ jobs:
             .github/scripts/
           sparse-checkout-cone-mode: false
 
-      - name: Checkout shared policy engine (read-only, from mgifford/tune-my-repos)
-        if: github.repository != 'mgifford/tune-my-repos'
+      - name: Checkout shared policy engine (read-only, from the policy repository)
+        if: github.repository != (vars.MAINTENANCE_POLICY_REPO || 'mgifford/tune-my-repos')
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: mgifford/tune-my-repos
+          repository: ${{ vars.MAINTENANCE_POLICY_REPO || 'mgifford/tune-my-repos' }}
+          ref: ${{ vars.MAINTENANCE_POLICY_REF || '' }}
           path: .tune-my-repos-policy
           sparse-checkout: |
             policy
@@ -150,8 +160,8 @@ jobs:
             maintenance-policy.json
           sparse-checkout-cone-mode: false
 
-      - name: Checkout this repository's own policy engine (tune-my-repos only)
-        if: github.repository == 'mgifford/tune-my-repos'
+      - name: Checkout this repository's own policy engine (when this IS the policy repository)
+        if: github.repository == (vars.MAINTENANCE_POLICY_REPO || 'mgifford/tune-my-repos')
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.sha }}

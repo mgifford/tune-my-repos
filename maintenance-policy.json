@@ -4,7 +4,7 @@
     "owners": ["mgifford"],
     "exclude_forks": true,
     "exclude_archived": true,
-    "max_repos_per_run": 50,
+    "max_repos_per_run": 200,
     "rescan_prs_after_days": 7
   },
   "repositories": {

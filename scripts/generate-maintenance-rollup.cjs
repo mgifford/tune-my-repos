@@ -25,6 +25,9 @@ const { redactExactAlertCounts } = require('../policy/public-redaction.cjs');
 const { KNOWN_REPLACEMENTS, listDirectDependencies, evaluateLibraryAdvice } = require('../policy/library-advice.cjs');
 
 const MAX_FAILURE_SUMMARY_CHARS = 500;
+// GitHub allows 60 unauthenticated requests/hour; a repository costs
+// roughly 6 or more, so an unauthenticated run stays small.
+const UNAUTHENTICATED_MAX_REPOS = 8;
 const MAX_REASON_CHARS = 500;
 const API_BASE = 'https://api.github.com';
 
@@ -708,8 +711,30 @@ async function resolveCandidateRepos(policy) {
   return pushedAtByRepo;
 }
 
+/** Pure: the per-run repository cap, lowered when there is no token. */
+function effectiveMaxRepos(configured, hasToken) {
+  return hasToken ? configured : Math.min(configured, UNAUTHENTICATED_MAX_REPOS);
+}
+
+/**
+ * Pure: a warning when this copy of the tool runs under an account its
+ * policy does not mention, which usually means a fork or copy whose
+ * maintenance-policy.json still names the original owner.
+ * @returns {string|null}
+ */
+function ownerMismatchWarning(policy, runningOwner) {
+  if (!runningOwner) return null;
+  const owners = (policy.discovery.owners || []).map((o) => o.toLowerCase());
+  if (owners.includes(runningOwner.toLowerCase())) return null;
+  return `This repository belongs to "${runningOwner}", but maintenance-policy.json scans ${owners.join(', ') || 'no owners'}. ` +
+    'If this is your copy, set discovery.owners and repositories.include to your own account (see README).';
+}
+
 async function main() {
   const policy = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'maintenance-policy.json'), 'utf8'));
+  const mismatch = ownerMismatchWarning(policy, process.env.GITHUB_REPOSITORY_OWNER);
+  // ::warning:: surfaces on the Actions run summary, not just in the log
+  if (mismatch) console.log(`::warning::${mismatch}`);
   const rollupSchema = JSON.parse(
     fs.readFileSync(path.join(__dirname, '..', 'policy', 'rollup.schema.json'), 'utf8')
   );
@@ -727,7 +752,11 @@ async function main() {
     scanState = pruneToRepositories(scanState, pushedAtByRepo.keys());
   }
   const orderedRepos = orderByActivityThenStaleness(scanState, [...pushedAtByRepo.keys()], pushedAtByRepo);
-  const reposThisRun = orderedRepos.slice(0, policy.discovery.max_repos_per_run);
+  const maxRepos = effectiveMaxRepos(policy.discovery.max_repos_per_run, Boolean(token));
+  if (maxRepos < policy.discovery.max_repos_per_run) {
+    console.log(`No token: scanning at most ${maxRepos} repositories this run (set MAINTENANCE_RO_TOKEN for more).`);
+  }
+  const reposThisRun = orderedRepos.slice(0, maxRepos);
 
   const repositories = [];
   for (const repoFullName of reposThisRun) {
@@ -811,6 +840,8 @@ module.exports = {
   npmManifestDir,
   summarizeCiStatus,
   combineBranchProtection,
+  effectiveMaxRepos,
+  ownerMismatchWarning,
   securitySettingStatus,
   findFailedCheckRun,
   semverParts,
