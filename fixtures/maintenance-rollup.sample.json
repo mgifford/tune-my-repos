@@ -25,6 +25,10 @@
         "has_urgent_alerts": true
       },
       "open_pull_requests": { "total": 4, "dependabot": 3 },
+      "library_advice": [
+        { "package": "request", "dependency_type": "production", "kind": "deprecated", "suggestion": "Use the built-in fetch (Node 18+ and browsers)." },
+        { "package": "rimraf", "dependency_type": "development", "kind": "native", "suggestion": "Use fs.rm(path, { recursive: true, force: true }) (Node 14.14+)." }
+      ],
       "dependabot_prs": [
         {
           "number": 42,

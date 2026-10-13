@@ -138,6 +138,23 @@
                 </div>
             </div>
         </section>
+
+        <section id="librarySection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="libraryPanel" id="libraryHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    🧰 Library suggestions
+                </button>
+            </h2>
+            <div id="libraryPanel" class="accordion-panel" role="region" aria-labelledby="libraryHeading">
+                <p class="section-note">
+                    Direct npm dependencies of public repositories that are compromised, deprecated, unmaintained
+                    (no release in over two years), or replaceable by a built-in API or a lighter package. Rules
+                    and npm registry data only; replacing a library is your decision.
+                </p>
+                <ul id="libraryList" class="finding-list"></ul>
+            </div>
+        </section>
         </div>
 
         <div class="accordion-controls">
