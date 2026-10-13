@@ -53,31 +53,20 @@ This tool evaluates repositories against established compliance, security, acces
    - See [DEBUGGING.md](DEBUGGING.md) for complete debugging guide
    - Error messages now include helpful tips and context
 
-5. **Optional - Configure authentication** (for higher rate limits and private repos):
-   
-   **For local development:**
-   
-   Use a Personal Access Token with .env file or config.js:
-   ```bash
-   # Copy the example file
-   cp .env.example .env
-   
-   # Edit .env and add your GitHub Personal Access Token
-   # Get a token from: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
-   ```
-   
-   **For GitHub Pages deployment:**
-   
-   Use GitHub OAuth for users to sign in with their own accounts:
-   - See [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) for complete OAuth configuration guide
-   - Allows users to authenticate with their GitHub account
-   - Each user gets their own 5,000 requests/hour rate limit
-   
-   **Rate limits:**
-   - Without authentication: 60 requests/hour (unauthenticated)
-   - With authentication: 5,000 requests/hour
-   - With authentication: Access to private repositories (if granted)
-   - **Caching reduces API usage:** Repeated scans within 1 hour use cached data
+5. **Rate limits and sign-in:**
+
+   The published site has **no sign-in**. A static GitHub Pages site cannot complete
+   GitHub's OAuth flow without a server that holds the OAuth client secret, and asking
+   visitors to paste access tokens is not acceptable, so the site runs unauthenticated:
+
+   - Public repositories only, at GitHub's limit of 60 API requests/hour per network
+   - Single repositories (`owner/repo`) fit comfortably; large accounts may be analyzed partly
+   - Repeated scans within 1 hour use cached data
+   - For a whole account, use the [Maintenance Control Plane](maintenance.html): a scheduled
+     workflow scans with the repository's own token and publishes the results
+
+   **For local development only**, you can raise the limit to 5,000 requests/hour by putting
+   a Personal Access Token in `.env` (copy `.env.example`) or `config.js`. Never commit it.
 
 5. **Export results:**
    - **JSON** - Complete analysis data for further processing
@@ -306,51 +295,20 @@ All evaluations follow the rules defined in [AGENTS.md](AGENTS.md), including:
 
 ## Frequently Asked Questions
 
-### Do I need to set up GitHub OAuth?
+### Why is there no "Sign in with GitHub"?
 
-**Short answer: No, for most users!**
+GitHub's OAuth web flow needs a server to exchange the login code using a client secret, and
+GitHub's device flow cannot be called from a browser. A static GitHub Pages site has neither, so
+a working sign-in would mean running and securing a separate proxy service. That is more
+infrastructure to maintain than the benefit is worth here, so the published site is unauthenticated.
+For a full, regularly updated view of an account, use the scheduled
+[Maintenance Control Plane](maintenance.html).
 
-GitHub OAuth is only needed if you're deploying to GitHub Pages and want multiple users to authenticate with their own accounts. For local/personal use, a Personal Access Token is simpler and sufficient.
+### How do I use a token locally?
 
-**When to use Personal Access Token (recommended for most users):**
-- Running locally for personal use
-- Single-user scenarios
-- Testing and development
-- Gives you 5,000 API requests/hour
-
-**When to use GitHub OAuth (advanced):**
-- Deploying to GitHub Pages
-- Multiple users need to authenticate
-- Each user needs their own rate limit
-- Requires setting up an OAuth proxy (see [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md))
-
-### How do I add my GitHub token?
-
-1. **Create a Personal Access Token:**
-   - Go to https://github.com/settings/tokens
-   - Click "Generate new token (classic)"
-   - Select scope: `public_repo` (or `repo` for private repositories)
-   - Copy the token (starts with `ghp_`)
-
-2. **Add the token to config.js:**
-   ```javascript
-   const CONFIG = { 
-       GITHUB_TOKEN: 'ghp_your_token_here',
-       // OAuth settings can be left empty for local use
-   };
-   ```
-
-3. **Verify it works:**
-   - Open the app in your browser
-   - The app will use your token automatically
-   - You'll get 5,000 requests/hour instead of 60
-
-### How do I check if authentication is working?
-
-- **Without any token:** You'll see "60 requests/hour" rate limit
-- **With token or OAuth:** You'll see "5,000 requests/hour" rate limit
-- Check the browser console for messages like "✓ Loaded GitHub token"
-- If OAuth is configured, you'll see your username in the top-right corner
+For local development only: copy `.env.example` to `.env` (or `config.example.js` to `config.js`)
+and set `GITHUB_TOKEN` to a fine-grained, read-only Personal Access Token. Both files are
+gitignored. The browser console logs whether a token is present.
 
 ### How does organization-level governance file detection work?
 

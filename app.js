@@ -152,17 +152,9 @@ const exportJsonBtn = document.getElementById('exportJson');
 const exportMarkdownBtn = document.getElementById('exportMarkdown');
 const exportCsvBtn = document.getElementById('exportCsv');
 
-// Auth DOM elements
-const authControls = document.getElementById('authControls');
-const authLoading = document.getElementById('authLoading');
-const authLoggedOut = document.getElementById('authLoggedOut');
-const authLoggedIn = document.getElementById('authLoggedIn');
-const authUsername = document.getElementById('authUsername');
-const loginBtn = document.getElementById('loginBtn');
-const logoutBtn = document.getElementById('logoutBtn');
 const debugIndicator = document.getElementById('debugIndicator');
 
-// Initialize auth UI and URL params when page loads
+// Initialize URL params when page loads
 window.addEventListener('DOMContentLoaded', async () => {
     debugLog('DOMContentLoaded - initializing app');
     
@@ -175,12 +167,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         await loadPrioritiesConfig();
     } catch (error) {
         console.error('Failed to load priorities config:', error);
-    }
-    
-    try {
-        await initAuthUI();
-    } catch (error) {
-        console.error('Failed to initialize auth UI:', error);
     }
     
     // Auto-submit the form if a URL parameter was provided
@@ -227,64 +213,6 @@ function updateDebugIndicator() {
     }
 }
 
-async function initAuthUI() {
-    try {
-        if (!window.githubAuth) {
-            console.warn('Auth module not loaded');
-            debugLog('githubAuth object not found on window');
-            return;
-        }
-        
-        debugLog('Initializing auth UI...');
-        
-        // Show loading state - hide all other states
-        authLoading.classList.remove('hidden');
-        authLoggedOut.classList.add('hidden');
-        authLoggedIn.classList.add('hidden');
-        
-        if (window.githubAuth.isAuthenticated()) {
-            debugLog('User is authenticated, fetching user info...');
-            // User is logged in - show username
-            try {
-                const userInfo = await window.githubAuth.getUserInfo();
-                if (userInfo) {
-                    debugLog('User info retrieved:', userInfo.login);
-                    authUsername.textContent = `@${userInfo.login}`;
-                    authLoggedIn.classList.remove('hidden');
-                    authLoggedOut.classList.add('hidden');
-                } else {
-                    debugLog('Failed to retrieve user info - token may be invalid');
-                    // Token invalid, show logged out state
-                    authLoggedIn.classList.add('hidden');
-                    authLoggedOut.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Error fetching user info:', error);
-                debugLog('getUserInfo error:', error);
-                // Show logged out state on error, hide logged in state
-                authLoggedIn.classList.add('hidden');
-                authLoggedOut.classList.remove('hidden');
-            }
-        } else {
-            debugLog('User is not authenticated');
-            // Not logged in - ensure logged in state is hidden
-            authLoggedIn.classList.add('hidden');
-            authLoggedOut.classList.remove('hidden');
-        }
-        
-        // Hide loading state
-        authLoading.classList.add('hidden');
-    } catch (error) {
-        console.error('Error in initAuthUI:', error);
-        // Ensure we hide loading and show only logged out state on any error
-        authLoading.classList.add('hidden');
-        authLoggedIn.classList.add('hidden');
-        if (authLoggedOut) {
-            authLoggedOut.classList.remove('hidden');
-        }
-    }
-}
-
 /**
  * Initialize URL parameter handling
  * Reads the 'u' parameter from URL and populates the input field
@@ -325,18 +253,14 @@ exportJsonBtn.addEventListener('click', exportAsJSON);
 exportMarkdownBtn.addEventListener('click', exportAsMarkdown);
 exportCsvBtn.addEventListener('click', exportAsCSV);
 loadMoreBtn.addEventListener('click', handleLoadMore);
-loginBtn.addEventListener('click', () => window.githubAuth.login());
-logoutBtn.addEventListener('click', () => window.githubAuth.logout());
 targetInput.addEventListener('input', updateURL);
 
 /**
- * Get the current GitHub token from either OAuth or config
+ * A token only exists for local development (config.js or .env). The
+ * published site has no sign-in: a static page cannot complete GitHub's
+ * OAuth flow without a server holding the client secret.
  */
 function getGitHubToken() {
-    // Priority: OAuth token > local token from config/env
-    if (window.githubAuth && window.githubAuth.isAuthenticated()) {
-        return window.githubAuth.getToken();
-    }
     return window.CONFIG?.GITHUB_TOKEN || '';
 }
 
@@ -398,12 +322,7 @@ async function handleAnalyze(e) {
     
     // Show rate limit warning if no token provided
     if (!token) {
-        const hasOAuthConfig = window.CONFIG?.GITHUB_OAUTH_CLIENT_ID;
-        if (hasOAuthConfig) {
-            showInfo(`⚡ Not authenticated. Click "Sign in with GitHub" above for higher rate limits (${GITHUB_RATE_LIMITS.authenticated.toLocaleString()}/hour) vs. ${GITHUB_RATE_LIMITS.unauthenticated}/hour unauthenticated.`);
-        } else {
-            showInfo(`Analyzing public repositories only. Without authentication, you're limited to ${GITHUB_RATE_LIMITS.unauthenticated} API requests/hour. For higher limits (${GITHUB_RATE_LIMITS.authenticated.toLocaleString()}/hour), <a href="https://github.com/settings/tokens" target="_blank">add a Personal Access Token</a> in .env or config.js for local development. See README for deployment options.`);
-        }
+        showInfo(`Analyzing public repositories only. GitHub allows ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour from your network, so a large account may only be partly analyzed. Single repositories (owner/repo) work best. For a scheduled scan of a whole account, see the <a href="maintenance.html">Maintenance Control Plane</a>.`);
     }
     
     // Reset UI
@@ -494,7 +413,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             'Accept': 'application/vnd.github.v3+json'
         };
         
-        // Get current token (OAuth or config)
+        // Local development token, if any (config.js or .env)
         const token = getGitHubToken();
         
         // Only add Authorization header if token is provided
@@ -701,7 +620,7 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             const token = getGitHubToken();
             let warningMessage = `⚠️ Partial analysis: ${batchResults.length} of ${repos.length} repositories analyzed. ${failedCount} ${rateLimited ? 'were not analyzed because the GitHub API rate limit was reached' : 'failed'}. The summary below covers only the analyzed repositories. `;
             if (!token) {
-                warningMessage += `You are not authenticated. Without authentication, you are limited to ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour. <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Get a Personal Access Token</a> for ${GITHUB_RATE_LIMITS.authenticated.toLocaleString()} requests/hour, or click "Sign in with GitHub" above.`;
+                warningMessage += `GitHub allows ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour from your network; the limit resets within an hour. Try a single repository (owner/repo), or see the <a href="maintenance.html">Maintenance Control Plane</a> for a scheduled scan of a whole account.`;
             } else {
                 warningMessage += `This may be due to rate limiting or individual repository access issues. Check the browser console for details.`;
             }

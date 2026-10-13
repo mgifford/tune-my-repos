@@ -26,33 +26,12 @@
  *   - With token: 5,000 API requests/hour
  *   - Access to private repositories (if granted)
  * 
- * 
- * GITHUB PAGES / PRODUCTION DEPLOYMENT:
- * 
- * For GitHub Pages deployment, configure GitHub OAuth:
- * 
- * 1. Create a GitHub OAuth App:
- *    https://github.com/settings/developers
- *    - Application name: Your app name
- *    - Homepage URL: https://yourusername.github.io/tune-my-repos/
- *    - Authorization callback URL: https://yourusername.github.io/tune-my-repos/
- * 
- * 2. Deploy an OAuth proxy (required for static sites):
- *    Option A: Use Cloudflare Workers (recommended)
- *      https://github.com/gr2m/cloudflare-worker-github-oauth-login
- *    
- *    Option B: Deploy your own proxy
- *      https://github.com/prose/gatekeeper
- * 
- * 3. Configure OAuth settings below and commit to repository
+ * The published GitHub Pages site has no sign-in. A static page cannot
+ * complete GitHub's OAuth flow without a server holding the client secret,
+ * so tokens are for local development only and must never be committed.
  */
 
 const CONFIG = {
     // Local development token (not committed, optional)
-    GITHUB_TOKEN: '',
-    
-    // GitHub OAuth App Configuration (for GitHub Pages deployment)
-    // These values CAN be committed as they are public (client ID is not secret)
-    GITHUB_OAUTH_CLIENT_ID: '',  // Your OAuth App Client ID
-    GITHUB_OAUTH_PROXY: ''        // Your OAuth proxy URL (e.g., https://your-worker.workers.dev/api/github/oauth/token)
+    GITHUB_TOKEN: ''
 };

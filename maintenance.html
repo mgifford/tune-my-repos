@@ -45,22 +45,6 @@
         </section>
 
         <div class="accordion" id="findingsAccordion">
-        <section id="unavailableSection" class="maintenance-section accordion-item" hidden>
-            <h2 class="accordion-heading">
-                <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="unavailablePanel" id="unavailableHeading">
-                    <span class="accordion-icon" aria-hidden="true"></span>
-                    ⚪ Unavailable or unknown data
-                </button>
-            </h2>
-            <div id="unavailablePanel" class="accordion-panel" role="region" aria-labelledby="unavailableHeading">
-                <p class="section-note">
-                    These coverage gaps mean a signal could not be verified — they are not evidence that a
-                    repository is insecure or non-compliant.
-                </p>
-                <ul id="unavailableList" class="finding-list"></ul>
-            </div>
-        </section>
-
         <section id="urgentSection" class="maintenance-section accordion-item" hidden>
             <h2 class="accordion-heading">
                 <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="urgentPanel" id="urgentHeading">
@@ -153,6 +137,22 @@
                     and npm registry data only; replacing a library is your decision.
                 </p>
                 <ul id="libraryList" class="finding-list"></ul>
+            </div>
+        </section>
+
+        <section id="unavailableSection" class="maintenance-section accordion-item" hidden>
+            <h2 class="accordion-heading">
+                <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="unavailablePanel" id="unavailableHeading">
+                    <span class="accordion-icon" aria-hidden="true"></span>
+                    ⚪ Unavailable or unknown data <span id="unavailableCount"></span>
+                </button>
+            </h2>
+            <div id="unavailablePanel" class="accordion-panel" role="region" aria-labelledby="unavailableHeading" hidden>
+                <p class="section-note">
+                    These coverage gaps mean a signal could not be verified — they are not evidence that a
+                    repository is insecure or non-compliant.
+                </p>
+                <ul id="unavailableList" class="finding-list"></ul>
             </div>
         </section>
         </div>
