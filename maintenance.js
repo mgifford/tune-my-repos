@@ -29,6 +29,7 @@ const sections = {
     eligible: { section: document.getElementById('eligibleSection'), list: document.getElementById('eligibleList') },
     review: { section: document.getElementById('reviewSection'), list: document.getElementById('reviewList') },
     openPrs: { section: document.getElementById('openPrsSection'), list: document.getElementById('openPrsBody') },
+    library: { section: document.getElementById('librarySection'), list: document.getElementById('libraryList') },
 };
 const emptyState = document.getElementById('emptyState');
 
@@ -127,6 +128,8 @@ function renderRollup(rollup, sourceUrl, schema) {
     renderReview(window.PrView.sortForReview(reviewItems, now), now);
     const openPrRows = window.PrView.reposWithOpenPrs(rollup.repositories);
     renderOpenPrs(openPrRows);
+    const libraryRepos = rollup.repositories.filter((r) => r.library_advice && r.library_advice.length > 0);
+    renderLibraryAdvice(libraryRepos);
 
     if (
         unavailableItems.length === 0 &&
@@ -134,7 +137,8 @@ function renderRollup(rollup, sourceUrl, schema) {
         failedItems.length === 0 &&
         eligibleItems.length === 0 &&
         reviewItems.length === 0 &&
-        openPrRows.length === 0
+        openPrRows.length === 0 &&
+        libraryRepos.length === 0
     ) {
         showEmptyState();
     }
@@ -253,6 +257,48 @@ function renderReview(items, now) {
     for (const { repo, pr } of items) renderPrCard(list, 'recommended', repo, pr, now);
 }
 
+const LIBRARY_KIND_LABELS = {
+    compromised: 'Compromised',
+    deprecated: 'Deprecated',
+    unmaintained: 'Unmaintained',
+    native: 'Built-in alternative',
+    lighter: 'Lighter alternative',
+};
+
+function renderLibraryAdvice(repos) {
+    const { section, list } = sections.library;
+    if (repos.length === 0) return;
+    section.hidden = false;
+    for (const repo of repos) {
+        const li = document.createElement('li');
+        const urgent = repo.library_advice.some((a) => a.kind === 'compromised' || a.kind === 'deprecated');
+        li.className = `finding-card ${urgent ? 'important' : 'recommended'}`;
+
+        const title = document.createElement('strong');
+        const link = document.createElement('a');
+        link.href = `https://github.com/${repo.full_name}`;
+        link.textContent = repo.full_name;
+        title.appendChild(link);
+        li.appendChild(title);
+
+        const items = document.createElement('ul');
+        items.className = 'library-advice-list';
+        for (const advice of repo.library_advice) {
+            const item = document.createElement('li');
+            const pkg = document.createElement('code');
+            pkg.textContent = advice.package;
+            item.append(
+                `${LIBRARY_KIND_LABELS[advice.kind] || advice.kind}: `,
+                pkg,
+                ` (${advice.dependency_type}) — ${advice.suggestion}`,
+            );
+            items.appendChild(item);
+        }
+        li.appendChild(items);
+        list.appendChild(li);
+    }
+}
+
 function renderOpenPrs(rows) {
     const { section, list } = sections.openPrs;
     if (rows.length === 0) return;
@@ -303,6 +349,13 @@ function exportAsMarkdown() {
             md += `### Dependabot PRs\n\n`;
             for (const pr of repo.dependabot_prs) {
                 md += `- [#${pr.number}](${pr.url}) ${pr.dependency_name} ${pr.version_from} → ${pr.version_to}: **${pr.risk_state}**, CI ${pr.ci_status}, ${describeAge(pr, new Date())} — ${pr.reason}\n`;
+            }
+            md += `\n`;
+        }
+        if (repo.library_advice && repo.library_advice.length > 0) {
+            md += `### Library suggestions\n\n`;
+            for (const a of repo.library_advice) {
+                md += `- \`${a.package}\` (${a.dependency_type}) — ${LIBRARY_KIND_LABELS[a.kind] || a.kind}: ${a.suggestion}\n`;
             }
             md += `\n`;
         }

@@ -155,3 +155,12 @@ nav[aria-label="Dashboards"] a:focus-visible {
 .open-prs-table td {
     font-variant-numeric: tabular-nums;
 }
+
+.library-advice-list {
+    margin: calc(var(--spacing) / 2) 0 0;
+    padding-left: calc(var(--spacing) * 1.25);
+}
+
+.library-advice-list li {
+    margin-bottom: calc(var(--spacing) / 4);
+}
