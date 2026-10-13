@@ -125,3 +125,33 @@ nav[aria-label="Dashboards"] a:focus-visible {
         transition-duration: 0.01ms !important;
     }
 }
+
+.pr-meta {
+    color: var(--text-secondary);
+    margin: calc(var(--spacing) / 4) 0;
+}
+
+/* Scrolls inside its own box so the page never scrolls sideways on phones */
+.table-scroll {
+    overflow-x: auto;
+}
+
+.open-prs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.open-prs-table th,
+.open-prs-table td {
+    padding: calc(var(--spacing) / 2) calc(var(--spacing) / 4);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.open-prs-table th[scope="row"] {
+    overflow-wrap: anywhere;
+}
+
+.open-prs-table td {
+    font-variant-numeric: tabular-nums;
+}

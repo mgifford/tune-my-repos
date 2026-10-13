@@ -354,10 +354,9 @@ async function fetchBranchProtection(repoFullName, defaultBranch) {
   return 'available';
 }
 
-async function fetchDependabotPulls(repoFullName) {
+async function fetchOpenPulls(repoFullName) {
   const result = await githubFetch(`/repos/${repoFullName}/pulls?state=open&per_page=100`);
-  if (!result.ok) return [];
-  return result.data.filter((pr) => pr.user?.login === 'dependabot[bot]');
+  return result.ok ? result.data : null; // null: unreadable, distinct from "none open"
 }
 
 const FAILING_CONCLUSIONS = ['failure', 'timed_out', 'cancelled', 'action_required', 'startup_failure'];
@@ -446,11 +445,12 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
   // appear with no new push). PR/CI-status work is the expensive part and
   // is skipped when scan-state says this repo is unchanged and was
   // recently scanned; see policy/scan-state.cjs.
-  const [alertResult, branchProtectionAvailability, pulls] = await Promise.all([
+  const [alertResult, branchProtectionAvailability, openPulls] = await Promise.all([
     fetchDependabotAlerts(repoFullName),
     fetchBranchProtection(repoFullName, defaultBranch),
-    skipPrWork ? Promise.resolve([]) : fetchDependabotPulls(repoFullName),
+    skipPrWork ? Promise.resolve(null) : fetchOpenPulls(repoFullName),
   ]);
+  const pulls = (openPulls || []).filter((pr) => pr.user?.login === 'dependabot[bot]');
 
   const coverage = {
     dependency_graph: repoMeta ? 'available' : 'unknown',
@@ -507,6 +507,7 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
     dependabotPrs.push({
       number: pr.number,
       url: pr.html_url,
+      opened_at: pr.created_at,
       ecosystem,
       dependency_name: dependencyName,
       version_from: versionFrom,
@@ -549,6 +550,9 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
     // any other authenticated consumer. has_urgent_alerts is the only field
     // safe to render on a public page — see rollup.schema.json.
     security_alerts: { ...counts, has_urgent_alerts: computeHasUrgentAlerts(counts) },
+    // Omitted (not zeroed) when PRs were not fetched this run. per_page=100
+    // caps the count; a repo with more open PRs reports 100.
+    ...(openPulls ? { open_pull_requests: { total: openPulls.length, dependabot: pulls.length } } : {}),
     dependabot_prs: dependabotPrs,
     failed_update_prs: failedUpdatePrs,
     recommended_action: recommendedAction,

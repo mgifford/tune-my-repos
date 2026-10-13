@@ -75,6 +75,15 @@
             }
           }
         },
+        "open_pull_requests": {
+          "type": "object",
+          "required": ["total", "dependabot"],
+          "additionalProperties": false,
+          "properties": {
+            "total": { "type": "integer", "minimum": 0 },
+            "dependabot": { "type": "integer", "minimum": 0 }
+          }
+        },
         "dependabot_prs": {
           "type": "array",
           "items": { "$ref": "#/definitions/dependabotPr" }
@@ -105,6 +114,7 @@
         "number": { "type": "integer", "minimum": 1 },
         "url": { "type": "string" },
         "ecosystem": { "type": "string" },
+        "opened_at": { "type": "string" },
         "dependency_name": { "type": "string" },
         "version_from": { "type": "string" },
         "version_to": { "type": "string" },
