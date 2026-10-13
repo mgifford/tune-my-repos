@@ -817,8 +817,10 @@ async function main() {
   const publicRollup = redactExactAlertCounts(rollup);
 
   if (dryRun) {
-    console.log(`[dry-run] would write ${outPath}:`);
-    console.log(JSON.stringify(rollup, null, 2));
+    // Workflow logs are public on a public repository, so a dry run prints
+    // only the redacted public rollup — never the exact alert counts, which
+    // exist only in the private artifact of a real run.
+    console.log(`[dry-run] would write ${outPath} (exact alert counts; not printed, logs are public)`);
     console.log(`[dry-run] would write ${publicOutPath}:`);
     console.log(JSON.stringify(publicRollup, null, 2));
   } else {
