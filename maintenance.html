@@ -144,14 +144,26 @@
             <h2 class="accordion-heading">
                 <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="unavailablePanel" id="unavailableHeading">
                     <span class="accordion-icon" aria-hidden="true"></span>
-                    ⚪ Unavailable or unknown data <span id="unavailableCount"></span>
+                    <span>⚪ Unavailable or unknown data <span id="unavailableCount"></span></span>
                 </button>
             </h2>
             <div id="unavailablePanel" class="accordion-panel" role="region" aria-labelledby="unavailableHeading" hidden>
                 <p class="section-note">
-                    These coverage gaps mean a signal could not be verified — they are not evidence that a
-                    repository is insecure or non-compliant.
+                    These coverage gaps mean a signal could not be verified, or a security feature is turned
+                    off. "Could not be read" is usually a missing permission on the scan token (below).
+                    Neither is evidence that a repository is insecure or non-compliant.
                 </p>
+                <details class="token-help">
+                    <summary>How to set up the scan token (MAINTENANCE_RO_TOKEN)</summary>
+                    <ol>
+                        <li>Create a <strong>fine-grained personal access token</strong> at GitHub → Settings → Developer settings → Fine-grained tokens.</li>
+                        <li>Resource owner: the account being scanned. Repository access: <strong>All repositories</strong> (only public ones are ever scanned).</li>
+                        <li>Repository permissions, all <strong>Read-only</strong>: Dependabot alerts, Administration (for security settings and classic branch protection). Metadata is added automatically. Nothing else, and nothing with write access.</li>
+                        <li>Set an expiry, and a reminder to renew it.</li>
+                        <li>In the repository running this dashboard: Settings → Secrets and variables → Actions → New repository secret, named <code>MAINTENANCE_RO_TOKEN</code>.</li>
+                        <li>The next scheduled scan uses it. Gaps that remain "could not be read" name the permission still missing.</li>
+                    </ol>
+                </details>
                 <ul id="unavailableList" class="finding-list"></ul>
             </div>
         </section>
@@ -179,6 +191,7 @@
     <script src="policy/policy-validator.cjs"></script>
     <script src="policy/public-redaction.cjs"></script>
     <script src="policy/pr-view.cjs"></script>
+    <script src="policy/coverage-help.cjs"></script>
     <script src="maintenance.js"></script>
 </body>
 </html>

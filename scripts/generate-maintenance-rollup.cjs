@@ -401,14 +401,38 @@ async function fetchSecurityAndAnalysis(repoFullName) {
   return result.data;
 }
 
+/**
+ * Pure: combines classic branch protection with repository rulesets. The
+ * classic endpoint needs Administration: read and never sees rulesets;
+ * the rules endpoint is readable on any public repository.
+ * @param {'available'|'not_available'|'unknown'} classic
+ * @param {object[]|null} rules - active rules on the branch, null if unreadable
+ */
+function combineBranchProtection(classic, rules) {
+  if (classic === 'available' || (rules && rules.length > 0)) return 'available';
+  if (classic === 'not_available' && rules) return 'not_available';
+  return 'unknown';
+}
+
 async function fetchBranchProtection(repoFullName, defaultBranch) {
-  const result = await githubFetch(
-    `/repos/${repoFullName}/branches/${encodeURIComponent(defaultBranch)}/protection`,
-    { allow404: true }
-  );
-  if (result.status === 404) return 'not_available'; // no protection configured
-  if (!result.ok) return 'unknown'; // likely 403: insufficient permission to read
-  return 'available';
+  const branch = encodeURIComponent(defaultBranch);
+  const [classicResult, rulesResult] = await Promise.all([
+    githubFetch(`/repos/${repoFullName}/branches/${branch}/protection`, { allow404: true }),
+    githubFetch(`/repos/${repoFullName}/rules/branches/${branch}`, { allow404: true }),
+  ]);
+  const classic = classicResult.status === 404 ? 'not_available' : classicResult.ok ? 'available' : 'unknown';
+  const rules = rulesResult.ok && Array.isArray(rulesResult.data) ? rulesResult.data : null;
+  return combineBranchProtection(classic, rules);
+}
+
+/**
+ * Pure: a security_and_analysis setting's coverage. GitHub omits the whole
+ * security_and_analysis block unless the token has admin-level read, so a
+ * missing block is "unknown", never "not_available".
+ */
+function securitySettingStatus(repoMeta, key) {
+  if (!repoMeta || !repoMeta.security_and_analysis) return 'unknown';
+  return repoMeta.security_and_analysis[key]?.status === 'enabled' ? 'available' : 'not_available';
 }
 
 async function fetchOpenPulls(repoFullName) {
@@ -517,12 +541,8 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
   const coverage = {
     dependency_graph: repoMeta ? 'available' : 'unknown',
     dependabot_alerts: alertResult.available,
-    dependabot_security_updates: repoMeta?.security_and_analysis?.dependabot_security_updates?.status === 'enabled'
-      ? 'available'
-      : repoMeta ? 'not_available' : 'unknown',
-    secret_scanning: repoMeta?.security_and_analysis?.secret_scanning?.status === 'enabled'
-      ? 'available'
-      : repoMeta ? 'not_available' : 'unknown',
+    dependabot_security_updates: securitySettingStatus(repoMeta, 'dependabot_security_updates'),
+    secret_scanning: securitySettingStatus(repoMeta, 'secret_scanning'),
     codeql_default_setup: 'unknown', // requires a separate, higher-scope endpoint; not fetched in this phase
     branch_protection: branchProtectionAvailability,
   };
@@ -790,6 +810,8 @@ module.exports = {
   classifyFromPackageLock,
   npmManifestDir,
   summarizeCiStatus,
+  combineBranchProtection,
+  securitySettingStatus,
   findFailedCheckRun,
   semverParts,
   inferUpdateType,

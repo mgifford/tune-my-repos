@@ -174,9 +174,29 @@ remains the merge gate for every change.
   any repository it *scans*. It does commit one file in *this* repository —
   `maintenance-scan-state.json` — and does so through a small pull request that must pass the same
   required `npm test` check as any other change to `main`, rather than bypassing branch protection.
-  Works with or without the optional `MAINTENANCE_RO_TOKEN` repository secret (a fine-grained PAT scoped
-  to read-only Metadata, Dependabot alerts, and Pull requests); without it, Dependabot alert and
-  branch-protection coverage report as `unknown` rather than failing the run.
+  Works with or without the optional `MAINTENANCE_RO_TOKEN` repository secret (see
+  [Setting up MAINTENANCE_RO_TOKEN](#setting-up-maintenance_ro_token)); without it, Dependabot alerts,
+  security settings and classic branch protection report as `unknown` rather than failing the run.
+
+### Setting up MAINTENANCE_RO_TOKEN
+
+The scan works without a token, but several signals then read "could not be read" on the Maintenance
+page. A read-only, fine-grained token fills them in:
+
+1. GitHub → Settings → Developer settings → **Fine-grained tokens** → Generate new token.
+2. **Resource owner:** the account being scanned. **Repository access:** All repositories (private
+   repositories are never scanned or published, whatever the token can see).
+3. **Repository permissions, all Read-only:**
+   - **Dependabot alerts** - alert severity (only the critical/high yes-or-no is published)
+   - **Administration** - whether secret scanning and Dependabot security updates are on, and classic
+     branch protection (rulesets are read without it)
+   - Metadata is added automatically. Grant nothing else, and nothing with write access.
+4. Set an expiry and a reminder to renew it.
+5. In this repository: Settings → Secrets and variables → Actions → New repository secret named
+   `MAINTENANCE_RO_TOKEN`.
+
+The "Unavailable or unknown data" section on the Maintenance page groups every remaining gap and names
+the permission or setting that would fill it. These instructions are also on that page.
 
 ### Security alert visibility on the public dashboard
 

@@ -13,9 +13,9 @@ name: Maintenance Inventory
 #     coverage (Dependabot alerts require authentication even on public
 #     repos, so dry-run output will show "unknown" for that field).
 #   - Authenticated: set the MAINTENANCE_RO_TOKEN repository secret to a
-#     fine-grained PAT scoped to read-only Metadata + Dependabot alerts +
-#     Pull requests on the repositories in policy scope. The workflow still
-#     runs without this secret; it simply has less coverage.
+#     fine-grained PAT with read-only Dependabot alerts + Administration
+#     (Metadata is automatic) — see README "Setting up MAINTENANCE_RO_TOKEN".
+#     The workflow still runs without this secret; it simply has less coverage.
 #
 # Publishing:
 #   maintenance-scan-state.json tracks when each discovered repository was
