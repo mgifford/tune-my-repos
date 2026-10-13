@@ -44,9 +44,9 @@ function cap(text, max) {
   return r.length > max ? `${r.slice(0, max)}… (truncated)` : r;
 }
 
-async function githubFetch(endpoint, { allow404 = false } = {}) {
+async function githubFetch(endpoint, { allow404 = false, raw = false } = {}) {
   const headers = {
-    Accept: 'application/vnd.github+json',
+    Accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
   };
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -62,7 +62,7 @@ async function githubFetch(endpoint, { allow404 = false } = {}) {
   if (!response.ok) {
     return { ok: false, status: response.status, data: null };
   }
-  return { ok: true, status: response.status, data: await response.json() };
+  return { ok: true, status: response.status, data: raw ? await response.text() : await response.json() };
 }
 
 /**
@@ -135,10 +135,54 @@ async function discoverRepositoriesForOwner(owner, options) {
  * string parsing, no inference beyond semver comparison.
  */
 function parseDependabotTitle(title) {
-  const match = title.match(/Bump\s+(\S+)\s+from\s+(\S+)\s+to\s+(\S+)/i);
+  const match = String(title || '').match(/(?:Bump|Update)\s+(\S+)\s+(?:requirement\s+)?from\s+(\S+)\s+to\s+(\S+)/i);
   if (!match) return null;
   const [, dependencyName, versionFrom, versionTo] = match;
   return { dependencyName, versionFrom, versionTo };
+}
+
+/**
+ * Grouped and multi-dependency Dependabot PRs ("Bump the npm_and_yarn group
+ * ... with 3 updates") carry no single version in the title. Their body
+ * lists each one as "Updates `name` from X to Y". Pure string parsing.
+ * @returns {{dependencyName: string, versionFrom: string, versionTo: string}[]}
+ */
+function parseDependabotBodyUpdates(body) {
+  const updates = [];
+  const seen = new Set();
+  const re = /Updates `([^`]+)` from (\S+?)[.,]? to (\S+?)[.,]?(?:\s|$)/g;
+  for (const m of String(body || '').matchAll(re)) {
+    if (seen.has(m[1])) continue;
+    seen.add(m[1]);
+    updates.push({ dependencyName: m[1], versionFrom: m[2], versionTo: m[3] });
+  }
+  return updates;
+}
+
+const UPDATE_TYPE_RANK = { patch: 1, minor: 2, major: 3 };
+
+/**
+ * Combines per-dependency update types for a multi-update PR: the riskiest
+ * wins, and any unparseable version makes the whole PR "unknown".
+ */
+function combineUpdateTypes(types) {
+  if (types.length === 0 || types.includes('unknown')) return 'unknown';
+  return types.reduce((a, b) => (UPDATE_TYPE_RANK[b] > UPDATE_TYPE_RANK[a] ? b : a));
+}
+
+/**
+ * Combines per-dependency classes for a multi-update PR, conservatively:
+ * any unknown -> unknown; any production -> production.
+ */
+function combineDependencyClasses(classes) {
+  if (classes.length === 0 || classes.includes('unknown')) return 'unknown';
+  if (classes.includes('production')) return 'production';
+  return classes.every((c) => c === classes[0]) ? classes[0] : 'unknown';
+}
+
+function describeDependencies(names, max = 3) {
+  if (names.length <= max) return names.join(', ');
+  return `${names.slice(0, max).join(', ')} (+${names.length - max} more)`;
 }
 
 function semverParts(version) {
@@ -186,18 +230,57 @@ function classifyFromPackageJson(packageJson, dependencyName) {
   return null;
 }
 
-async function fetchPackageJson(repoFullName, ref) {
-  const result = await githubFetch(
-    `/repos/${repoFullName}/contents/package.json?ref=${encodeURIComponent(ref)}`,
-    { allow404: true }
-  );
-  if (!result.ok || !result.data?.content) return null;
-  try {
-    const decoded = Buffer.from(result.data.content, 'base64').toString('utf8');
-    return JSON.parse(decoded);
-  } catch {
-    return null; // malformed or unexpectedly-shaped content; never throw on untrusted repo data
+/**
+ * Classifies a dependency (direct or transitive) from a parsed npm
+ * package-lock.json. npm marks packages reachable only through
+ * devDependencies with "dev": true; anything else ships at runtime
+ * ("devOptional" is treated as production, conservatively). Pure.
+ * @returns {'production'|'development'|null} null when not found
+ */
+function classifyFromPackageLock(lock, dependencyName) {
+  if (!lock || typeof lock !== 'object') return null;
+  if (lock.packages && typeof lock.packages === 'object') {
+    const suffix = `node_modules/${dependencyName}`;
+    const entries = Object.entries(lock.packages).filter(([key]) => key === suffix || key.endsWith(`/${suffix}`));
+    if (entries.length === 0) return null;
+    return entries.every(([, entry]) => entry && entry.dev === true) ? 'development' : 'production';
   }
+  const legacy = lock.dependencies?.[dependencyName]; // lockfileVersion 1
+  if (!legacy) return null;
+  return legacy.dev === true ? 'development' : 'production';
+}
+
+// One run fetches each manifest at most once per repo/ref/path, however many
+// PRs need it.
+const manifestCache = new Map();
+
+async function fetchJsonFile(repoFullName, ref, filePath) {
+  const key = `${repoFullName}@${ref}:${filePath}`;
+  if (!manifestCache.has(key)) {
+    manifestCache.set(key, (async () => {
+      const result = await githubFetch(
+        `/repos/${repoFullName}/contents/${filePath}?ref=${encodeURIComponent(ref)}`,
+        { allow404: true, raw: true }
+      );
+      if (!result.ok || typeof result.data !== 'string') return null;
+      try {
+        return JSON.parse(result.data);
+      } catch {
+        return null; // malformed content; never throw on untrusted repo data
+      }
+    })());
+  }
+  return manifestCache.get(key);
+}
+
+/**
+ * Pure: the directory holding the npm manifest a PR changes ("" for root),
+ * so nested packages are classified against their own manifest.
+ */
+function npmManifestDir(changedFiles) {
+  const hit = (changedFiles || []).find((f) => /(^|\/)(package\.json|package-lock\.json)$/.test(f));
+  if (!hit || !hit.includes('/')) return '';
+  return hit.slice(0, hit.lastIndexOf('/') + 1);
 }
 
 /**
@@ -207,16 +290,20 @@ async function fetchPackageJson(repoFullName, ref) {
  * in the manifest is assumed transitive and left "unknown" rather than
  * guessed — see classifyFromPackageJson.
  */
-async function inferDependencyClass(pr, ecosystem, repoFullName, dependencyName, baseRef) {
+async function inferDependencyClass(pr, ecosystem, repoFullName, dependencyName, baseRef, manifestDir = '') {
   if (ecosystem === 'github_actions') return 'github-actions';
 
   const fromLabel = inferDependencyClassFromLabels(pr);
   if (fromLabel) return fromLabel;
 
   if (ecosystem === 'npm' && dependencyName !== 'unknown') {
-    const packageJson = await fetchPackageJson(repoFullName, baseRef);
+    const packageJson = await fetchJsonFile(repoFullName, baseRef, `${manifestDir}package.json`);
     const fromManifest = classifyFromPackageJson(packageJson, dependencyName);
     if (fromManifest) return fromManifest;
+    // Transitive dependency: the lockfile records whether it is dev-only.
+    const lock = await fetchJsonFile(repoFullName, baseRef, `${manifestDir}package-lock.json`);
+    const fromLock = classifyFromPackageLock(lock, dependencyName);
+    if (fromLock) return fromLock;
   }
 
   // Without a label or a direct manifest entry (e.g. a transitive
@@ -273,12 +360,49 @@ async function fetchDependabotPulls(repoFullName) {
   return result.data.filter((pr) => pr.user?.login === 'dependabot[bot]');
 }
 
-async function fetchRequiredChecksStatus(repoFullName, pr) {
-  const result = await githubFetch(`/repos/${repoFullName}/commits/${pr.head.sha}/status`, { allow404: true });
-  if (!result.ok) return 'unknown';
-  if (result.data.state === 'success') return 'passing';
-  if (result.data.state === 'failure' || result.data.state === 'error') return 'failing';
-  return 'pending';
+const FAILING_CONCLUSIONS = ['failure', 'timed_out', 'cancelled', 'action_required', 'startup_failure'];
+
+/**
+ * Pure: derives one CI status from GitHub Actions check runs plus legacy
+ * commit statuses. GitHub Actions reports only via check runs, and the
+ * legacy combined status reads "pending" when no statuses exist at all, so
+ * using it alone made every Actions-only PR look pending forever.
+ * Skipped/neutral runs are ignored. All checks count, not only required
+ * ones (required-check config needs admin scope to read).
+ * @param {object[]|null} checkRuns - check_runs array, or null if unreadable
+ * @param {object|null} combinedStatus - /status response, or null if unreadable
+ * @returns {'passing'|'failing'|'pending'|'none'|'unknown'}
+ */
+function summarizeCiStatus(checkRuns, combinedStatus) {
+  if (checkRuns === null && combinedStatus === null) return 'unknown';
+  const states = [];
+  for (const run of checkRuns || []) {
+    if (run.status !== 'completed') states.push('pending');
+    else if (FAILING_CONCLUSIONS.includes(run.conclusion)) states.push('failing');
+    else if (run.conclusion === 'success') states.push('passing');
+  }
+  if (combinedStatus && combinedStatus.total_count > 0) {
+    if (combinedStatus.state === 'success') states.push('passing');
+    else if (combinedStatus.state === 'failure' || combinedStatus.state === 'error') states.push('failing');
+    else states.push('pending');
+  }
+  if (states.includes('failing')) return 'failing';
+  if (states.includes('pending')) return 'pending';
+  if (states.includes('passing')) return 'passing';
+  return 'none';
+}
+
+function findFailedCheckRun(checkRuns) {
+  return (checkRuns || []).find((run) => run.status === 'completed' && FAILING_CONCLUSIONS.includes(run.conclusion)) || null;
+}
+
+async function fetchCiState(repoFullName, pr) {
+  const [runs, status] = await Promise.all([
+    githubFetch(`/repos/${repoFullName}/commits/${pr.head.sha}/check-runs?per_page=100`, { allow404: true }),
+    githubFetch(`/repos/${repoFullName}/commits/${pr.head.sha}/status`, { allow404: true }),
+  ]);
+  const checkRuns = runs.ok ? runs.data.check_runs || [] : null;
+  return { checkRuns, ciStatus: summarizeCiStatus(checkRuns, status.ok ? status.data : null) };
 }
 
 async function fetchChangedFiles(repoFullName, pr) {
@@ -301,10 +425,8 @@ function detectEcosystemFromFiles(filenames) {
   return 'unknown';
 }
 
-async function fetchFailedCheckDetail(repoFullName, pr) {
-  const result = await githubFetch(`/repos/${repoFullName}/commits/${pr.head.sha}/check-runs`, { allow404: true });
-  if (!result.ok) return null;
-  const failed = (result.data.check_runs || []).find((run) => run.conclusion === 'failure');
+function failedCheckDetail(checkRuns) {
+  const failed = findFailedCheckRun(checkRuns);
   if (!failed) return null;
   return {
     name: failed.name,
@@ -349,14 +471,23 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
   for (const pr of pulls) {
     const changedFiles = await fetchChangedFiles(repoFullName, pr);
     const ecosystem = detectEcosystemFromFiles(changedFiles);
-    const parsed = parseDependabotTitle(pr.title);
-    const dependencyName = parsed?.dependencyName || 'unknown';
-    const versionFrom = parsed?.versionFrom || 'unknown';
-    const versionTo = parsed?.versionTo || 'unknown';
-    const updateType = parsed ? inferUpdateType(versionFrom, versionTo) : 'unknown';
-    const dependencyClass = await inferDependencyClass(pr, ecosystem, repoFullName, dependencyName, pr.base.ref);
+    const manifestDir = npmManifestDir(changedFiles);
+    const bodyUpdates = parseDependabotBodyUpdates(pr.body);
+    const titleUpdate = parseDependabotTitle(pr.title);
+    // A grouped PR's body lists every update; otherwise trust the title.
+    const updates = bodyUpdates.length > 1 ? bodyUpdates : titleUpdate ? [titleUpdate] : bodyUpdates;
+    const single = updates.length === 1 ? updates[0] : null;
+    const dependencyName = updates.length ? describeDependencies(updates.map((u) => u.dependencyName)) : 'unknown';
+    const versionFrom = single ? single.versionFrom : updates.length ? 'multiple' : 'unknown';
+    const versionTo = single ? single.versionTo : updates.length ? 'multiple' : 'unknown';
+    const updateType = combineUpdateTypes(updates.map((u) => inferUpdateType(u.versionFrom, u.versionTo)));
+    const classes = [];
+    for (const u of updates) {
+      classes.push(await inferDependencyClass(pr, ecosystem, repoFullName, u.dependencyName, pr.base.ref, manifestDir));
+    }
+    const dependencyClass = combineDependencyClasses(classes);
 
-    const ciStatus = await fetchRequiredChecksStatus(repoFullName, pr);
+    const { checkRuns, ciStatus } = await fetchCiState(repoFullName, pr);
     const requiredCheckFailed = ciStatus === 'failing';
 
     const classification = classifyUpdate(policy, {
@@ -389,7 +520,7 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
     });
 
     if (requiredCheckFailed) {
-      const detail = await fetchFailedCheckDetail(repoFullName, pr);
+      const detail = failedCheckDetail(checkRuns);
       failedUpdatePrs.push({
         number: pr.number,
         url: pr.html_url,
@@ -572,6 +703,14 @@ module.exports = {
   redact,
   cap,
   parseDependabotTitle,
+  parseDependabotBodyUpdates,
+  combineUpdateTypes,
+  combineDependencyClasses,
+  describeDependencies,
+  classifyFromPackageLock,
+  npmManifestDir,
+  summarizeCiStatus,
+  findFailedCheckRun,
   semverParts,
   inferUpdateType,
   inferDependencyClass,
