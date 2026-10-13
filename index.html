@@ -60,7 +60,9 @@
                         <input type="checkbox" id="forceRefresh">
                         Force refresh (ignore cache)
                     </label>
-                    <small>Bypass the 1-hour cache and fetch fresh data from GitHub API</small>
+                    <small>Results are kept in this browser for 24 hours per repository (sooner if the repository changes). Tick this to fetch everything fresh.</small>
+                    <button type="button" id="clearCacheBtn" class="secondary-btn">Clear cached results</button>
+                    <span id="clearCacheStatus" class="cache-clear-status" role="status"></span>
                 </div>
 
                 <div id="cacheStatus" class="cache-status hidden"></div>
@@ -144,6 +146,7 @@
         </div>
     </footer>
 
+    <script src="repo-cache.cjs"></script>
     <script src="analyzer.js"></script>
     <script src="app.js"></script>
 </body>

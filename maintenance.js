@@ -250,7 +250,20 @@ function tagPrCard(li, repo, pr) {
     li.dataset.pr = String(pr.number);
 }
 
+// Merged and closed are final, so they are remembered in localStorage
+// (30 days) and never re-requested; that way each visit only spends the
+// shared 60 requests/hour on PRs still open or not yet checked, and a check
+// cut short by the rate limit is finished by later visits. "open" can
+// change, so it is only reused for 10 minutes within the tab.
+const FINAL_STATE_MS = 30 * 24 * 60 * 60 * 1000;
+
 function readLiveCache(key) {
+    try {
+        const final = JSON.parse(localStorage.getItem(key) || 'null');
+        if (final && Date.now() - final.at < FINAL_STATE_MS) return final.state;
+    } catch {
+        // storage blocked or unreadable: fall through
+    }
     try {
         const cached = JSON.parse(sessionStorage.getItem(key) || 'null');
         return cached && Date.now() - cached.at < LIVE_CACHE_MS ? cached.state : undefined;
@@ -260,10 +273,12 @@ function readLiveCache(key) {
 }
 
 function writeLiveCache(key, state) {
+    const value = JSON.stringify({ at: Date.now(), state });
     try {
-        sessionStorage.setItem(key, JSON.stringify({ at: Date.now(), state }));
+        if (state === 'merged' || state === 'closed') localStorage.setItem(key, value);
+        else sessionStorage.setItem(key, value);
     } catch {
-        // storage blocked: the check still works, it is only repeated
+        // storage blocked or full: the check still works, it is only repeated
     }
 }
 
@@ -282,9 +297,11 @@ async function refreshPrStates() {
 
     const states = new Map();
     let stoppedEarly = false;
+    let fromBrowser = 0;
     for (const key of keys) {
         const cacheKey = `pr-state:${key}`;
         let state = readLiveCache(cacheKey);
+        if (state !== undefined) fromBrowser++;
         if (state === undefined) {
             const [repo, number] = key.split('#');
             try {
@@ -323,8 +340,11 @@ async function refreshPrStates() {
     let message = parts.length
         ? `Checked ${checked} pull request${checked === 1 ? '' : 's'} just now: ${parts.join(' and ')} since the scan, so removed from the lists below.`
         : `Checked ${checked} pull request${checked === 1 ? '' : 's'} just now: all still open.`;
+    if (fromBrowser) {
+        message += ` ${fromBrowser} of these were already known from an earlier visit, so they used no requests.`;
+    }
     if (stoppedEarly) {
-        message += ' GitHub\'s hourly limit for unauthenticated requests was reached, so the rest show their state as of the scan.';
+        message += ` GitHub's limit of 60 requests per hour from your network was reached (the Analyze page shares it), so ${keys.length - checked} still show their state as of the scan. Reload after the limit resets to finish checking them.`;
     } else if (keys.length < allKeys.length) {
         message += ` Only the first ${LIVE_CHECK_LIMIT} were checked.`;
     }
