@@ -9,6 +9,10 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Lets Maintenance Inventory start this check on its own data-update PR:
+  # pushes made with a workflow's GITHUB_TOKEN never trigger pull_request
+  # or push workflows, but workflow_dispatch is allowed.
+  workflow_dispatch:
 
 permissions:
   contents: read

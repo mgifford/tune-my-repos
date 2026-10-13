@@ -32,10 +32,12 @@ name: Maintenance Inventory
 #   only and is never committed.
 #
 #   A non-dry-run that changed either file opens a single small pull
-#   request containing just those files, waits for its own required
-#   "npm test" check (the same ruleset that applies to every other change
-#   to main), and merges it — using the workflow's own GITHUB_TOKEN, no
-#   external secret. This keeps the required check meaningful for every
+#   request containing just those files, starts the required "npm test"
+#   check on it (GITHUB_TOKEN pushes never trigger CI by themselves, so it
+#   is dispatched explicitly), waits for it to pass (the same ruleset that
+#   applies to every other change to main), merges it, and requests a Pages
+#   build (a merge made with GITHUB_TOKEN does not trigger one either) —
+#   using the workflow's own GITHUB_TOKEN, no external secret. This keeps the required check meaningful for every
 #   change to main, including this automated one, rather than granting the
 #   workflow a ruleset bypass.
 #
@@ -58,6 +60,8 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write # start and watch the CI check on the data-update PR
+  pages: write   # request a Pages build after merging (see Publish step)
 
 concurrency:
   group: maintenance-inventory
@@ -136,9 +140,32 @@ jobs:
             --body "Automated update from the Maintenance Inventory workflow (run ${{ github.run_id }}). Contains only maintenance-scan-state.json and maintenance-rollup.public.json (no exact alert counts — see policy/public-redaction.cjs)." \
             --base main --head "$BRANCH"
 
-          # Wait for this PR's own required "npm test" check, same as any
-          # other change — no ruleset bypass. Up to ~5 minutes; the job
-          # timeout above provides a backstop if a check hangs.
-          gh pr checks "$BRANCH" --watch --required
+          # GITHUB_TOKEN pushes never trigger pull_request workflows, so the
+          # required "npm test" check would never start (and `gh pr checks
+          # --watch` fails with "no checks reported"). Dispatch CI on the
+          # branch explicitly; its check run lands on the PR's head commit.
+          gh workflow run ci.yml --ref "$BRANCH"
+          RUN_ID=""
+          for attempt in $(seq 1 20); do
+            sleep 6
+            RUN_ID=$(gh run list --workflow ci.yml --branch "$BRANCH" --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // empty' || true)
+            [ -n "$RUN_ID" ] && break
+          done
+          if [ -z "$RUN_ID" ]; then
+            echo "::warning::CI did not start on $BRANCH; the data PR is left open for a human to merge."
+            exit 0
+          fi
+
+          # Same gate as any other change to main — no ruleset bypass. The job
+          # timeout above is the backstop if the check hangs.
+          if ! gh run watch "$RUN_ID" --exit-status; then
+            echo "::error::npm test failed on the data PR; it is left open for review."
+            exit 1
+          fi
 
           gh pr merge "$BRANCH" --squash --delete-branch
+
+          # A merge made with GITHUB_TOKEN does not trigger the Pages build
+          # either, so the dashboard would keep serving the previous rollup.
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" --silent \
+            || echo "::warning::Could not request a Pages build; it will deploy with the next push to main."
