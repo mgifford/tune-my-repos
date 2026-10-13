@@ -135,6 +135,15 @@ const analyzeBtn = document.getElementById('analyzeBtn');
 const skipForksCheckbox = document.getElementById('skipForks');
 const forceRefreshCheckbox = document.getElementById('forceRefresh');
 const cacheStatusDiv = document.getElementById('cacheStatus');
+const clearCacheBtn = document.getElementById('clearCacheBtn');
+const clearCacheStatus = document.getElementById('clearCacheStatus');
+// Per-repository results, 24 hours, in this browser only (see repo-cache.cjs)
+let repoCache = null;
+try {
+    repoCache = window.RepoCache.createRepoCache(window.localStorage);
+} catch {
+    repoCache = null; // storage blocked (e.g. some private modes): run without it
+}
 const paginationControls = document.getElementById('paginationControls');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 const paginationInfo = document.getElementById('paginationInfo');
@@ -254,6 +263,10 @@ exportMarkdownBtn.addEventListener('click', exportAsMarkdown);
 exportCsvBtn.addEventListener('click', exportAsCSV);
 loadMoreBtn.addEventListener('click', handleLoadMore);
 targetInput.addEventListener('input', updateURL);
+clearCacheBtn.addEventListener('click', () => {
+    const removed = (repoCache ? repoCache.clear() : 0) + (window.analysisCache ? (window.analysisCache.clearAll() || 0) : 0);
+    clearCacheStatus.textContent = removed ? 'Cached results cleared.' : 'Nothing was cached.';
+});
 
 /**
  * A token only exists for local development (config.js or .env). The
@@ -287,7 +300,10 @@ async function handleAnalyze(e) {
     if (!forceRefresh && window.analysisCache) {
         debugLog('Checking cache...');
         const cached = window.analysisCache.get(targetValue, skipForks);
-        if (cached) {
+        // A cached partial run (rate limited) must not block finishing it:
+        // per-repository caching makes re-running cheap, so fall through.
+        const cachedWasPartial = Boolean(cached && cached.analysisStats && cached.analysisStats.failed > 0);
+        if (cached && !cachedWasPartial) {
             debugLog('Cache hit! Using cached results');
             const ageMinutes = Math.round(cached.age / 1000 / 60);
             showCacheStatus(true, ageMinutes);
@@ -561,7 +577,9 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         // Analyze each repo
         const batchResults = [];
         let failedCount = 0;
+        let fromCache = 0;
         let rateLimited = false;
+        const useRepoCache = repoCache && !forceRefreshCheckbox.checked;
         for (let i = 0; i < repos.length; i++) {
             const repo = repos[i];
             const percent = Math.round(((i + 1) / repos.length) * 100);
@@ -570,10 +588,18 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
             progressText.textContent = `Analyzing ${repo.full_name}...`;
             
             debugLog(`[${i + 1}/${repos.length}] Analyzing ${repo.full_name}...`);
+
+            const cachedResult = useRepoCache ? repoCache.get(repo.full_name, repo.pushed_at) : null;
+            if (cachedResult) {
+                batchResults.push(cachedResult);
+                fromCache++;
+                continue; // no API request spent on this repository
+            }
             
             try {
                 const result = await analyzer.analyzeRepository(repo.owner.login, repo.name);
                 batchResults.push(result);
+                if (repoCache) repoCache.set(repo.full_name, repo.pushed_at, result);
                 debugLog(`[${i + 1}/${repos.length}] ✓ ${repo.full_name} completed`);
             } catch (error) {
                 console.error(`Error analyzing ${repo.full_name}:`, error);
@@ -618,15 +644,19 @@ async function analyzeBatch(analyzer, userOrOrg, page = 1, append = false) {
         // Show warning if there were partial failures
         if (failedCount > 0) {
             const token = getGitHubToken();
-            let warningMessage = `⚠️ Partial analysis: ${batchResults.length} of ${repos.length} repositories analyzed. ${failedCount} ${rateLimited ? 'were not analyzed because the GitHub API rate limit was reached' : 'failed'}. The summary below covers only the analyzed repositories. `;
+            let warningMessage = `⚠️ Partial analysis: ${batchResults.length} of ${repos.length} repositories analyzed${fromCache ? ` (${fromCache} from this browser's cache)` : ''}. ${failedCount} ${rateLimited ? 'were not analyzed because the GitHub API rate limit was reached' : 'failed'}. The summary below covers only the analyzed repositories. `;
             if (!token) {
-                warningMessage += `GitHub allows ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour from your network; the limit resets within an hour. Try a single repository (owner/repo), or see the <a href="maintenance.html">Maintenance Control Plane</a> for a scheduled scan of a whole account.`;
+                warningMessage += `GitHub allows ${GITHUB_RATE_LIMITS.unauthenticated} API requests per hour from your network; the limit resets within an hour. Finished repositories are kept in this browser for 24 hours, so <strong>run the same analysis again after the limit resets to continue where it stopped</strong>. For a scheduled scan of a whole account, see the <a href="maintenance.html">Maintenance Control Plane</a>.`;
             } else {
                 warningMessage += `This may be due to rate limiting or individual repository access issues. Check the browser console for details.`;
             }
             showInfo(warningMessage);
         }
         
+        if (failedCount === 0 && fromCache > 0) {
+            showInfo(`All ${repos.length} repositories analyzed; ${fromCache} came from this browser's 24-hour cache, so only ${repos.length - fromCache} needed GitHub API requests.`);
+        }
+
         displayResults(allResults);
         
         // Hide pagination controls since we fetched everything

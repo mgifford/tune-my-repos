@@ -735,3 +735,12 @@ footer a:hover {
 }
 
 
+
+#clearCacheBtn {
+    margin-top: calc(var(--spacing) / 2);
+}
+
+.cache-clear-status {
+    margin-left: calc(var(--spacing) / 2);
+    color: var(--text-secondary);
+}
