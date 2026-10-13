@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "run_timestamp": "2026-10-13T19:00:58.432Z",
+  "run_timestamp": "2026-10-13T20:11:08.140Z",
   "policy_version": "1.0.0",
   "repositories": [
     {
@@ -8,7 +8,7 @@
       "default_branch": "main",
       "tier": "pilot",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:41.898Z",
+      "source_timestamp": "2026-10-13T20:09:40.779Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -25,7 +25,37 @@
         "dependabot": 0
       },
       "library_advice": [],
-      "pr_data_as_of": "2026-10-13T18:58:41.898Z",
+      "pr_data_as_of": "2026-10-13T20:09:40.779Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/drupal-core-lab",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-13T20:09:42.562Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-13T20:09:42.562Z",
       "dependabot_prs": [],
       "failed_update_prs": [],
       "recommended_action": {
@@ -38,7 +68,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:43.541Z",
+      "source_timestamp": "2026-10-13T20:09:45.238Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -68,7 +98,7 @@
           "suggestion": "No npm release in over 5 years; check for a maintained alternative."
         }
       ],
-      "pr_data_as_of": "2026-10-13T18:58:43.541Z",
+      "pr_data_as_of": "2026-10-13T20:09:45.238Z",
       "dependabot_prs": [],
       "failed_update_prs": [],
       "recommended_action": {
@@ -81,7 +111,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:44.563Z",
+      "source_timestamp": "2026-10-13T20:09:45.916Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -111,7 +141,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:45.518Z",
+      "source_timestamp": "2026-10-13T20:09:46.731Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -141,7 +171,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:46.583Z",
+      "source_timestamp": "2026-10-13T20:09:47.393Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -171,7 +201,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:47.656Z",
+      "source_timestamp": "2026-10-13T20:09:48.206Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -201,7 +231,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:49.447Z",
+      "source_timestamp": "2026-10-13T20:09:48.779Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -250,7 +280,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:51.363Z",
+      "source_timestamp": "2026-10-13T20:09:49.405Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -299,7 +329,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:52.831Z",
+      "source_timestamp": "2026-10-13T20:09:50.031Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -347,7 +377,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:56.136Z",
+      "source_timestamp": "2026-10-13T20:09:50.837Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -405,7 +435,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:58:58.680Z",
+      "source_timestamp": "2026-10-13T20:09:51.504Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -461,7 +491,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:01.949Z",
+      "source_timestamp": "2026-10-13T20:09:52.154Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -510,7 +540,7 @@
       "default_branch": "main",
       "tier": "pilot",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:05.706Z",
+      "source_timestamp": "2026-10-13T20:09:52.796Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -621,7 +651,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:07.183Z",
+      "source_timestamp": "2026-10-13T20:09:53.439Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -669,7 +699,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:09.754Z",
+      "source_timestamp": "2026-10-13T20:09:54.178Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -725,7 +755,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:12.103Z",
+      "source_timestamp": "2026-10-13T20:09:54.837Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -814,7 +844,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:13.178Z",
+      "source_timestamp": "2026-10-13T20:09:55.528Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -844,7 +874,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:14.827Z",
+      "source_timestamp": "2026-10-13T20:09:56.260Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -873,7 +903,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:16.509Z",
+      "source_timestamp": "2026-10-13T20:09:56.983Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -902,7 +932,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:18.919Z",
+      "source_timestamp": "2026-10-13T20:09:57.676Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -957,7 +987,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:19.750Z",
+      "source_timestamp": "2026-10-13T20:09:58.298Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -986,7 +1016,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:20.661Z",
+      "source_timestamp": "2026-10-13T20:09:59.040Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1016,7 +1046,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:21.724Z",
+      "source_timestamp": "2026-10-13T20:09:59.766Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1046,7 +1076,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:22.825Z",
+      "source_timestamp": "2026-10-13T20:10:00.301Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1076,7 +1106,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:23.707Z",
+      "source_timestamp": "2026-10-13T20:10:00.893Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1106,7 +1136,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:24.815Z",
+      "source_timestamp": "2026-10-13T20:10:01.623Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1136,7 +1166,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:25.599Z",
+      "source_timestamp": "2026-10-13T20:10:02.295Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1166,7 +1196,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:27.619Z",
+      "source_timestamp": "2026-10-13T20:10:02.920Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1196,7 +1226,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:28.561Z",
+      "source_timestamp": "2026-10-13T20:10:03.672Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1226,7 +1256,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:30.286Z",
+      "source_timestamp": "2026-10-13T20:10:04.470Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1256,7 +1286,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:31.051Z",
+      "source_timestamp": "2026-10-13T20:10:05.166Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1285,7 +1315,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:31.871Z",
+      "source_timestamp": "2026-10-13T20:10:05.987Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1315,7 +1345,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:33.127Z",
+      "source_timestamp": "2026-10-13T20:10:06.623Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1345,7 +1375,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:33.993Z",
+      "source_timestamp": "2026-10-13T20:10:07.447Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1375,7 +1405,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:34.852Z",
+      "source_timestamp": "2026-10-13T20:10:08.123Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1412,7 +1442,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:35.657Z",
+      "source_timestamp": "2026-10-13T20:10:08.873Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1437,41 +1467,11 @@
       }
     },
     {
-      "full_name": "mgifford/drupal-core-lab",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:36.494Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-13T18:59:36.494Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
       "full_name": "mgifford/daily-cap",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:37.324Z",
+      "source_timestamp": "2026-10-13T20:10:09.527Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1501,7 +1501,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:38.189Z",
+      "source_timestamp": "2026-10-13T20:10:10.182Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1530,7 +1530,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:39.029Z",
+      "source_timestamp": "2026-10-13T20:10:10.925Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1560,7 +1560,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:39.875Z",
+      "source_timestamp": "2026-10-13T20:10:11.654Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1590,7 +1590,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:40.651Z",
+      "source_timestamp": "2026-10-13T20:10:12.364Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1619,7 +1619,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:42.079Z",
+      "source_timestamp": "2026-10-13T20:10:12.977Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1649,7 +1649,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:42.818Z",
+      "source_timestamp": "2026-10-13T20:10:13.831Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1679,7 +1679,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:44.130Z",
+      "source_timestamp": "2026-10-13T20:10:14.505Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1709,7 +1709,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:45.109Z",
+      "source_timestamp": "2026-10-13T20:10:15.102Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1739,7 +1739,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:46.366Z",
+      "source_timestamp": "2026-10-13T20:10:15.806Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1769,7 +1769,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:47.461Z",
+      "source_timestamp": "2026-10-13T20:10:16.520Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1799,7 +1799,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:48.236Z",
+      "source_timestamp": "2026-10-13T20:10:17.334Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1829,7 +1829,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:49.024Z",
+      "source_timestamp": "2026-10-13T20:10:17.991Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1858,7 +1858,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:49.822Z",
+      "source_timestamp": "2026-10-13T20:10:18.487Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1888,7 +1888,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:50.718Z",
+      "source_timestamp": "2026-10-13T20:10:19.088Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1918,7 +1918,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:51.482Z",
+      "source_timestamp": "2026-10-13T20:10:19.752Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1948,7 +1948,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:52.362Z",
+      "source_timestamp": "2026-10-13T20:10:20.317Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1978,7 +1978,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:53.695Z",
+      "source_timestamp": "2026-10-13T20:10:21.007Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2008,7 +2008,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:54.753Z",
+      "source_timestamp": "2026-10-13T20:10:21.641Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2038,7 +2038,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:55.604Z",
+      "source_timestamp": "2026-10-13T20:10:22.219Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2068,7 +2068,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:56.437Z",
+      "source_timestamp": "2026-10-13T20:10:22.839Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2098,7 +2098,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:57.145Z",
+      "source_timestamp": "2026-10-13T20:10:23.624Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2127,7 +2127,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:58.252Z",
+      "source_timestamp": "2026-10-13T20:10:24.159Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2164,7 +2164,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:59.019Z",
+      "source_timestamp": "2026-10-13T20:10:25.068Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2193,7 +2193,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T18:59:59.771Z",
+      "source_timestamp": "2026-10-13T20:10:25.677Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2222,7 +2222,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:00.590Z",
+      "source_timestamp": "2026-10-13T20:10:26.322Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2251,7 +2251,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:01.477Z",
+      "source_timestamp": "2026-10-13T20:10:27.072Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2281,7 +2281,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:02.286Z",
+      "source_timestamp": "2026-10-13T20:10:27.649Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2310,7 +2310,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:03.183Z",
+      "source_timestamp": "2026-10-13T20:10:28.213Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2339,7 +2339,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:04.040Z",
+      "source_timestamp": "2026-10-13T20:10:28.919Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2368,7 +2368,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:04.938Z",
+      "source_timestamp": "2026-10-13T20:10:29.533Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2398,7 +2398,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:05.819Z",
+      "source_timestamp": "2026-10-13T20:10:30.138Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2427,7 +2427,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:06.528Z",
+      "source_timestamp": "2026-10-13T20:10:30.730Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2456,7 +2456,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:08.552Z",
+      "source_timestamp": "2026-10-13T20:10:31.386Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2486,7 +2486,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:09.364Z",
+      "source_timestamp": "2026-10-13T20:10:32.072Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2516,7 +2516,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:10.332Z",
+      "source_timestamp": "2026-10-13T20:10:32.764Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2545,7 +2545,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:11.276Z",
+      "source_timestamp": "2026-10-13T20:10:33.397Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2575,7 +2575,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:12.136Z",
+      "source_timestamp": "2026-10-13T20:10:34.004Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2605,7 +2605,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:13.010Z",
+      "source_timestamp": "2026-10-13T20:10:34.675Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2634,7 +2634,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:14.838Z",
+      "source_timestamp": "2026-10-13T20:10:35.431Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2664,7 +2664,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:15.614Z",
+      "source_timestamp": "2026-10-13T20:10:36.138Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2694,7 +2694,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:16.405Z",
+      "source_timestamp": "2026-10-13T20:10:36.723Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2723,7 +2723,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:18.199Z",
+      "source_timestamp": "2026-10-13T20:10:37.315Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2753,7 +2753,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:19.148Z",
+      "source_timestamp": "2026-10-13T20:10:37.915Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2782,7 +2782,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:19.983Z",
+      "source_timestamp": "2026-10-13T20:10:39.300Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2811,7 +2811,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:20.755Z",
+      "source_timestamp": "2026-10-13T20:10:39.915Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2840,7 +2840,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:21.477Z",
+      "source_timestamp": "2026-10-13T20:10:40.535Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2870,7 +2870,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:22.322Z",
+      "source_timestamp": "2026-10-13T20:10:41.173Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2899,7 +2899,7 @@
       "default_branch": "procurement-mind-map-2026-v1-17571514656555226024",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:23.078Z",
+      "source_timestamp": "2026-10-13T20:10:41.728Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2928,7 +2928,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:23.940Z",
+      "source_timestamp": "2026-10-13T20:10:42.234Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2957,7 +2957,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:24.796Z",
+      "source_timestamp": "2026-10-13T20:10:42.922Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2987,7 +2987,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:25.584Z",
+      "source_timestamp": "2026-10-13T20:10:43.473Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3016,7 +3016,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:26.414Z",
+      "source_timestamp": "2026-10-13T20:10:44.136Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3045,7 +3045,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:27.272Z",
+      "source_timestamp": "2026-10-13T20:10:44.727Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3074,7 +3074,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:28.047Z",
+      "source_timestamp": "2026-10-13T20:10:45.487Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3103,7 +3103,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:28.814Z",
+      "source_timestamp": "2026-10-13T20:10:46.130Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3132,7 +3132,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:29.597Z",
+      "source_timestamp": "2026-10-13T20:10:46.701Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3161,7 +3161,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:30.371Z",
+      "source_timestamp": "2026-10-13T20:10:47.351Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3190,7 +3190,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:31.161Z",
+      "source_timestamp": "2026-10-13T20:10:48.009Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3219,7 +3219,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:31.914Z",
+      "source_timestamp": "2026-10-13T20:10:48.670Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3248,7 +3248,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:32.706Z",
+      "source_timestamp": "2026-10-13T20:10:49.477Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3277,7 +3277,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:33.477Z",
+      "source_timestamp": "2026-10-13T20:10:50.146Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3306,7 +3306,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:34.262Z",
+      "source_timestamp": "2026-10-13T20:10:50.801Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3335,7 +3335,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:35.032Z",
+      "source_timestamp": "2026-10-13T20:10:51.685Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3364,7 +3364,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:35.945Z",
+      "source_timestamp": "2026-10-13T20:10:52.347Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3393,7 +3393,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:36.826Z",
+      "source_timestamp": "2026-10-13T20:10:52.985Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3422,7 +3422,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:37.655Z",
+      "source_timestamp": "2026-10-13T20:10:53.701Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3451,7 +3451,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:38.937Z",
+      "source_timestamp": "2026-10-13T20:10:54.325Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3488,7 +3488,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:39.740Z",
+      "source_timestamp": "2026-10-13T20:10:54.978Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3517,7 +3517,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:41.493Z",
+      "source_timestamp": "2026-10-13T20:10:55.592Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3546,7 +3546,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:42.287Z",
+      "source_timestamp": "2026-10-13T20:10:56.137Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3575,7 +3575,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:43.154Z",
+      "source_timestamp": "2026-10-13T20:10:56.738Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3604,7 +3604,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:44.258Z",
+      "source_timestamp": "2026-10-13T20:10:57.324Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3633,7 +3633,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:45.019Z",
+      "source_timestamp": "2026-10-13T20:10:58.088Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3662,7 +3662,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:45.788Z",
+      "source_timestamp": "2026-10-13T20:10:58.668Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3691,7 +3691,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:46.503Z",
+      "source_timestamp": "2026-10-13T20:10:59.286Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3720,7 +3720,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:47.329Z",
+      "source_timestamp": "2026-10-13T20:10:59.876Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3749,7 +3749,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:48.102Z",
+      "source_timestamp": "2026-10-13T20:11:00.546Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3778,7 +3778,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:48.889Z",
+      "source_timestamp": "2026-10-13T20:11:01.140Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3807,7 +3807,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:49.710Z",
+      "source_timestamp": "2026-10-13T20:11:01.830Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3836,7 +3836,7 @@
       "default_branch": "gh-pages",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:50.555Z",
+      "source_timestamp": "2026-10-13T20:11:02.503Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3865,7 +3865,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:51.345Z",
+      "source_timestamp": "2026-10-13T20:11:03.195Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3894,7 +3894,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:52.061Z",
+      "source_timestamp": "2026-10-13T20:11:03.828Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3923,7 +3923,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:52.816Z",
+      "source_timestamp": "2026-10-13T20:11:04.590Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3952,7 +3952,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:54.471Z",
+      "source_timestamp": "2026-10-13T20:11:05.123Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3981,7 +3981,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:55.257Z",
+      "source_timestamp": "2026-10-13T20:11:05.741Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4010,7 +4010,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:56.121Z",
+      "source_timestamp": "2026-10-13T20:11:06.352Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4039,7 +4039,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:56.829Z",
+      "source_timestamp": "2026-10-13T20:11:06.929Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4068,7 +4068,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:57.706Z",
+      "source_timestamp": "2026-10-13T20:11:07.532Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4097,7 +4097,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-13T19:00:58.431Z",
+      "source_timestamp": "2026-10-13T20:11:08.140Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
