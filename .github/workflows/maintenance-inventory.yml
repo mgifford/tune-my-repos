@@ -46,7 +46,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run: compute the rollup and print it, but do not publish an artifact"
+        description: "Dry run: compute the rollup and print the redacted public version to the log; publish nothing"
         type: boolean
         default: true
   schedule:
