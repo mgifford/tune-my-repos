@@ -268,3 +268,42 @@ test('ownerMismatchWarning: names both accounts when a copy still points at the 
   assert.match(warning, /someone-else/);
   assert.match(warning, /mgifford/);
 });
+
+const { carryForwardPrData } = require('../scripts/generate-maintenance-rollup.cjs');
+
+test('carryForwardPrData: reuses the previous PR fields and keeps their original read time', () => {
+  const previous = {
+    source_timestamp: '2026-10-13T15:43:00Z',
+    dependabot_prs: [{ number: 42 }],
+    failed_update_prs: [{ number: 41 }],
+    open_pull_requests: { total: 3, dependabot: 2 },
+    library_advice: [{ package: 'request' }],
+  };
+  assert.deepEqual(carryForwardPrData(previous), {
+    dependabotPrs: [{ number: 42 }],
+    failedUpdatePrs: [{ number: 41 }],
+    openPullRequests: { total: 3, dependabot: 2 },
+    libraryAdvice: [{ package: 'request' }],
+    prDataAsOf: '2026-10-13T15:43:00Z',
+  });
+});
+
+test('carryForwardPrData: an already-carried entry keeps its first read time, not the later run time', () => {
+  const previous = { source_timestamp: '2026-10-13T18:42:00Z', pr_data_as_of: '2026-10-13T15:43:00Z', dependabot_prs: [] };
+  assert.equal(carryForwardPrData(previous).prDataAsOf, '2026-10-13T15:43:00Z');
+});
+
+test('carryForwardPrData: no previous entry means empty PR data and unknown counts', () => {
+  assert.deepEqual(carryForwardPrData(undefined), {
+    dependabotPrs: [], failedUpdatePrs: [], openPullRequests: null, libraryAdvice: null, prDataAsOf: null,
+  });
+});
+
+const { hasCarryablePrData } = require('../scripts/generate-maintenance-rollup.cjs');
+
+test('hasCarryablePrData: only entries that recorded when PRs were read can be carried', () => {
+  assert.equal(hasCarryablePrData({ pr_data_as_of: '2026-10-13T15:43:00Z', dependabot_prs: [] }), true);
+  // Published before carry-forward existed: PR list may be an empty placeholder, so rescan.
+  assert.equal(hasCarryablePrData({ source_timestamp: '2026-10-13T18:42:00Z', dependabot_prs: [] }), false);
+  assert.equal(hasCarryablePrData(undefined), false);
+});
