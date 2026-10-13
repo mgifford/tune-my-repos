@@ -111,7 +111,7 @@
         "update_type": { "type": "string", "enum": ["patch", "minor", "major", "unknown"] },
         "dependency_class": { "type": "string", "enum": ["github-actions", "development", "production", "major", "unknown"] },
         "labels": { "type": "array", "items": { "type": "string" } },
-        "ci_status": { "type": "string", "enum": ["pending", "passing", "failing", "unknown"] },
+        "ci_status": { "type": "string", "enum": ["pending", "passing", "failing", "none", "unknown"] },
         "risk_state": { "type": "string", "enum": ["eligible", "needs_review", "needs_repair", "blocked", "ignored"] },
         "reason": { "type": "string", "maxLength": 500 }
       }
