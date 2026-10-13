@@ -163,7 +163,29 @@ jobs:
             exit 1
           fi
 
-          gh pr merge "$BRANCH" --squash --delete-branch
+          # The ruleset can take a few seconds to count the just-finished
+          # check (run 38448741995 was refused 2s after it passed with "the
+          # base branch policy prohibits the merge"), so retry for ~2 minutes.
+          MERGED=""
+          for attempt in $(seq 1 8); do
+            if gh pr merge "$BRANCH" --squash --delete-branch; then
+              MERGED=1
+              break
+            fi
+            sleep 15
+          done
+
+          if [ -z "$MERGED" ]; then
+            # Still refused: hand it to GitHub auto-merge, which merges as soon
+            # as every requirement is met, or leaves it for a human if the
+            # dispatched check never counts. Nothing is merged unchecked.
+            if gh pr merge "$BRANCH" --squash --delete-branch --auto; then
+              echo "::warning::The data PR will merge automatically once the branch rules accept its checks."
+            else
+              echo "::warning::The data PR could not be merged or queued for auto-merge; it is left open for review."
+            fi
+            exit 0
+          fi
 
           # A merge made with GITHUB_TOKEN does not trigger the Pages build
           # either, so the dashboard would keep serving the previous rollup.
