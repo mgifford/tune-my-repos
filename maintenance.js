@@ -120,7 +120,7 @@ function renderRollup(rollup, sourceUrl, schema) {
         }
     }
 
-    renderUnavailable(unavailableItems);
+    renderUnavailable(unavailableItems, rollup.repositories);
     renderUrgent(urgentItems);
     renderFailed(failedItems);
     const now = new Date();
@@ -144,24 +144,44 @@ function renderRollup(rollup, sourceUrl, schema) {
     }
 }
 
-function renderUnavailable(items) {
+function renderUnavailable(items, repositories) {
     const { section, list } = sections.unavailable;
     if (items.length === 0) return;
     section.hidden = false;
+    const groups = window.CoverageHelp.summarizeCoverageGaps(repositories);
     // Collapsed by default, so the count tells you whether it is worth opening
-    document.getElementById('unavailableCount').textContent = `(${items.length})`;
-    for (const item of items) {
+    document.getElementById('unavailableCount').textContent = `(${groups.length} gap${groups.length === 1 ? '' : 's'})`;
+    for (const group of groups) {
         const li = document.createElement('li');
         li.className = 'finding-card';
 
-        const text = document.createElement('span');
-        text.textContent = `${item.repo}: ${item.field.replace(/_/g, ' ')} is ${item.status.replace(/_/g, ' ')} `;
-        li.appendChild(text);
+        const title = document.createElement('strong');
+        const statusText = group.status === 'unknown' ? 'could not be read' : 'turned off';
+        const n = group.repos.length;
+        title.textContent = `${group.label}: ${statusText} on ${n} repositor${n === 1 ? 'y' : 'ies'}`;
+        li.appendChild(title);
 
-        const link = document.createElement('a');
-        link.href = `https://github.com/${item.repo}`;
-        link.textContent = 'View repository';
-        li.appendChild(link);
+        const help = document.createElement('p');
+        help.textContent = group.help;
+        li.appendChild(help);
+
+        // Native disclosure: keyboard and screen-reader support built in
+        const details = document.createElement('details');
+        const summary = document.createElement('summary');
+        summary.textContent = `Show the ${n} repositor${n === 1 ? 'y' : 'ies'}`;
+        details.appendChild(summary);
+        const repoList = document.createElement('ul');
+        repoList.className = 'coverage-repo-list';
+        for (const repo of group.repos) {
+            const item = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = `https://github.com/${repo}`;
+            link.textContent = repo;
+            item.appendChild(link);
+            repoList.appendChild(item);
+        }
+        details.appendChild(repoList);
+        li.appendChild(details);
 
         list.appendChild(li);
     }

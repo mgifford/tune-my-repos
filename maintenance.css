@@ -164,3 +164,23 @@ nav[aria-label="Dashboards"] a:focus-visible {
 .library-advice-list li {
     margin-bottom: calc(var(--spacing) / 4);
 }
+
+.coverage-repo-list {
+    margin: calc(var(--spacing) / 2) 0 0;
+    padding-left: calc(var(--spacing) * 1.25);
+    columns: 16rem auto;
+}
+
+.finding-card details summary {
+    cursor: pointer;
+    margin-top: calc(var(--spacing) / 2);
+}
+
+.token-help {
+    margin-bottom: var(--spacing);
+}
+
+.token-help ol {
+    margin: calc(var(--spacing) / 2) 0 0;
+    padding-left: calc(var(--spacing) * 1.25);
+}
