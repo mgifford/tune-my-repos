@@ -168,7 +168,7 @@ remains the merge gate for every change.
   than one very long/expensive run. Forks and archived repositories are excluded entirely before this
   ordering ever runs (`discovery.exclude_forks` / `exclude_archived`, both default `true`) — this
   project's own work takes priority over code merely hosted in the same account.
-- **`.github/workflows/maintenance-inventory.yml`** - runs the script on a weekly schedule or on demand.
+- **`.github/workflows/maintenance-inventory.yml`** - runs the script daily or on demand.
   Defaults to dry-run on manual dispatch (prints the rollup, writes nothing); scheduled runs publish the
   rollup as a 90-day workflow artifact. It never writes to, labels, comments on, or merges anything in
   any repository it *scans*. It does commit one file in *this* repository —

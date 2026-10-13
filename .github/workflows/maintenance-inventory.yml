@@ -50,8 +50,10 @@ on:
         type: boolean
         default: true
   schedule:
-    # Every Monday at 09:00 UTC.
-    - cron: '0 9 * * 1'
+    # Daily at 09:00 UTC. Repositories unchanged since their last scan skip
+    # the PR/CI work (policy/scan-state.cjs), so a daily run is cheap and the
+    # dashboard snapshot is rarely more than a day old.
+    - cron: '0 9 * * *'
 
 permissions:
   contents: write
