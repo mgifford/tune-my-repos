@@ -84,6 +84,22 @@
             "dependabot": { "type": "integer", "minimum": 0 }
           }
         },
+        "library_advice": {
+          "type": "array",
+          "maxItems": 20,
+          "description": "Advisory library-change suggestions for direct npm dependencies of public repositories. See policy/library-advice.cjs.",
+          "items": {
+            "type": "object",
+            "required": ["package", "dependency_type", "kind", "suggestion"],
+            "additionalProperties": false,
+            "properties": {
+              "package": { "type": "string" },
+              "dependency_type": { "type": "string", "enum": ["production", "development"] },
+              "kind": { "type": "string", "enum": ["compromised", "deprecated", "unmaintained", "native", "lighter"] },
+              "suggestion": { "type": "string", "maxLength": 320 }
+            }
+          }
+        },
         "dependabot_prs": {
           "type": "array",
           "items": { "$ref": "#/definitions/dependabotPr" }
