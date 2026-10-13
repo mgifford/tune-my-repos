@@ -22,6 +22,7 @@ const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatch
 const { validatePolicySchema } = require('../policy/policy-validator.cjs');
 const { canSkipPrWork, recordScan, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
 const { redactExactAlertCounts } = require('../policy/public-redaction.cjs');
+const { KNOWN_REPLACEMENTS, listDirectDependencies, evaluateLibraryAdvice } = require('../policy/library-advice.cjs');
 
 const MAX_FAILURE_SUMMARY_CHARS = 500;
 const MAX_REASON_CHARS = 500;
@@ -29,6 +30,9 @@ const API_BASE = 'https://api.github.com';
 
 const token = process.env.MAINTENANCE_RO_TOKEN || process.env.GITHUB_TOKEN || '';
 const dryRun = process.argv.includes('--dry-run');
+// Set LIBRARY_ADVICE_REGISTRY=off to skip npm registry lookups (curated
+// rules still apply).
+const registryLookups = process.env.LIBRARY_ADVICE_REGISTRY !== 'off';
 
 function redact(text) {
   if (!text) return '';
@@ -273,6 +277,55 @@ async function fetchJsonFile(repoFullName, ref, filePath) {
   return manifestCache.get(key);
 }
 
+// One lookup per package name per run, shared by every repository.
+const registryCache = new Map();
+
+async function registryJson(url) {
+  try {
+    const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10000) });
+    return response.ok ? await response.json() : null;
+  } catch {
+    return null; // registry unreachable: no advice rather than a guess
+  }
+}
+
+/**
+ * Public npm registry facts for one package: the latest version's
+ * deprecation message, and (only if not deprecated) its publish date via
+ * the search endpoint, which is far smaller than the full packument.
+ * @returns {Promise<{deprecated?: string, lastPublished?: string}|null>}
+ */
+async function fetchNpmRegistryFacts(name) {
+  if (!registryCache.has(name)) {
+    registryCache.set(name, (async () => {
+      const encoded = name.replace('/', '%2f');
+      const latest = await registryJson(`https://registry.npmjs.org/${encoded}/latest`);
+      if (!latest) return null;
+      if (latest.deprecated) return { deprecated: String(latest.deprecated).slice(0, 200) };
+      const search = await registryJson(`https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(name)}&size=5`);
+      const hit = (search?.objects || []).find((o) => o.package?.name === name);
+      return hit?.package?.date ? { lastPublished: hit.package.date } : {};
+    })());
+  }
+  return registryCache.get(name);
+}
+
+async function buildLibraryAdvice(repoFullName, defaultBranch) {
+  const packageJson = await fetchJsonFile(repoFullName, defaultBranch, 'package.json');
+  if (!packageJson) return null; // no npm manifest at the root: nothing to advise on
+  const dependencies = listDirectDependencies(packageJson);
+  const facts = new Map();
+  if (registryLookups) {
+    const toCheck = dependencies.filter((d) => !KNOWN_REPLACEMENTS[d.name]);
+    for (let i = 0; i < toCheck.length; i += 8) {
+      const batch = toCheck.slice(i, i + 8);
+      const results = await Promise.all(batch.map((d) => fetchNpmRegistryFacts(d.name)));
+      batch.forEach((d, j) => facts.set(d.name, results[j]));
+    }
+  }
+  return evaluateLibraryAdvice(dependencies, facts, new Date()).map((a) => ({ ...a, suggestion: cap(a.suggestion, 300) }));
+}
+
 /**
  * Pure: the directory holding the npm manifest a PR changes ("" for root),
  * so nested packages are classified against their own manifest.
@@ -451,6 +504,11 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
     skipPrWork ? Promise.resolve(null) : fetchOpenPulls(repoFullName),
   ]);
   const pulls = (openPulls || []).filter((pr) => pr.user?.login === 'dependabot[bot]');
+  // Public repos only: a private repo's dependency list must never reach
+  // the published rollup. Refreshed on the same cadence as PR work.
+  const libraryAdvice = !skipPrWork && repoMeta && repoMeta.private === false
+    ? await buildLibraryAdvice(repoFullName, defaultBranch)
+    : null;
 
   const coverage = {
     dependency_graph: repoMeta ? 'available' : 'unknown',
@@ -553,6 +611,7 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
     // Omitted (not zeroed) when PRs were not fetched this run. per_page=100
     // caps the count; a repo with more open PRs reports 100.
     ...(openPulls ? { open_pull_requests: { total: openPulls.length, dependabot: pulls.length } } : {}),
+    ...(libraryAdvice ? { library_advice: libraryAdvice } : {}),
     dependabot_prs: dependabotPrs,
     failed_update_prs: failedUpdatePrs,
     recommended_action: recommendedAction,
