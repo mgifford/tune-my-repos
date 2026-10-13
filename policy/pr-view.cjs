@@ -71,7 +71,32 @@ function reposWithOpenPrs(repositories) {
     .sort((a, b) => b.total - a.total || a.repo.localeCompare(b.repo));
 }
 
-const PrView = { ageInDays, mergeBlocker, sortForReview, reposWithOpenPrs };
+/**
+ * How old the scan snapshot is, in words, so the page never presents
+ * scan-time data as current.
+ * @returns {string|null} e.g. "20 hours ago", or null when unknown
+ */
+function describeSnapshotAge(runTimestamp, now) {
+  const ran = Date.parse(runTimestamp || '');
+  if (Number.isNaN(ran)) return null;
+  const hours = Math.max(0, Math.floor((now.getTime() - ran) / 3600000));
+  if (hours < 1) return 'less than an hour ago';
+  if (hours < 48) return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+  return `${Math.floor(hours / 24)} days ago`;
+}
+
+/**
+ * Current state of a PR from GitHub's REST response for
+ * GET /repos/{owner}/{repo}/pulls/{number}.
+ * @returns {'open'|'merged'|'closed'|null} null when the response is unusable
+ */
+function liveStateFromApi(apiPr) {
+  if (!apiPr || typeof apiPr.state !== 'string') return null;
+  if (apiPr.state === 'open') return 'open';
+  return apiPr.merged_at ? 'merged' : 'closed';
+}
+
+const PrView = { ageInDays, mergeBlocker, sortForReview, reposWithOpenPrs, describeSnapshotAge, liveStateFromApi };
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = PrView;

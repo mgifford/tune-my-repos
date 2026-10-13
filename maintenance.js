@@ -9,6 +9,7 @@
 
 const rollupSourceSelect = document.getElementById('rollupSource');
 const rollupMeta = document.getElementById('rollupMeta');
+const liveStatus = document.getElementById('liveStatus');
 const exportJsonBtn = document.getElementById('exportJsonBtn');
 const exportMarkdownBtn = document.getElementById('exportMarkdownBtn');
 
@@ -82,9 +83,12 @@ function renderRollup(rollup, sourceUrl, schema) {
     currentRollup = rollup;
     hideEmptyState();
 
+    const snapshotAge = window.PrView.describeSnapshotAge(rollup.run_timestamp, new Date());
     rollupMeta.textContent =
-        `Loaded ${sourceUrl} — run ${rollup.run_timestamp}, policy v${rollup.policy_version}, ` +
-        `${rollup.repositories.length} repositor${rollup.repositories.length === 1 ? 'y' : 'ies'}.`;
+        `Snapshot from the scan on ${rollup.run_timestamp}${snapshotAge ? ` (${snapshotAge})` : ''} — ` +
+        `policy v${rollup.policy_version}, ${rollup.repositories.length} repositor${rollup.repositories.length === 1 ? 'y' : 'ies'}. ` +
+        `Everything below is as of that scan unless marked otherwise.`;
+    liveStatus.textContent = '';
 
     const unavailableItems = [];
     const urgentItems = [];
@@ -130,6 +134,9 @@ function renderRollup(rollup, sourceUrl, schema) {
     renderOpenPrs(openPrRows);
     const libraryRepos = rollup.repositories.filter((r) => r.library_advice && r.library_advice.length > 0);
     renderLibraryAdvice(libraryRepos);
+
+    // The sample fixture names example PRs, so only live data is re-checked.
+    if (sourceUrl === LIVE_ROLLUP) refreshPrStates();
 
     if (
         unavailableItems.length === 0 &&
@@ -215,6 +222,7 @@ function renderFailed(items) {
     for (const { repo, pr } of items) {
         const li = document.createElement('li');
         li.className = 'finding-card important';
+        tagPrCard(li, repo, pr);
 
         const title = document.createElement('strong');
         title.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name}`;
@@ -233,6 +241,96 @@ function renderFailed(items) {
     }
 }
 
+const LIVE_ROLLUP = 'maintenance-rollup.public.json';
+const LIVE_CHECK_LIMIT = 40; // GitHub allows 60 unauthenticated requests per hour per network
+const LIVE_CACHE_MS = 10 * 60 * 1000;
+
+function tagPrCard(li, repo, pr) {
+    li.dataset.repo = repo;
+    li.dataset.pr = String(pr.number);
+}
+
+function readLiveCache(key) {
+    try {
+        const cached = JSON.parse(sessionStorage.getItem(key) || 'null');
+        return cached && Date.now() - cached.at < LIVE_CACHE_MS ? cached.state : undefined;
+    } catch {
+        return undefined; // storage blocked or unreadable: just fetch
+    }
+}
+
+function writeLiveCache(key, state) {
+    try {
+        sessionStorage.setItem(key, JSON.stringify({ at: Date.now(), state }));
+    } catch {
+        // storage blocked: the check still works, it is only repeated
+    }
+}
+
+/**
+ * The scan is a snapshot; PRs are often merged soon after. Ask GitHub for
+ * each listed PR's current state (public data, no sign-in) and remove the
+ * ones already merged or closed, so the page never asks you to act on
+ * something already done. Falls back to the snapshot on any error.
+ */
+async function refreshPrStates() {
+    const cards = [...document.querySelectorAll('li[data-pr]')];
+    const allKeys = [...new Set(cards.map((li) => `${li.dataset.repo}#${li.dataset.pr}`))];
+    const keys = allKeys.slice(0, LIVE_CHECK_LIMIT);
+    if (keys.length === 0) return;
+    liveStatus.textContent = `Checking the current state of ${keys.length} pull request${keys.length === 1 ? '' : 's'} on GitHub…`;
+
+    const states = new Map();
+    let stoppedEarly = false;
+    for (const key of keys) {
+        const cacheKey = `pr-state:${key}`;
+        let state = readLiveCache(cacheKey);
+        if (state === undefined) {
+            const [repo, number] = key.split('#');
+            try {
+                const response = await fetch(`https://api.github.com/repos/${repo}/pulls/${number}`, {
+                    headers: { Accept: 'application/vnd.github+json' },
+                });
+                if (response.status === 403 || response.status === 429) {
+                    stoppedEarly = true; // rate limited: keep the rest as snapshot data
+                    break;
+                }
+                state = response.ok ? window.PrView.liveStateFromApi(await response.json()) : null;
+            } catch {
+                state = null; // network error: leave this card as it was
+            }
+            writeLiveCache(cacheKey, state);
+        }
+        states.set(key, state);
+    }
+
+    let merged = 0;
+    let closed = 0;
+    for (const li of cards) {
+        const state = states.get(`${li.dataset.repo}#${li.dataset.pr}`);
+        if (state === 'merged' || state === 'closed') {
+            if (state === 'merged') merged++; else closed++;
+            const section = li.closest('section');
+            li.remove();
+            if (section && !section.querySelector('li[data-pr]')) section.hidden = true;
+        }
+    }
+
+    const checked = states.size;
+    const parts = [];
+    if (merged) parts.push(`${merged} merged`);
+    if (closed) parts.push(`${closed} closed`);
+    let message = parts.length
+        ? `Checked ${checked} pull request${checked === 1 ? '' : 's'} just now: ${parts.join(' and ')} since the scan, so removed from the lists below.`
+        : `Checked ${checked} pull request${checked === 1 ? '' : 's'} just now: all still open.`;
+    if (stoppedEarly) {
+        message += ' GitHub\'s hourly limit for unauthenticated requests was reached, so the rest show their state as of the scan.';
+    } else if (keys.length < allKeys.length) {
+        message += ` Only the first ${LIVE_CHECK_LIMIT} were checked.`;
+    }
+    liveStatus.textContent = message;
+}
+
 function describeAge(pr, now) {
     const days = window.PrView.ageInDays(pr.opened_at, now);
     if (days === null) return 'age unknown';
@@ -242,6 +340,7 @@ function describeAge(pr, now) {
 function renderPrCard(list, className, repo, pr, now) {
     const li = document.createElement('li');
     li.className = `finding-card ${className}`;
+    tagPrCard(li, repo, pr);
 
     const title = document.createElement('strong');
     title.textContent = `${repo} — PR #${pr.number}: ${pr.dependency_name} ${pr.version_from} → ${pr.version_to}`;

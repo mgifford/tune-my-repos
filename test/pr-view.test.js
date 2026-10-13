@@ -58,3 +58,21 @@ test('reposWithOpenPrs: most PRs first; unscanned and zero-PR repos left out', (
     { repo: 'o/few', total: 2, dependabot: 2, other: 0 },
   ]);
 });
+
+const { describeSnapshotAge, liveStateFromApi } = require('../policy/pr-view.cjs');
+
+test('describeSnapshotAge: hours under two days, then days', () => {
+  assert.equal(describeSnapshotAge('2026-10-13T11:30:00Z', NOW), 'less than an hour ago');
+  assert.equal(describeSnapshotAge('2026-10-13T11:00:00Z', NOW), '1 hour ago');
+  assert.equal(describeSnapshotAge('2026-10-12T16:00:00Z', NOW), '20 hours ago');
+  assert.equal(describeSnapshotAge('2026-10-06T12:00:00Z', NOW), '7 days ago');
+  assert.equal(describeSnapshotAge('garbage', NOW), null);
+});
+
+test('liveStateFromApi: open, merged, closed without merging, unusable', () => {
+  assert.equal(liveStateFromApi({ state: 'open', merged_at: null }), 'open');
+  assert.equal(liveStateFromApi({ state: 'closed', merged_at: '2026-10-13T00:00:00Z' }), 'merged');
+  assert.equal(liveStateFromApi({ state: 'closed', merged_at: null }), 'closed');
+  assert.equal(liveStateFromApi({ message: 'Not Found' }), null);
+  assert.equal(liveStateFromApi(null), null);
+});
