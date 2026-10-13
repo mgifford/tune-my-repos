@@ -55,6 +55,23 @@ function recordScan(state, repoFullName, pushedAt, nowIso = new Date().toISOStri
 }
 
 /**
+ * Returns a new state keeping only the given repositories. The scan-state
+ * file is committed publicly, so entries for repositories that are no
+ * longer candidates (now private, archived, excluded or deleted) must not
+ * linger in it. Does not mutate the input.
+ * @param {object} state
+ * @param {Iterable<string>} keepFullNames
+ */
+function pruneToRepositories(state, keepFullNames) {
+  const keep = new Set(keepFullNames);
+  const repositories = {};
+  for (const [name, entry] of Object.entries(state.repositories || {})) {
+    if (keep.has(name)) repositories[name] = entry;
+  }
+  return { ...state, repositories };
+}
+
+/**
  * Orders candidate repositories oldest-last-scanned-first, so a capped-size
  * run makes progress across the whole set over successive runs rather than
  * always scanning the same repositories. Repositories never scanned before
@@ -112,6 +129,7 @@ const ScanState = {
   getRepoState,
   canSkipPrWork,
   recordScan,
+  pruneToRepositories,
   orderByStaleness,
   orderByActivityThenStaleness,
 };

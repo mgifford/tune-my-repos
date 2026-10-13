@@ -141,6 +141,11 @@ remains the merge gate for every change.
   Dependabot PR through `policy/policy-engine.cjs`, redacts anything token-shaped, caps text fields, and
   writes a schema-conformant `maintenance-rollup.json`. Runs with reduced coverage (reported as
   `unknown`, never guessed) when no token is available.
+- **Private repositories are never scanned** - every output of the scan is public (the published
+  rollup and the committed `maintenance-scan-state.json`), so private repositories are dropped at
+  discovery, any repository whose visibility cannot be confirmed as public is skipped, and scan-state
+  entries for repositories that are no longer public candidates are pruned on the next run. This is
+  not configurable.
 - **Repository discovery and scan scope** (`maintenance-policy.yml`'s `discovery` section) - when
   `repositories.include` contains an `"owner/*"` glob, candidate repositories are discovered via the
   GitHub API across `discovery.owners` (default: `mgifford`, `CivicActions`) rather than listed by hand.

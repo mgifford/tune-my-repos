@@ -20,7 +20,7 @@ const path = require('node:path');
 
 const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.cjs');
 const { validatePolicySchema } = require('../policy/policy-validator.cjs');
-const { canSkipPrWork, recordScan, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
+const { canSkipPrWork, recordScan, pruneToRepositories, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
 const { redactExactAlertCounts } = require('../policy/public-redaction.cjs');
 const { KNOWN_REPLACEMENTS, listDirectDependencies, evaluateLibraryAdvice } = require('../policy/library-advice.cjs');
 
@@ -117,6 +117,10 @@ async function githubFetchAllPages(endpoint) {
  */
 function filterDiscoveredRepos(rawRepos, options) {
   return rawRepos
+    // Never configurable: every output of this script is published (the
+    // public rollup and the committed scan-state), so a private repository
+    // must not even be named in it.
+    .filter((repo) => repo.private !== true)
     .filter((repo) => !(options.exclude_forks && repo.fork))
     .filter((repo) => !(options.exclude_archived && repo.archived))
     .map((repo) => ({ full_name: repo.full_name, pushed_at: repo.pushed_at }));
@@ -696,6 +700,12 @@ async function main() {
   }
 
   const pushedAtByRepo = await resolveCandidateRepos(policy);
+  // Drop state for repositories that are no longer public candidates. Skipped
+  // when discovery returned nothing (likely an API failure), so one bad run
+  // does not wipe the rotation history.
+  if (pushedAtByRepo.size > 0) {
+    scanState = pruneToRepositories(scanState, pushedAtByRepo.keys());
+  }
   const orderedRepos = orderByActivityThenStaleness(scanState, [...pushedAtByRepo.keys()], pushedAtByRepo);
   const reposThisRun = orderedRepos.slice(0, policy.discovery.max_repos_per_run);
 
@@ -706,6 +716,13 @@ async function main() {
     // decide skipPrWork, including for an exact (non-glob)
     // repositories.include entry, which discovery never saw.
     const repoMeta = await fetchSecurityAndAnalysis(repoFullName);
+    // Second guard for exact repositories.include entries, which discovery
+    // never filtered: only a repository confirmed public is scanned.
+    if (repoMeta?.private !== false) {
+      console.log(`Skipping ${repoFullName}: private, or visibility could not be confirmed`);
+      scanState = pruneToRepositories(scanState, Object.keys(scanState.repositories).filter((n) => n !== repoFullName));
+      continue;
+    }
     const knownPushedAt = pushedAtByRepo.get(repoFullName) ?? repoMeta?.pushed_at ?? null;
     const skipPrWork = knownPushedAt !== null && canSkipPrWork(
       scanState,
