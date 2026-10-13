@@ -75,6 +75,10 @@
             }
           }
         },
+        "pr_data_as_of": {
+          "type": "string",
+          "description": "When this repository's PR fields were last read from GitHub. Earlier than source_timestamp when the repository was unchanged and its PR data was carried forward from the previous run."
+        },
         "open_pull_requests": {
           "type": "object",
           "required": ["total", "dependabot"],

@@ -518,7 +518,34 @@ function failedCheckDetail(checkRuns) {
   };
 }
 
-async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, repoMeta: providedRepoMeta } = {}) {
+/**
+ * Pure: PR-derived fields to reuse when this run skipped a repository's PR
+ * work (unchanged since its last scan). Without this, a skipped repository
+ * was published with no PRs at all, so back-to-back runs emptied the
+ * dashboard. Any merge or new Dependabot PR changes pushed_at, which forces
+ * a fresh scan, so the carried data is still accurate; the page's live
+ * check also removes PRs merged since.
+ * @param {object|undefined} previousEntry - this repo's entry in the last published rollup
+ */
+function carryForwardPrData(previousEntry) {
+  if (!previousEntry) {
+    return { dependabotPrs: [], failedUpdatePrs: [], openPullRequests: null, libraryAdvice: null, prDataAsOf: null };
+  }
+  return {
+    dependabotPrs: previousEntry.dependabot_prs || [],
+    failedUpdatePrs: previousEntry.failed_update_prs || [],
+    openPullRequests: previousEntry.open_pull_requests || null,
+    libraryAdvice: previousEntry.library_advice || null,
+    prDataAsOf: previousEntry.pr_data_as_of || previousEntry.source_timestamp || null,
+  };
+}
+
+/** Pure: whether a previous entry holds PR data that may be carried forward. */
+function hasCarryablePrData(previousEntry) {
+  return Boolean(previousEntry && previousEntry.pr_data_as_of && Array.isArray(previousEntry.dependabot_prs));
+}
+
+async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, repoMeta: providedRepoMeta, previousEntry } = {}) {
   const tier = getRepositoryTier(policy, repoFullName);
   // Callers that already fetched repo metadata to decide skipPrWork (see
   // main()) pass it in via repoMeta to avoid fetching it twice.
@@ -618,6 +645,20 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
     }
   }
 
+  // Skipped this run: reuse the last published PR data instead of
+  // publishing none (alerts above are always re-checked regardless).
+  const carried = skipPrWork ? carryForwardPrData(previousEntry) : null;
+  if (carried) {
+    dependabotPrs.push(...carried.dependabotPrs);
+    failedUpdatePrs.push(...carried.failedUpdatePrs);
+  }
+  const openPullRequests = openPulls
+    ? { total: openPulls.length, dependabot: pulls.length }
+    : carried?.openPullRequests || null;
+  const advice = libraryAdvice || carried?.libraryAdvice || null;
+  const nowIso = new Date().toISOString();
+  const prDataAsOf = carried ? carried.prDataAsOf : nowIso;
+
   const recommendedAction = computeRecommendedAction(alertResult, dependabotPrs, failedUpdatePrs);
   const counts = alertResult.counts || { critical: 0, high: 0, moderate: 0, low: 0 };
 
@@ -629,16 +670,17 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
     default_branch: defaultBranch,
     tier,
     policy_version: policy.policy_version,
-    source_timestamp: new Date().toISOString(),
+    source_timestamp: nowIso,
     coverage,
     // Exact counts are retained here for the private workflow artifact and
     // any other authenticated consumer. has_urgent_alerts is the only field
     // safe to render on a public page — see rollup.schema.json.
     security_alerts: { ...counts, has_urgent_alerts: computeHasUrgentAlerts(counts) },
-    // Omitted (not zeroed) when PRs were not fetched this run. per_page=100
-    // caps the count; a repo with more open PRs reports 100.
-    ...(openPulls ? { open_pull_requests: { total: openPulls.length, dependabot: pulls.length } } : {}),
-    ...(libraryAdvice ? { library_advice: libraryAdvice } : {}),
+    // Omitted (not zeroed) when PR counts are unknown. per_page=100 caps the
+    // count; a repo with more open PRs reports 100.
+    ...(openPullRequests ? { open_pull_requests: openPullRequests } : {}),
+    ...(advice ? { library_advice: advice } : {}),
+    ...(prDataAsOf ? { pr_data_as_of: prDataAsOf } : {}),
     dependabot_prs: dependabotPrs,
     failed_update_prs: failedUpdatePrs,
     recommended_action: recommendedAction,
@@ -744,6 +786,20 @@ async function main() {
     scanState = JSON.parse(fs.readFileSync(scanStatePath, 'utf8'));
   }
 
+  // The last published rollup supplies PR data for repositories whose PR
+  // work is skipped this run (see carryForwardPrData).
+  const previousEntries = new Map();
+  const previousPublicPath = path.join(__dirname, '..', 'maintenance-rollup.public.json');
+  if (fs.existsSync(previousPublicPath)) {
+    try {
+      for (const e of JSON.parse(fs.readFileSync(previousPublicPath, 'utf8')).repositories || []) {
+        previousEntries.set(e.full_name, e);
+      }
+    } catch {
+      // unreadable previous rollup: skipped repositories simply get fresh-empty PR data
+    }
+  }
+
   const pushedAtByRepo = await resolveCandidateRepos(policy);
   // Drop state for repositories that are no longer public candidates. Skipped
   // when discovery returned nothing (likely an API failure), so one bad run
@@ -773,14 +829,18 @@ async function main() {
       continue;
     }
     const knownPushedAt = pushedAtByRepo.get(repoFullName) ?? repoMeta?.pushed_at ?? null;
-    const skipPrWork = knownPushedAt !== null && canSkipPrWork(
-      scanState,
-      repoFullName,
-      knownPushedAt,
-      policy.discovery.rescan_prs_after_days
-    );
+    // Only skip when there is real PR data to carry forward: an entry
+    // without pr_data_as_of was published before carry-forward existed (or
+    // never had PRs read), so skipping would publish an empty PR list.
+    const skipPrWork = knownPushedAt !== null
+      && hasCarryablePrData(previousEntries.get(repoFullName))
+      && canSkipPrWork(scanState, repoFullName, knownPushedAt, policy.discovery.rescan_prs_after_days);
 
-    const entry = await buildRepositoryEntry(policy, repoFullName, { skipPrWork, repoMeta });
+    const entry = await buildRepositoryEntry(policy, repoFullName, {
+      skipPrWork,
+      repoMeta,
+      previousEntry: previousEntries.get(repoFullName),
+    });
     const pushedAtForState = knownPushedAt ?? entry._pushed_at;
     delete entry._pushed_at;
     repositories.push(entry);
@@ -842,6 +902,8 @@ module.exports = {
   npmManifestDir,
   summarizeCiStatus,
   combineBranchProtection,
+  carryForwardPrData,
+  hasCarryablePrData,
   effectiveMaxRepos,
   ownerMismatchWarning,
   securitySettingStatus,
