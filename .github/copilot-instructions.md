@@ -26,10 +26,9 @@ This tool analyzes GitHub repositories against open source best-practice standar
 | `analyzer.js` | Core logic: repo classification, governance checks, fork analysis |
 | `app.js` | UI rendering, event handling, caching orchestration, debug mode |
 | `styles.css` | Responsive layout with dark-mode support |
-| `auth.js` | GitHub OAuth and Personal Access Token handling |
 | `cache.js` | localStorage-backed 1-hour result cache |
 | `env-loader.js` | Loads `.env` on localhost/`file://` only; no-op in production |
-| `config.js` | GitHub token and OAuth config (not committed; see `config.example.js`) |
+| `config.js` | Optional local-development token only (not committed; see `config.example.js`). The published site has no sign-in |
 | `priorities.json` / `priorities.yaml` | Configurable finding sort order (see `PRIORITIES_CONFIG.md`) |
 | `maintenance.html` / `maintenance.js` / `maintenance.css` | Separate maintenance control-plane dashboard (security alerts, Dependabot status, policy-derived risk states) |
 | `maintenance-policy.json` / `maintenance-policy.yml` | Versioned policy: dependency classification and merge eligibility rules. JSON is loaded; YAML is the documented source (same pattern as `priorities.json`/`priorities.yaml`) |
@@ -37,6 +36,8 @@ This tool analyzes GitHub repositories against open source best-practice standar
 | `policy/policy-validator.cjs`, `policy/*.schema.json` | Dependency-free JSON Schema validation for the policy file and the maintenance rollup data model |
 | `policy/public-redaction.cjs` | Strips exact Dependabot alert counts before rendering/export on the unauthenticated maintenance.html page — only `has_urgent_alerts` (boolean) is ever shown publicly; exact counts stay in the private workflow artifact |
 | `fixtures/maintenance-rollup.sample.json` | Static sample rollup so the maintenance dashboard works without credentials |
+| `policy/pr-view.cjs`, `policy/coverage-help.cjs`, `policy/library-advice.cjs`, `policy/scan-state.cjs` | Pure helpers for the maintenance dashboard and scan: PR age/blockers/live state, coverage-gap explanations, library-change rules, scan rotation |
+| `scripts/enable-security-defaults.cjs` | Dry-run-by-default script that enables GitHub security settings across an account's public repositories |
 | `scripts/generate-maintenance-rollup.cjs` | Read-only GitHub API inventory script; discovers repos via `maintenance-policy.json`'s `discovery` section when `repositories.include` has a glob, classifies PRs via the policy engine, redacts/caps output, writes `maintenance-rollup.json` (gitignored; published as a workflow artifact) |
 | `maintenance-scan-state.json` / `policy/scan-state.cjs` | Committed skip-cache: tracks per-repo `last_scanned`/`last_pushed_at` so unchanged repos skip expensive PR/CI-status work (alerts are always re-checked) |
 | `.github/workflows/maintenance-inventory.yml` | Scheduled/manual workflow running the inventory script. Dry-run by default on manual dispatch. Never writes to a *scanned* repository. Does commit `maintenance-scan-state.json` in *this* repo, via a PR that passes the same required `npm test` check as any other change — not a ruleset bypass. Third-party actions pinned by commit SHA |
@@ -90,10 +91,7 @@ There is no `npm install`, `npm run build`, or compilation step. Edit source fil
 | `README.md` | User-facing setup and usage guide |
 | `DEBUGGING.md` | Debug mode, console logging, troubleshooting |
 | `PRIORITIES_CONFIG.md` | Customizing finding sort order via `priorities.json` |
-| `SETUP.md` | Local development setup |
-| `QUICK_START.md` | Fast onboarding for new contributors |
-| `GITHUB_PAGES_SETUP.md` | OAuth proxy configuration for GitHub Pages deployment |
-| `DEPLOYMENT_CHECKLIST.md` | Pre-deployment checklist |
+| `SETUP.md` | Local development setup (optional local token) |
 
 ---
 

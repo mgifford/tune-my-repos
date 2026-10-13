@@ -307,16 +307,14 @@ Before copying this pilot to another repository:
    GitHub UI). This is normal GitHub behavior, not a bug — expect to do this once per already-open PR
    the first time the pilot is enabled on a repository.
 
-### Tracked follow-up: package-swap suggestions (not built yet)
+### Library-change suggestions
 
-Idea, not yet designed or built: suggest (never automatically apply) swapping a poorly-supported
-dependency for a better-supported alternative in the same role — e.g. a package with no release in
-years and a pile of open security advisories, versus a well-maintained equivalent. This is explicitly
-a **suggestion surfaced to a human**, never an automated action; nothing in this policy model may ever
-choose a replacement dependency on its own. Needs real design before building: what signals indicate
-"better supported" (release recency, maintainer count, open advisory count — some combination, pulled
-from where), where the suggestion surfaces (a new rollup field? a separate report?), and how false
-positives are avoided (a less-active package is not automatically worse — some are simply stable).
+For each public repository, the scan reads the root `package.json` and flags direct npm dependencies
+that are compromised, deprecated, unmaintained (no npm release in over two years) or replaceable by a
+built-in API or a lighter package. Sources are a short curated list in `policy/library-advice.cjs` and
+npm registry facts; no AI. Suggestions appear in the "Library suggestions" section of the Maintenance
+page and are never applied automatically. Limits: npm only, root manifest only, direct dependencies
+only.
 
 ## GitHub Actions Integration
 
@@ -391,11 +389,19 @@ This project was built with AI assistance. The following AI tools have been used
 ### GitHub Copilot (code generation and maintenance)
 
 **Used to build this project.** GitHub Copilot and the GitHub Copilot Agent have been used to:
-- Generate and refactor JavaScript source code (`analyzer.js`, `app.js`, `auth.js`, `cache.js`, `env-loader.js`)
+- Generate and refactor JavaScript source code (`analyzer.js`, `app.js`, `cache.js`, `env-loader.js`, and the since-removed `auth.js`)
 - Draft and update documentation (`README.md`, `AGENTS.md`, and other Markdown files)
-- Implement feature branches and bug fixes (evidenced by branches prefixed `copilot/` and the `IMPLEMENTATION_SUMMARY.md` file)
+- Implement feature branches and bug fixes (evidenced by branches prefixed `copilot/` and, in git history, the former `IMPLEMENTATION_SUMMARY.md` file)
 
 The `.github/copilot-instructions.md` file configures Copilot's behavior for this repository.
+
+### Claude Code (code generation, review and documentation)
+
+**Used to build this project.** Anthropic's Claude Code has been used to write and test changes to the
+maintenance scan, the dashboards, the workflows and the documentation, including the removal of the
+sign-in, private-repository exclusion, Dependabot PR triage and library-change suggestions. Its
+commits carry a `Co-Authored-By: Claude` trailer. Each change went through a pull request that the
+maintainer reviewed and merged.
 
 ### Runtime AI use
 

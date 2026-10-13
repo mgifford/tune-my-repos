@@ -37,14 +37,14 @@ cp config.example.js config.js
 2. You should see **no rate limit warning**
 3. Console should show: `✓ Loaded GitHub token from .env file`
 
-**Note:** The `.env` file is only loaded in development environments (localhost or file://). In production deployments like GitHub Pages, `.env` is not used. Instead, production uses OAuth authentication to allow users to sign in with their GitHub accounts. See [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) for OAuth deployment instructions.
+**Note:** The `.env` file is only loaded in development environments (localhost or file://). In production deployments like GitHub Pages, `.env` is not used and there is no sign-in: the published site runs unauthenticated (see the README's "Why is there no Sign in with GitHub?"). For whole-account scans, use the scheduled Maintenance Control Plane.
 
 ## Rate Limits
 
 | Authentication | Rate Limit | Use Case |
 |----------------|------------|----------|
 | None | 60 requests/hour | Quick tests, public repos only |
-| Token | 5,000 requests/hour | Production use, private repos |
+| Token | 5,000 requests/hour | Local development only |
 
 ## Security Notes
 
