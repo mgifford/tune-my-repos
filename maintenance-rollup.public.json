@@ -1,43 +1,14 @@
 {
   "schema_version": "1.0.0",
-  "run_timestamp": "2026-10-29T15:50:05.750Z",
+  "run_timestamp": "2026-10-30T15:31:18.171Z",
   "policy_version": "1.0.0",
   "repositories": [
-    {
-      "full_name": "mgifford/vital-core-lgd-data",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:38.937Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "pr_data_as_of": "2026-10-29T15:48:38.937Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
     {
       "full_name": "mgifford/vital-core-data",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:39.581Z",
+      "source_timestamp": "2026-10-30T15:29:24.437Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -53,7 +24,7 @@
         "total": 0,
         "dependabot": 0
       },
-      "pr_data_as_of": "2026-10-29T15:48:39.581Z",
+      "pr_data_as_of": "2026-10-30T15:29:24.437Z",
       "dependabot_prs": [],
       "failed_update_prs": [],
       "recommended_action": {
@@ -62,11 +33,11 @@
       }
     },
     {
-      "full_name": "mgifford/vital-core-lgd",
+      "full_name": "mgifford/vital-core-lgd-data",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:42.404Z",
+      "source_timestamp": "2026-10-30T15:29:25.204Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -82,21 +53,7 @@
         "total": 0,
         "dependabot": 0
       },
-      "library_advice": [
-        {
-          "package": "dictionary-en",
-          "dependency_type": "production",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
-        },
-        {
-          "package": "dictionary-en-au",
-          "dependency_type": "production",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
-        }
-      ],
-      "pr_data_as_of": "2026-10-29T15:48:42.404Z",
+      "pr_data_as_of": "2026-10-30T15:29:25.204Z",
       "dependabot_prs": [],
       "failed_update_prs": [],
       "recommended_action": {
@@ -105,203 +62,11 @@
       }
     },
     {
-      "full_name": "mgifford/vital-core",
+      "full_name": "mgifford/wai-yaml-ld",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:43.129Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 0
-      },
-      "library_advice": [
-        {
-          "package": "dictionary-en",
-          "dependency_type": "production",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
-        },
-        {
-          "package": "dictionary-en-au",
-          "dependency_type": "production",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
-        }
-      ],
-      "pr_data_as_of": "2026-10-29T15:48:43.129Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/vital-core-nsf-data",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:43.780Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "pr_data_as_of": "2026-10-29T15:48:43.780Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/eu-plus-government-scans",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:44.740Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-29T15:48:44.740Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/dot-gov-scans",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:45.551Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-29T15:48:45.551Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/edu-scans",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:46.646Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-29T15:48:46.646Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/wcag-spine",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:48.561Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-29T15:48:48.561Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 3 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/daily-dap",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:51.316Z",
+      "source_timestamp": "2026-10-30T15:29:27.857Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -318,17 +83,487 @@
         "dependabot": 1
       },
       "library_advice": [],
-      "pr_data_as_of": "2026-10-29T15:48:51.316Z",
+      "pr_data_as_of": "2026-10-30T15:29:27.857Z",
       "dependabot_prs": [
         {
-          "number": 230,
-          "url": "https://github.com/mgifford/daily-dap/pull/230",
-          "opened_at": "2026-10-23T21:38:50Z",
+          "number": 118,
+          "url": "https://github.com/mgifford/wai-yaml-ld/pull/118",
+          "opened_at": "2026-10-30T15:26:16Z",
           "ecosystem": "npm",
-          "dependency_name": "zod, puppeteer-core",
+          "dependency_name": "body-parser, fast-uri, ip-address (+1 more)",
           "version_from": "multiple",
           "version_to": "multiple",
-          "update_type": "major",
+          "update_type": "minor",
+          "dependency_class": "production",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "failing",
+          "risk_state": "needs_repair",
+          "reason": "One or more required CI checks failed"
+        }
+      ],
+      "failed_update_prs": [
+        {
+          "number": 118,
+          "url": "https://github.com/mgifford/wai-yaml-ld/pull/118",
+          "dependency_name": "body-parser, fast-uri, ip-address (+1 more)",
+          "failed_check_name": "validate-graph",
+          "failed_check_url": "https://github.com/mgifford/wai-yaml-ld/actions/runs/41080720783/job/124148772015",
+          "failure_summary": "No summary available"
+        }
+      ],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 2 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/pdf-crawler",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:29.860Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:29.860Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "7 critical and 37 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/vital-core-nsf-data",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:30.594Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "pr_data_as_of": "2026-10-30T15:29:30.594Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/vital-core-lgd",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:32.374Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [
+        {
+          "package": "dictionary-en",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
+        },
+        {
+          "package": "dictionary-en-au",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
+        }
+      ],
+      "pr_data_as_of": "2026-10-30T15:29:32.374Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/vital-core",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:33.248Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [
+        {
+          "package": "dictionary-en",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
+        },
+        {
+          "package": "dictionary-en-au",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
+        }
+      ],
+      "pr_data_as_of": "2026-10-30T15:29:33.248Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/vital-core-nsf",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:34.114Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [
+        {
+          "package": "dictionary-en",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
+        },
+        {
+          "package": "dictionary-en-au",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
+        }
+      ],
+      "pr_data_as_of": "2026-10-30T15:29:34.114Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/firefox-energy-scanner",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:35.356Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:35.356Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/eu-plus-government-scans",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:36.294Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:36.294Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/dot-gov-scans",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:37.136Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:37.136Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/edu-scans",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:38.006Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:38.006Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/wai-linkedobjects",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:39.440Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "pr_data_as_of": "2026-10-30T15:29:39.440Z",
+      "dependabot_prs": [
+        {
+          "number": 15,
+          "url": "https://github.com/mgifford/wai-linkedobjects/pull/15",
+          "opened_at": "2026-10-30T10:57:57Z",
+          "ecosystem": "unknown",
+          "dependency_name": "certifi",
+          "version_from": "2026.5.20",
+          "version_to": "2026.10.18",
+          "update_type": "minor",
+          "dependency_class": "unknown",
+          "labels": [
+            "dependencies",
+            "python:uv"
+          ],
+          "ci_status": "none",
+          "risk_state": "needs_review",
+          "reason": "Dependency class could not be determined from manifest or PR metadata"
+        }
+      ],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "1 critical and 0 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/whisper-slides",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:41.496Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:41.496Z",
+      "dependabot_prs": [
+        {
+          "number": 43,
+          "url": "https://github.com/mgifford/whisper-slides/pull/43",
+          "opened_at": "2026-10-30T10:56:54Z",
+          "ecosystem": "npm",
+          "dependency_name": "fast-uri, undici",
+          "version_from": "multiple",
+          "version_to": "multiple",
+          "update_type": "patch",
+          "dependency_class": "development",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "passing",
+          "risk_state": "eligible",
+          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
+        }
+      ],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 5 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/openapi-reference",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:43.944Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "library_advice": [
+        {
+          "package": "node-fetch",
+          "dependency_type": "production",
+          "kind": "native",
+          "suggestion": "Node 18+ has a global fetch; the package is only needed for older Node."
+        }
+      ],
+      "pr_data_as_of": "2026-10-30T15:29:43.944Z",
+      "dependabot_prs": [
+        {
+          "number": 23,
+          "url": "https://github.com/mgifford/openapi-reference/pull/23",
+          "opened_at": "2026-10-30T10:56:37Z",
+          "ecosystem": "npm",
+          "dependency_name": "body-parser, fast-uri",
+          "version_from": "multiple",
+          "version_to": "multiple",
+          "update_type": "patch",
           "dependency_class": "production",
           "labels": [
             "dependencies",
@@ -346,11 +581,801 @@
       }
     },
     {
+      "full_name": "mgifford/AirScript",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:45.189Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:45.189Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "1 critical and 7 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/perception",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:46.096Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "pr_data_as_of": "2026-10-30T15:29:46.096Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/content-first-wireframe",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:47.931Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:47.931Z",
+      "dependabot_prs": [
+        {
+          "number": 18,
+          "url": "https://github.com/mgifford/content-first-wireframe/pull/18",
+          "opened_at": "2026-10-30T10:54:30Z",
+          "ecosystem": "npm",
+          "dependency_name": "fast-uri",
+          "version_from": "3.1.7",
+          "version_to": "3.1.9",
+          "update_type": "patch",
+          "dependency_class": "development",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "passing",
+          "risk_state": "eligible",
+          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
+        }
+      ],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "merge_eligible_updates",
+        "reason": "1 update(s) are eligible for the low-risk merge path once required CI passes"
+      }
+    },
+    {
+      "full_name": "mgifford/a11y-svg",
+      "default_branch": "main",
+      "tier": "pilot",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:50.030Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:50.030Z",
+      "dependabot_prs": [
+        {
+          "number": 54,
+          "url": "https://github.com/mgifford/a11y-svg/pull/54",
+          "opened_at": "2026-10-08T20:36:16Z",
+          "ecosystem": "github_actions",
+          "dependency_name": "jsdom",
+          "version_from": "28.1.0",
+          "version_to": "30.1.2",
+          "update_type": "major",
+          "dependency_class": "github-actions",
+          "labels": [
+            "dependencies",
+            "javascript",
+            "maintenance:development",
+            "maintenance:major",
+            "maintenance:needs_review"
+          ],
+          "ci_status": "failing",
+          "risk_state": "needs_repair",
+          "reason": "One or more required CI checks failed"
+        }
+      ],
+      "failed_update_prs": [
+        {
+          "number": 54,
+          "url": "https://github.com/mgifford/a11y-svg/pull/54",
+          "dependency_name": "jsdom",
+          "failed_check_name": "copilot",
+          "failed_check_url": "https://github.com/mgifford/a11y-svg/actions/runs/40028095869/job/120669241005",
+          "failure_summary": "No summary available"
+        }
+      ],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 4 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/unosw.plus",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:51.224Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:51.224Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/w3c-a11y-maturity-model",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:55.548Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 3,
+        "dependabot": 3
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:55.548Z",
+      "dependabot_prs": [
+        {
+          "number": 137,
+          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/137",
+          "opened_at": "2026-10-30T10:47:46Z",
+          "ecosystem": "npm",
+          "dependency_name": "undici",
+          "version_from": "8.11.2",
+          "version_to": "8.12.3",
+          "update_type": "minor",
+          "dependency_class": "development",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "none",
+          "risk_state": "needs_review",
+          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
+        },
+        {
+          "number": 136,
+          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/136",
+          "opened_at": "2026-10-23T21:44:23Z",
+          "ecosystem": "npm",
+          "dependency_name": "@vitest/ui",
+          "version_from": "5.0.3",
+          "version_to": "5.0.5",
+          "update_type": "patch",
+          "dependency_class": "development",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "none",
+          "risk_state": "needs_review",
+          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
+        },
+        {
+          "number": 134,
+          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/134",
+          "opened_at": "2026-10-21T04:53:34Z",
+          "ecosystem": "npm",
+          "dependency_name": "@vitest/ui, vitest",
+          "version_from": "multiple",
+          "version_to": "multiple",
+          "update_type": "patch",
+          "dependency_class": "development",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "none",
+          "risk_state": "needs_review",
+          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
+        }
+      ],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 4 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/dpg-dpi-govstack-map",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:58.225Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "library_advice": [
+        {
+          "package": "d3-array",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 3 years; check for a maintained alternative."
+        },
+        {
+          "package": "d3-scale",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 5 years; check for a maintained alternative."
+        },
+        {
+          "package": "leaflet",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 3 years; check for a maintained alternative."
+        },
+        {
+          "package": "lunr",
+          "dependency_type": "production",
+          "kind": "unmaintained",
+          "suggestion": "No npm release in over 6 years; check for a maintained alternative."
+        }
+      ],
+      "pr_data_as_of": "2026-10-30T15:29:58.225Z",
+      "dependabot_prs": [
+        {
+          "number": 26,
+          "url": "https://github.com/mgifford/dpg-dpi-govstack-map/pull/26",
+          "opened_at": "2026-10-30T10:48:12Z",
+          "ecosystem": "npm",
+          "dependency_name": "qs, undici",
+          "version_from": "multiple",
+          "version_to": "multiple",
+          "update_type": "minor",
+          "dependency_class": "production",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "failing",
+          "risk_state": "needs_repair",
+          "reason": "One or more required CI checks failed"
+        }
+      ],
+      "failed_update_prs": [
+        {
+          "number": 26,
+          "url": "https://github.com/mgifford/dpg-dpi-govstack-map/pull/26",
+          "dependency_name": "qs, undici",
+          "failed_check_name": "Lint, type-check, test, validate",
+          "failed_check_url": "https://github.com/mgifford/dpg-dpi-govstack-map/actions/runs/41043423858/job/124021519657",
+          "failure_summary": "No summary available"
+        }
+      ],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 7 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/ai-browser-test",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:29:59.106Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:29:59.106Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/wsg-mooc",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:00.113Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:00.113Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 3 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/gh-open-dash",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:01.038Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:01.038Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/find-publiccode.yml",
+      "default_branch": "master",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:01.877Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "pr_data_as_of": "2026-10-30T15:30:01.877Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 4 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/daily-dap",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:03.939Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:03.939Z",
+      "dependabot_prs": [
+        {
+          "number": 231,
+          "url": "https://github.com/mgifford/daily-dap/pull/231",
+          "opened_at": "2026-10-30T10:41:16Z",
+          "ecosystem": "npm",
+          "dependency_name": "fast-uri",
+          "version_from": "3.1.8",
+          "version_to": "3.1.9",
+          "update_type": "patch",
+          "dependency_class": "production",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "passing",
+          "risk_state": "needs_review",
+          "reason": "Runtime dependencies shipped to users"
+        }
+      ],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "human_review_required",
+        "reason": "1 update(s) require a human decision under current policy"
+      }
+    },
+    {
+      "full_name": "mgifford/drupal-core-lab",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:05.193Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:05.193Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/upstream-first",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:05.960Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "pr_data_as_of": "2026-10-30T15:30:05.960Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/bellwether",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:06.773Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:06.773Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "none",
+        "reason": "No open Dependabot alerts or update PRs requiring attention"
+      }
+    },
+    {
+      "full_name": "mgifford/alt-text-scan",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:08.643Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:08.643Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 4 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/wcag-spine",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:09.740Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 0,
+        "dependabot": 0
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:09.740Z",
+      "dependabot_prs": [],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 3 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/mgifford.github.io",
+      "default_branch": "master",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:11.699Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "not_available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": true
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "library_advice": [],
+      "pr_data_as_of": "2026-10-30T15:30:11.699Z",
+      "dependabot_prs": [
+        {
+          "number": 24,
+          "url": "https://github.com/mgifford/mgifford.github.io/pull/24",
+          "opened_at": "2026-10-30T04:17:25Z",
+          "ecosystem": "npm",
+          "dependency_name": "brace-expansion",
+          "version_from": "1.1.18",
+          "version_to": "1.1.21",
+          "update_type": "patch",
+          "dependency_class": "development",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "passing",
+          "risk_state": "eligible",
+          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
+        }
+      ],
+      "failed_update_prs": [],
+      "recommended_action": {
+        "action": "review_security_alerts",
+        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
+      }
+    },
+    {
+      "full_name": "mgifford/ACCESSIBILITY.md",
+      "default_branch": "main",
+      "tier": "manual",
+      "policy_version": "1.0.0",
+      "source_timestamp": "2026-10-30T15:30:14.155Z",
+      "coverage": {
+        "dependency_graph": "available",
+        "dependabot_alerts": "available",
+        "dependabot_security_updates": "available",
+        "secret_scanning": "available",
+        "codeql_default_setup": "unknown",
+        "branch_protection": "not_available"
+      },
+      "security_alerts": {
+        "has_urgent_alerts": false
+      },
+      "open_pull_requests": {
+        "total": 1,
+        "dependabot": 1
+      },
+      "pr_data_as_of": "2026-10-30T15:30:14.155Z",
+      "dependabot_prs": [
+        {
+          "number": 159,
+          "url": "https://github.com/mgifford/ACCESSIBILITY.md/pull/159",
+          "opened_at": "2026-10-29T23:42:01Z",
+          "ecosystem": "npm",
+          "dependency_name": "fast-uri",
+          "version_from": "3.1.7",
+          "version_to": "3.1.9",
+          "update_type": "patch",
+          "dependency_class": "production",
+          "labels": [
+            "dependencies",
+            "javascript"
+          ],
+          "ci_status": "failing",
+          "risk_state": "needs_repair",
+          "reason": "One or more required CI checks failed"
+        }
+      ],
+      "failed_update_prs": [
+        {
+          "number": 159,
+          "url": "https://github.com/mgifford/ACCESSIBILITY.md/pull/159",
+          "dependency_name": "fast-uri",
+          "failed_check_name": "markdown-links",
+          "failed_check_url": "https://github.com/mgifford/ACCESSIBILITY.md/actions/runs/40974909543/job/123800433670",
+          "failure_summary": "No summary available"
+        }
+      ],
+      "recommended_action": {
+        "action": "repair_failed_update_pr",
+        "reason": "1 Dependabot update PR(s) failed a required check and need repair"
+      }
+    },
+    {
       "full_name": "mgifford/tune-my-repos",
       "default_branch": "main",
       "tier": "pilot",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:51.987Z",
+      "source_timestamp": "2026-10-30T15:30:15.079Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -367,7 +1392,7 @@
         "dependabot": 0
       },
       "library_advice": [],
-      "pr_data_as_of": "2026-10-29T15:48:51.987Z",
+      "pr_data_as_of": "2026-10-30T15:30:15.079Z",
       "dependabot_prs": [],
       "failed_update_prs": [],
       "recommended_action": {
@@ -376,59 +1401,11 @@
       }
     },
     {
-      "full_name": "mgifford/upstream-first",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:52.532Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "pr_data_as_of": "2026-10-28T15:42:04.630Z",
-      "dependabot_prs": [
-        {
-          "number": 1,
-          "url": "https://github.com/mgifford/upstream-first/pull/1",
-          "opened_at": "2026-10-28T14:44:26Z",
-          "ecosystem": "github_actions",
-          "dependency_name": "actions/setup-python",
-          "version_from": "7.0.0",
-          "version_to": "7.1.0",
-          "update_type": "minor",
-          "dependency_class": "github-actions",
-          "labels": [
-            "dependencies",
-            "github_actions"
-          ],
-          "ci_status": "passing",
-          "risk_state": "eligible",
-          "reason": "Updates to .github/workflows/*.yml action references — required checks passed"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "merge_eligible_updates",
-        "reason": "1 update(s) are eligible for the low-risk merge path once required CI passes"
-      }
-    },
-    {
       "full_name": "mgifford/daily-cap",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:53.078Z",
+      "source_timestamp": "2026-10-30T15:30:15.695Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -454,54 +1431,11 @@
       }
     },
     {
-      "full_name": "mgifford/vital-core-nsf",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:53.783Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [
-        {
-          "package": "dictionary-en",
-          "dependency_type": "production",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
-        },
-        {
-          "package": "nspell",
-          "dependency_type": "production",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 5 years; check for a maintained alternative."
-        }
-      ],
-      "pr_data_as_of": "2026-10-28T15:42:14.508Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/mermaid-graphs",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:54.367Z",
+      "source_timestamp": "2026-10-30T15:30:16.327Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -526,130 +1460,11 @@
       }
     },
     {
-      "full_name": "mgifford/ACCESSIBILITY.md",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:54.984Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "pr_data_as_of": "2026-10-27T15:05:50.575Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/firefox-energy-scanner",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:55.562Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-27T15:05:54.163Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/drupal-core-lab",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:56.107Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-26T15:47:30.340Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
-      "full_name": "mgifford/mgifford.github.io",
-      "default_branch": "master",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:56.690Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "not_available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-26T15:47:32.693Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/drupal-core",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:57.255Z",
+      "source_timestamp": "2026-10-30T15:30:16.949Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -675,59 +1490,11 @@
       }
     },
     {
-      "full_name": "mgifford/find-publiccode.yml",
-      "default_branch": "master",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:57.959Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "pr_data_as_of": "2026-10-26T15:47:38.367Z",
-      "dependabot_prs": [
-        {
-          "number": 5,
-          "url": "https://github.com/mgifford/find-publiccode.yml/pull/5",
-          "opened_at": "2026-10-26T09:40:19Z",
-          "ecosystem": "unknown",
-          "dependency_name": "certifi",
-          "version_from": "2026.5.20",
-          "version_to": "2026.10.19",
-          "update_type": "minor",
-          "dependency_class": "unknown",
-          "labels": [
-            "dependencies",
-            "python:uv"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "Dependency class could not be determined from manifest or PR metadata"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 2 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/open-scans",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:58.520Z",
+      "source_timestamp": "2026-10-30T15:30:17.645Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -757,7 +1524,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:59.068Z",
+      "source_timestamp": "2026-10-30T15:30:18.236Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -801,216 +1568,11 @@
       }
     },
     {
-      "full_name": "mgifford/gh-open-dash",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:48:59.674Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-25T13:32:24.992Z",
-      "dependabot_prs": [
-        {
-          "number": 75,
-          "url": "https://github.com/mgifford/gh-open-dash/pull/75",
-          "opened_at": "2026-10-24T13:11:37Z",
-          "ecosystem": "npm",
-          "dependency_name": "@vitest/mocker, undici",
-          "version_from": "multiple",
-          "version_to": "multiple",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "passing",
-          "risk_state": "eligible",
-          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/dpg-dpi-govstack-map",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:00.335Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-24T13:04:01.684Z",
-      "dependabot_prs": [
-        {
-          "number": 25,
-          "url": "https://github.com/mgifford/dpg-dpi-govstack-map/pull/25",
-          "opened_at": "2026-10-24T12:36:08Z",
-          "ecosystem": "npm",
-          "dependency_name": "astro, zod, fast-uri",
-          "version_from": "multiple",
-          "version_to": "multiple",
-          "update_type": "major",
-          "dependency_class": "production",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "failing",
-          "risk_state": "needs_repair",
-          "reason": "One or more required CI checks failed"
-        }
-      ],
-      "failed_update_prs": [
-        {
-          "number": 25,
-          "url": "https://github.com/mgifford/dpg-dpi-govstack-map/pull/25",
-          "dependency_name": "astro, zod, fast-uri",
-          "failed_check_name": "Link Check",
-          "failed_check_url": "https://github.com/mgifford/dpg-dpi-govstack-map/actions/runs/40094611206/job/120874137166",
-          "failure_summary": "No summary available"
-        }
-      ],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 5 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/wsg-mooc",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:01.081Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-24T13:04:04.499Z",
-      "dependabot_prs": [
-        {
-          "number": 133,
-          "url": "https://github.com/mgifford/wsg-mooc/pull/133",
-          "opened_at": "2026-10-24T11:17:40Z",
-          "ecosystem": "npm",
-          "dependency_name": "handlebars",
-          "version_from": "4.7.9",
-          "version_to": "4.7.10",
-          "update_type": "patch",
-          "dependency_class": "production",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "Runtime dependencies shipped to users"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "2 critical and 3 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/ai-browser-test",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:01.772Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-24T13:04:06.518Z",
-      "dependabot_prs": [
-        {
-          "number": 35,
-          "url": "https://github.com/mgifford/ai-browser-test/pull/35",
-          "opened_at": "2026-10-24T11:16:15Z",
-          "ecosystem": "npm",
-          "dependency_name": "fast-uri",
-          "version_from": "3.1.7",
-          "version_to": "3.1.9",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "passing",
-          "risk_state": "eligible",
-          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/airtime2",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:02.417Z",
+      "source_timestamp": "2026-10-30T15:30:18.818Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1040,7 +1602,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:02.992Z",
+      "source_timestamp": "2026-10-30T15:30:19.473Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1073,187 +1635,11 @@
       }
     },
     {
-      "full_name": "mgifford/pdf-crawler",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:03.875Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-24T13:04:14.752Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "9 critical and 54 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/w3c-a11y-maturity-model",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:04.573Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 6,
-        "dependabot": 6
-      },
-      "library_advice": [
-        {
-          "package": "@resvg/resvg-js",
-          "dependency_type": "development",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
-        }
-      ],
-      "pr_data_as_of": "2026-10-24T13:04:26.280Z",
-      "dependabot_prs": [
-        {
-          "number": 136,
-          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/136",
-          "opened_at": "2026-10-23T21:44:23Z",
-          "ecosystem": "npm",
-          "dependency_name": "@vitest/ui",
-          "version_from": "5.0.3",
-          "version_to": "5.0.5",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
-        },
-        {
-          "number": 135,
-          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/135",
-          "opened_at": "2026-10-21T07:33:18Z",
-          "ecosystem": "npm",
-          "dependency_name": "vite",
-          "version_from": "8.3.0",
-          "version_to": "8.3.5",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
-        },
-        {
-          "number": 134,
-          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/134",
-          "opened_at": "2026-10-21T04:53:34Z",
-          "ecosystem": "npm",
-          "dependency_name": "@vitest/ui, vitest",
-          "version_from": "multiple",
-          "version_to": "multiple",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
-        },
-        {
-          "number": 133,
-          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/133",
-          "opened_at": "2026-10-14T19:42:01Z",
-          "ecosystem": "npm",
-          "dependency_name": "vite",
-          "version_from": "8.3.0",
-          "version_to": "8.3.4",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
-        },
-        {
-          "number": 132,
-          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/132",
-          "opened_at": "2026-10-14T19:39:06Z",
-          "ecosystem": "npm",
-          "dependency_name": "@sveltejs/vite-plugin-svelte",
-          "version_from": "7.3.0",
-          "version_to": "7.3.1",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
-        },
-        {
-          "number": 131,
-          "url": "https://github.com/mgifford/w3c-a11y-maturity-model/pull/131",
-          "opened_at": "2026-10-14T19:38:42Z",
-          "ecosystem": "npm",
-          "dependency_name": "@types/node",
-          "version_from": "26.6.2",
-          "version_to": "26.6.5",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/open-data-guide",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:05.149Z",
+      "source_timestamp": "2026-10-30T15:30:20.154Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1279,41 +1665,11 @@
       }
     },
     {
-      "full_name": "mgifford/wai-yaml-ld",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:05.700Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-24T13:04:29.661Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 2 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/DiDay",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:06.296Z",
+      "source_timestamp": "2026-10-30T15:30:20.772Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1339,41 +1695,11 @@
       }
     },
     {
-      "full_name": "mgifford/alt-text-scan",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:06.877Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-24T13:04:31.505Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 4 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/open-accessibility-workbench",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:07.455Z",
+      "source_timestamp": "2026-10-30T15:30:21.484Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1399,130 +1725,11 @@
       }
     },
     {
-      "full_name": "mgifford/a11y-svg",
-      "default_branch": "main",
-      "tier": "pilot",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:08.166Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 3,
-        "dependabot": 3
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-24T13:04:39.283Z",
-      "dependabot_prs": [
-        {
-          "number": 59,
-          "url": "https://github.com/mgifford/a11y-svg/pull/59",
-          "opened_at": "2026-10-23T17:46:23Z",
-          "ecosystem": "npm",
-          "dependency_name": "@axe-core/cli",
-          "version_from": "4.13.0",
-          "version_to": "4.14.0",
-          "update_type": "minor",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript",
-            "maintenance:development",
-            "maintenance:eligible",
-            "maintenance:minor"
-          ],
-          "ci_status": "failing",
-          "risk_state": "needs_repair",
-          "reason": "One or more required CI checks failed"
-        },
-        {
-          "number": 58,
-          "url": "https://github.com/mgifford/a11y-svg/pull/58",
-          "opened_at": "2026-10-21T21:26:08Z",
-          "ecosystem": "npm",
-          "dependency_name": "follow-redirects",
-          "version_from": "1.16.0",
-          "version_to": "1.16.1",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript",
-            "maintenance:development",
-            "maintenance:eligible",
-            "maintenance:patch"
-          ],
-          "ci_status": "failing",
-          "risk_state": "needs_repair",
-          "reason": "One or more required CI checks failed"
-        },
-        {
-          "number": 54,
-          "url": "https://github.com/mgifford/a11y-svg/pull/54",
-          "opened_at": "2026-10-08T20:36:16Z",
-          "ecosystem": "github_actions",
-          "dependency_name": "jsdom",
-          "version_from": "28.1.0",
-          "version_to": "30.1.2",
-          "update_type": "major",
-          "dependency_class": "github-actions",
-          "labels": [
-            "dependencies",
-            "javascript",
-            "maintenance:development",
-            "maintenance:major",
-            "maintenance:needs_review"
-          ],
-          "ci_status": "failing",
-          "risk_state": "needs_repair",
-          "reason": "One or more required CI checks failed"
-        }
-      ],
-      "failed_update_prs": [
-        {
-          "number": 59,
-          "url": "https://github.com/mgifford/a11y-svg/pull/59",
-          "dependency_name": "@axe-core/cli",
-          "failed_check_name": "Request auto-merge if eligible",
-          "failed_check_url": "https://github.com/mgifford/a11y-svg/actions/runs/39997830238/job/120565979874",
-          "failure_summary": "No summary available"
-        },
-        {
-          "number": 58,
-          "url": "https://github.com/mgifford/a11y-svg/pull/58",
-          "dependency_name": "follow-redirects",
-          "failed_check_name": "Request auto-merge if eligible",
-          "failed_check_url": "https://github.com/mgifford/a11y-svg/actions/runs/39678772737/job/119495649602",
-          "failure_summary": "No summary available"
-        },
-        {
-          "number": 54,
-          "url": "https://github.com/mgifford/a11y-svg/pull/54",
-          "dependency_name": "jsdom",
-          "failed_check_name": "copilot",
-          "failed_check_url": "https://github.com/mgifford/a11y-svg/actions/runs/40028095869/job/120669241005",
-          "failure_summary": "No summary available"
-        }
-      ],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 4 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/permutations",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:08.772Z",
+      "source_timestamp": "2026-10-30T15:30:22.037Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1547,60 +1754,11 @@
       }
     },
     {
-      "full_name": "mgifford/unosw.plus",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:09.387Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-19T16:08:36.972Z",
-      "dependabot_prs": [
-        {
-          "number": 64,
-          "url": "https://github.com/mgifford/unosw.plus/pull/64",
-          "opened_at": "2026-10-18T13:43:58Z",
-          "ecosystem": "npm",
-          "dependency_name": "brace-expansion",
-          "version_from": "1.1.18",
-          "version_to": "1.1.21",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "devDependencies / test-only / lint-only packages — eligible once required CI passes"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/pdf-alt-fixer",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:09.894Z",
+      "source_timestamp": "2026-10-30T15:30:22.709Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1630,7 +1788,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:10.550Z",
+      "source_timestamp": "2026-10-30T15:30:23.428Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1659,7 +1817,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:11.132Z",
+      "source_timestamp": "2026-10-30T15:30:24.114Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1689,7 +1847,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:11.751Z",
+      "source_timestamp": "2026-10-30T15:30:24.856Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1738,7 +1896,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:12.300Z",
+      "source_timestamp": "2026-10-30T15:30:25.621Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -1764,317 +1922,11 @@
       }
     },
     {
-      "full_name": "mgifford/content-first-wireframe",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:13.047Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-13T18:58:51.363Z",
-      "dependabot_prs": [
-        {
-          "number": 17,
-          "url": "https://github.com/mgifford/content-first-wireframe/pull/17",
-          "opened_at": "2026-10-13T04:42:42Z",
-          "ecosystem": "npm",
-          "dependency_name": "brace-expansion",
-          "version_from": "2.1.4",
-          "version_to": "2.1.7",
-          "update_type": "patch",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "passing",
-          "risk_state": "eligible",
-          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "merge_eligible_updates",
-        "reason": "1 update(s) are eligible for the low-risk merge path once required CI passes"
-      }
-    },
-    {
-      "full_name": "mgifford/perception",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:13.630Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "pr_data_as_of": "2026-10-13T18:58:52.831Z",
-      "dependabot_prs": [
-        {
-          "number": 4,
-          "url": "https://github.com/mgifford/perception/pull/4",
-          "opened_at": "2026-10-12T23:28:35Z",
-          "ecosystem": "unknown",
-          "dependency_name": "json",
-          "version_from": "2.21.1",
-          "version_to": "2.21.2",
-          "update_type": "patch",
-          "dependency_class": "unknown",
-          "labels": [
-            "dependencies",
-            "ruby"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "Dependency class could not be determined from manifest or PR metadata"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 1 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/openapi-reference",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:14.244Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [
-        {
-          "package": "node-fetch",
-          "dependency_type": "production",
-          "kind": "native",
-          "suggestion": "Node 18+ has a global fetch; the package is only needed for older Node."
-        }
-      ],
-      "pr_data_as_of": "2026-10-13T18:58:58.680Z",
-      "dependabot_prs": [
-        {
-          "number": 22,
-          "url": "https://github.com/mgifford/openapi-reference/pull/22",
-          "opened_at": "2026-10-12T23:25:38Z",
-          "ecosystem": "npm",
-          "dependency_name": "brace-expansion, ip-address, proxy-addr",
-          "version_from": "multiple",
-          "version_to": "multiple",
-          "update_type": "minor",
-          "dependency_class": "production",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "passing",
-          "risk_state": "needs_review",
-          "reason": "Runtime dependencies shipped to users"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "1 critical and 0 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/whisper-slides",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:14.894Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-13T18:59:01.949Z",
-      "dependabot_prs": [
-        {
-          "number": 42,
-          "url": "https://github.com/mgifford/whisper-slides/pull/42",
-          "opened_at": "2026-10-12T23:24:23Z",
-          "ecosystem": "npm",
-          "dependency_name": "brace-expansion, undici",
-          "version_from": "multiple",
-          "version_to": "multiple",
-          "update_type": "minor",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "passing",
-          "risk_state": "eligible",
-          "reason": "devDependencies / test-only / lint-only packages — required checks passed"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 2 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/wai-linkedobjects",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:15.538Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "pr_data_as_of": "2026-10-13T18:59:07.183Z",
-      "dependabot_prs": [
-        {
-          "number": 14,
-          "url": "https://github.com/mgifford/wai-linkedobjects/pull/14",
-          "opened_at": "2026-10-12T23:23:51Z",
-          "ecosystem": "unknown",
-          "dependency_name": "urllib3",
-          "version_from": "2.7.0",
-          "version_to": "2.8.0",
-          "update_type": "minor",
-          "dependency_class": "unknown",
-          "labels": [
-            "dependencies",
-            "python:uv"
-          ],
-          "ci_status": "none",
-          "risk_state": "needs_review",
-          "reason": "Dependency class could not be determined from manifest or PR metadata"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "0 critical and 2 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
-      "full_name": "mgifford/AirScript",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:16.335Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": true
-      },
-      "open_pull_requests": {
-        "total": 1,
-        "dependabot": 1
-      },
-      "library_advice": [
-        {
-          "package": "qrcode",
-          "dependency_type": "production",
-          "kind": "unmaintained",
-          "suggestion": "No npm release in over 2 years; check for a maintained alternative."
-        }
-      ],
-      "pr_data_as_of": "2026-10-13T18:59:09.754Z",
-      "dependabot_prs": [
-        {
-          "number": 20,
-          "url": "https://github.com/mgifford/AirScript/pull/20",
-          "opened_at": "2026-10-12T23:23:04Z",
-          "ecosystem": "npm",
-          "dependency_name": "@opentelemetry/instrumentation-tedious",
-          "version_from": "0.18.1",
-          "version_to": "removed",
-          "update_type": "unknown",
-          "dependency_class": "development",
-          "labels": [
-            "dependencies",
-            "javascript"
-          ],
-          "ci_status": "passing",
-          "risk_state": "needs_review",
-          "reason": "Unrecognized update_type \"unknown\" for dependency class \"development\"; treated as unknown"
-        }
-      ],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "review_security_alerts",
-        "reason": "1 critical and 6 high severity Dependabot alerts are open and unaddressed"
-      }
-    },
-    {
       "full_name": "mgifford/drupal-cms",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:17.051Z",
+      "source_timestamp": "2026-10-30T15:30:26.470Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2103,7 +1955,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:17.750Z",
+      "source_timestamp": "2026-10-30T15:30:27.069Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2132,7 +1984,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:18.257Z",
+      "source_timestamp": "2026-10-30T15:30:27.725Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2162,7 +2014,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:18.881Z",
+      "source_timestamp": "2026-10-30T15:30:28.516Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2192,7 +2044,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:19.449Z",
+      "source_timestamp": "2026-10-30T15:30:29.122Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2221,7 +2073,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:19.995Z",
+      "source_timestamp": "2026-10-30T15:30:29.793Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2251,7 +2103,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:20.582Z",
+      "source_timestamp": "2026-10-30T15:30:30.443Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2281,7 +2133,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:21.167Z",
+      "source_timestamp": "2026-10-30T15:30:31.081Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2303,7 +2155,7 @@
       "failed_update_prs": [],
       "recommended_action": {
         "action": "review_security_alerts",
-        "reason": "0 critical and 2 high severity Dependabot alerts are open and unaddressed"
+        "reason": "0 critical and 3 high severity Dependabot alerts are open and unaddressed"
       }
     },
     {
@@ -2311,7 +2163,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:22.037Z",
+      "source_timestamp": "2026-10-30T15:30:31.695Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2348,7 +2200,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:22.564Z",
+      "source_timestamp": "2026-10-30T15:30:32.340Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2377,7 +2229,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:23.287Z",
+      "source_timestamp": "2026-10-30T15:30:33.018Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2406,7 +2258,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:23.916Z",
+      "source_timestamp": "2026-10-30T15:30:33.721Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2436,7 +2288,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:24.543Z",
+      "source_timestamp": "2026-10-30T15:30:34.360Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2466,7 +2318,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:25.106Z",
+      "source_timestamp": "2026-10-30T15:30:34.952Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2496,7 +2348,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:25.734Z",
+      "source_timestamp": "2026-10-30T15:30:35.597Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2526,7 +2378,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:26.284Z",
+      "source_timestamp": "2026-10-30T15:30:36.189Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2555,7 +2407,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:26.923Z",
+      "source_timestamp": "2026-10-30T15:30:36.815Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2581,41 +2433,11 @@
       }
     },
     {
-      "full_name": "mgifford/bellwether",
-      "default_branch": "main",
-      "tier": "manual",
-      "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:27.504Z",
-      "coverage": {
-        "dependency_graph": "available",
-        "dependabot_alerts": "available",
-        "dependabot_security_updates": "available",
-        "secret_scanning": "available",
-        "codeql_default_setup": "unknown",
-        "branch_protection": "not_available"
-      },
-      "security_alerts": {
-        "has_urgent_alerts": false
-      },
-      "open_pull_requests": {
-        "total": 0,
-        "dependabot": 0
-      },
-      "library_advice": [],
-      "pr_data_as_of": "2026-10-13T18:59:52.362Z",
-      "dependabot_prs": [],
-      "failed_update_prs": [],
-      "recommended_action": {
-        "action": "none",
-        "reason": "No open Dependabot alerts or update PRs requiring attention"
-      }
-    },
-    {
       "full_name": "mgifford/open-site-review",
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:28.068Z",
+      "source_timestamp": "2026-10-30T15:30:37.459Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2645,7 +2467,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:28.555Z",
+      "source_timestamp": "2026-10-30T15:30:38.064Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2675,7 +2497,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:29.117Z",
+      "source_timestamp": "2026-10-30T15:30:38.667Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2704,7 +2526,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:29.657Z",
+      "source_timestamp": "2026-10-30T15:30:39.328Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2733,7 +2555,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:30.297Z",
+      "source_timestamp": "2026-10-30T15:30:39.872Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2762,7 +2584,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:30.853Z",
+      "source_timestamp": "2026-10-30T15:30:40.421Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2792,7 +2614,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:31.412Z",
+      "source_timestamp": "2026-10-30T15:30:40.979Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2821,7 +2643,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:32.008Z",
+      "source_timestamp": "2026-10-30T15:30:41.553Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2850,7 +2672,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:32.565Z",
+      "source_timestamp": "2026-10-30T15:30:42.131Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2879,7 +2701,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:33.084Z",
+      "source_timestamp": "2026-10-30T15:30:42.734Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2909,7 +2731,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:33.800Z",
+      "source_timestamp": "2026-10-30T15:30:43.461Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2938,7 +2760,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:34.365Z",
+      "source_timestamp": "2026-10-30T15:30:44.062Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2968,7 +2790,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:34.832Z",
+      "source_timestamp": "2026-10-30T15:30:44.681Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -2998,7 +2820,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:35.454Z",
+      "source_timestamp": "2026-10-30T15:30:45.373Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3027,7 +2849,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:36.098Z",
+      "source_timestamp": "2026-10-30T15:30:46.102Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3057,7 +2879,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:36.699Z",
+      "source_timestamp": "2026-10-30T15:30:46.736Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3087,7 +2909,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:37.197Z",
+      "source_timestamp": "2026-10-30T15:30:47.439Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3117,7 +2939,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:37.701Z",
+      "source_timestamp": "2026-10-30T15:30:47.928Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3147,7 +2969,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:38.222Z",
+      "source_timestamp": "2026-10-30T15:30:48.601Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3176,7 +2998,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:38.822Z",
+      "source_timestamp": "2026-10-30T15:30:49.183Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3206,7 +3028,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:39.329Z",
+      "source_timestamp": "2026-10-30T15:30:50.019Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3235,7 +3057,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:39.903Z",
+      "source_timestamp": "2026-10-30T15:30:50.603Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3264,7 +3086,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:40.420Z",
+      "source_timestamp": "2026-10-30T15:30:51.272Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3293,7 +3115,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:40.963Z",
+      "source_timestamp": "2026-10-30T15:30:51.860Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3323,7 +3145,7 @@
       "default_branch": "procurement-mind-map-2026-v1-17571514656555226024",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:41.527Z",
+      "source_timestamp": "2026-10-30T15:30:52.455Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3352,7 +3174,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:42.006Z",
+      "source_timestamp": "2026-10-30T15:30:53.024Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3381,7 +3203,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:42.508Z",
+      "source_timestamp": "2026-10-30T15:30:53.679Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3411,7 +3233,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:43.123Z",
+      "source_timestamp": "2026-10-30T15:30:54.308Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3440,7 +3262,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:43.773Z",
+      "source_timestamp": "2026-10-30T15:30:54.950Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3469,7 +3291,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:44.321Z",
+      "source_timestamp": "2026-10-30T15:30:55.549Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3498,7 +3320,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:44.913Z",
+      "source_timestamp": "2026-10-30T15:30:56.156Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3527,7 +3349,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:45.488Z",
+      "source_timestamp": "2026-10-30T15:30:56.711Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3556,7 +3378,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:46.011Z",
+      "source_timestamp": "2026-10-30T15:30:57.318Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3585,7 +3407,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:46.629Z",
+      "source_timestamp": "2026-10-30T15:30:57.942Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3614,7 +3436,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:47.111Z",
+      "source_timestamp": "2026-10-30T15:30:58.546Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3643,7 +3465,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:47.714Z",
+      "source_timestamp": "2026-10-30T15:30:59.107Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3672,7 +3494,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:48.304Z",
+      "source_timestamp": "2026-10-30T15:30:59.740Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3701,7 +3523,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:48.796Z",
+      "source_timestamp": "2026-10-30T15:31:00.377Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3730,7 +3552,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:49.487Z",
+      "source_timestamp": "2026-10-30T15:31:01.069Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3759,7 +3581,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:50.124Z",
+      "source_timestamp": "2026-10-30T15:31:01.990Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3788,7 +3610,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:50.742Z",
+      "source_timestamp": "2026-10-30T15:31:02.749Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3817,7 +3639,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:51.419Z",
+      "source_timestamp": "2026-10-30T15:31:03.338Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3846,7 +3668,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:52.253Z",
+      "source_timestamp": "2026-10-30T15:31:04.023Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3875,7 +3697,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:52.902Z",
+      "source_timestamp": "2026-10-30T15:31:04.602Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3912,7 +3734,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:53.713Z",
+      "source_timestamp": "2026-10-30T15:31:05.358Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3941,7 +3763,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:54.353Z",
+      "source_timestamp": "2026-10-30T15:31:05.957Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3970,7 +3792,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:54.879Z",
+      "source_timestamp": "2026-10-30T15:31:06.600Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -3999,7 +3821,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:55.494Z",
+      "source_timestamp": "2026-10-30T15:31:07.184Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4028,7 +3850,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:56.145Z",
+      "source_timestamp": "2026-10-30T15:31:07.776Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4057,7 +3879,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:56.657Z",
+      "source_timestamp": "2026-10-30T15:31:08.347Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4086,7 +3908,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:57.187Z",
+      "source_timestamp": "2026-10-30T15:31:08.923Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4115,7 +3937,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:57.715Z",
+      "source_timestamp": "2026-10-30T15:31:09.491Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4144,7 +3966,7 @@
       "default_branch": "main",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:58.270Z",
+      "source_timestamp": "2026-10-30T15:31:10.132Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4173,7 +3995,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:58.857Z",
+      "source_timestamp": "2026-10-30T15:31:10.791Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4202,7 +4024,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:59.383Z",
+      "source_timestamp": "2026-10-30T15:31:11.396Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4231,7 +4053,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:49:59.914Z",
+      "source_timestamp": "2026-10-30T15:31:11.967Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4260,7 +4082,7 @@
       "default_branch": "gh-pages",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:00.484Z",
+      "source_timestamp": "2026-10-30T15:31:12.656Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4289,7 +4111,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:01.019Z",
+      "source_timestamp": "2026-10-30T15:31:13.207Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4318,7 +4140,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:01.587Z",
+      "source_timestamp": "2026-10-30T15:31:13.804Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4347,7 +4169,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:02.273Z",
+      "source_timestamp": "2026-10-30T15:31:14.388Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4376,7 +4198,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:02.847Z",
+      "source_timestamp": "2026-10-30T15:31:15.095Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4405,7 +4227,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:03.409Z",
+      "source_timestamp": "2026-10-30T15:31:15.759Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4434,7 +4256,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:03.951Z",
+      "source_timestamp": "2026-10-30T15:31:16.337Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4463,7 +4285,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:04.588Z",
+      "source_timestamp": "2026-10-30T15:31:16.969Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4492,7 +4314,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:05.175Z",
+      "source_timestamp": "2026-10-30T15:31:17.609Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
@@ -4521,7 +4343,7 @@
       "default_branch": "master",
       "tier": "manual",
       "policy_version": "1.0.0",
-      "source_timestamp": "2026-10-29T15:50:05.749Z",
+      "source_timestamp": "2026-10-30T15:31:18.170Z",
       "coverage": {
         "dependency_graph": "available",
         "dependabot_alerts": "available",
