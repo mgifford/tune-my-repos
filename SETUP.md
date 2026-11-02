@@ -66,3 +66,13 @@ cp config.example.js config.js
 - Make sure token starts with `ghp_` (classic token)
 - Verify no extra spaces in `.env` file
 - Check console for "Loaded GitHub token" message
+
+## Maintenance dashboard: private data repository
+
+`maintenance.html` requires sign-in; its data is not published on GitHub Pages.
+
+1. Create a **private** repository named `mgifford/tune-my-repos-data` (an initial commit, e.g. a README, so it can be cloned).
+2. Create a fine-grained PAT limited to that one repository with **Contents: Read and write**, and add it to this repository as the Actions secret `MAINTENANCE_DATA_TOKEN`.
+3. Run the "Maintenance Inventory" workflow with dry run turned off (or wait for the schedule).
+4. To view the dashboard, create a second fine-grained PAT with **Contents: Read-only** on `tune-my-repos-data` only, and paste it into the sign-in form on `maintenance.html`.
+5. Remove the old Pages copy: this branch deletes `maintenance-rollup.public.json` from the repo. Its earlier versions remain in git history.

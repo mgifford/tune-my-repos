@@ -217,27 +217,25 @@ Nothing in the code is tied to one account; the account to scan is configuration
    pins the policy, so a later change to the policy repository cannot change what auto-merges until
    you move the pin.
 
-### Security alert visibility on the public dashboard
+### Security alert visibility on the dashboard (sign-in required)
 
-The live `maintenance-rollup.json` is currently **only** a private workflow artifact (90-day retention,
-visible to repository collaborators via the Actions tab) — it is not published to the public
-`maintenance.html` page today. GitHub Pages for a public repo cannot require authentication, so this was
-designed with that constraint in mind from the start:
+GitHub Pages for a public repository cannot require authentication, and the dashboard's rollup says which
+repositories have unpatched urgent alerts. Hiding it with client-side JavaScript would not protect it, so the
+data is **not published from this repository at all**:
 
-- Dependabot *security alerts* are private on GitHub even for public repositories — only people with
-  repository access can see exact counts natively. `maintenance.html`, `scripts/generate-maintenance-rollup.cjs`'s
-  public-safe fields, and every export path (JSON, Markdown) therefore only ever expose a derived
-  `has_urgent_alerts` boolean (`policy/public-redaction.cjs`), never the exact `critical`/`high`/`moderate`/`low`
-  counts, and link out to `github.com/{repo}/security/dependabot` — GitHub's own page, with GitHub's own
-  access control — for anyone who needs the real numbers. The rollup JSON produced by the scheduled
-  workflow still *contains* exact counts (useful for the private 90-day artifact and any future
-  authenticated consumer); only the rendering and export paths strip them.
-- Dependabot *update PRs* (dependency names, versions) are already fully public on this repository's own
-  Pull Requests tab, so there is nothing to protect by hiding that detail in the rollup — it is shown as-is.
-- A client-side "sign in and check org membership" gate was considered and rejected: GitHub Pages has no
-  backend, so such a gate only changes what renders in a browser that runs the page's JavaScript honestly —
-  it does not stop anyone from fetching the underlying files directly. Given the reduction above already
-  removes the only genuinely private signal, no gate is needed.
+- The scheduled workflow writes `maintenance-rollup.public.json` (no exact alert counts —
+  `policy/public-redaction.cjs`) to a **private** repository, `mgifford/tune-my-repos-data`, using the
+  `MAINTENANCE_DATA_TOKEN` secret. The full rollup with exact counts remains a private 90-day workflow artifact.
+- `maintenance.html` shows only a sign-in form. After you paste a read-only fine-grained personal access token
+  (Contents: read on the data repository), the page fetches the file straight from `api.github.com`. The token is
+  held in `sessionStorage` (cleared when the tab closes or you press "Sign out") and is sent nowhere else.
+  GitHub's OAuth/device flows cannot be used from a static page (no CORS, client secret required), so a token
+  is the simplest gate that genuinely keeps the data private.
+- The sign-in form has a visible label, keyboard-operable controls, errors announced via `role="alert"`, and
+  focus moves to the data heading after a successful sign-in.
+- Limitation: earlier versions of this repository committed `maintenance-rollup.public.json`; it remains in
+  git history. Treat that older snapshot as public.
+- Setup steps are in SETUP.md.
 
 ### Tests
 

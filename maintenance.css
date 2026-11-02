@@ -184,3 +184,12 @@ nav[aria-label="Dashboards"] a:focus-visible {
     margin: calc(var(--spacing) / 2) 0 0;
     padding-left: calc(var(--spacing) * 1.25);
 }
+
+.error-message {
+    margin: 0.5rem 0;
+    font-weight: bold;
+}
+
+.error-message:empty {
+    display: none;
+}

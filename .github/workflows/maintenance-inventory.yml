@@ -3,10 +3,10 @@ name: Maintenance Inventory
 # Deterministic, scheduled inventory of Dependabot alerts and update PRs for
 # repositories in maintenance-policy.json's scope. No AI involved. This
 # workflow reads data and writes a redacted, bounded maintenance-rollup.json
-# artifact; it never mutates any repository it scans. The exceptions are two
-# files in THIS repository, committed back to main after a non-dry-run —
-# maintenance-scan-state.json and maintenance-rollup.public.json — which is
-# why this workflow has contents: write — see "Publishing" below.
+# artifact; it never mutates any repository it scans. The exceptions are
+# maintenance-scan-state.json in THIS repository (committed back to main via
+# a PR after a non-dry-run, which is why this workflow has contents: write)
+# and the rollup pushed to a private data repository — see "Publishing".
 #
 # Modes:
 #   - Public dry-run (default): no secret required, runs with reduced
@@ -24,15 +24,17 @@ name: Maintenance Inventory
 #   Dependabot alerts regardless — see policy/scan-state.cjs).
 #
 #   maintenance-rollup.public.json is the reduced rollup (see
-#   policy/public-redaction.cjs) actually served by GitHub Pages at
-#   maintenance.html — it never contains exact Dependabot alert counts,
-#   only the has_urgent_alerts boolean, which is why it is safe to publish
-#   even though this page has no authentication. The full rollup with exact
-#   counts (maintenance-rollup.json) stays in the private workflow artifact
-#   only and is never committed.
+#   policy/public-redaction.cjs; no exact Dependabot alert counts). It lists
+#   which repositories have unpatched urgent alerts, so it is NOT published
+#   from this public repository or GitHub Pages. It is pushed to the PRIVATE
+#   data repository mgifford/tune-my-repos-data using the
+#   MAINTENANCE_DATA_TOKEN secret (fine-grained PAT, Contents read/write on
+#   that one repository only). maintenance.html reads it after the viewer
+#   signs in with their own read-only token. The full rollup with exact
+#   counts (maintenance-rollup.json) stays in the private workflow artifact.
 #
-#   A non-dry-run that changed either file opens a single small pull
-#   request containing just those files, re-runs the PR's own "npm test"
+#   A non-dry-run that changed maintenance-scan-state.json opens a single
+#   small pull request containing just that file, re-runs the PR's own "npm test"
 #   check (GitHub holds CI runs created by GITHUB_TOKEN until re-run), waits
 #   for it to pass (the same ruleset that applies to every other change to
 #   main) and merges it; Pages then rebuilds by itself — using the
@@ -95,6 +97,20 @@ jobs:
             echo "dry_run=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Fetch previous rollup from the private data repository
+        if: steps.mode.outputs.dry_run != 'true'
+        env:
+          DATA_TOKEN: ${{ secrets.MAINTENANCE_DATA_TOKEN }}
+        run: |
+          # Supplies PR data for repositories skipped this run. Absent token or
+          # empty data repo just means a fresh start.
+          if [ -z "$DATA_TOKEN" ]; then
+            echo "::warning::MAINTENANCE_DATA_TOKEN is not set; the rollup will not be published."
+            exit 0
+          fi
+          git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data" || exit 0
+          cp "$RUNNER_TEMP/data/maintenance-rollup.public.json" . 2>/dev/null || true
+
       - name: Generate maintenance rollup
         id: generate
         env:
@@ -115,12 +131,12 @@ jobs:
           retention-days: 90
           if-no-files-found: error
 
-      - name: Publish scan-state and public rollup via a PR (passes through the required check like any other change)
+      - name: Publish scan-state via a PR (passes through the required check like any other change)
         if: steps.mode.outputs.dry_run != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- maintenance-scan-state.json maintenance-rollup.public.json; then
+          if git diff --quiet -- maintenance-scan-state.json; then
             echo "Nothing changed; skipping."
             exit 0
           fi
@@ -130,12 +146,12 @@ jobs:
 
           BRANCH="maintenance-rollup-update-${{ github.run_id }}"
           git checkout -b "$BRANCH"
-          git add maintenance-scan-state.json maintenance-rollup.public.json
+          git add maintenance-scan-state.json
           git commit -m "Update maintenance rollup (automated, run ${{ github.run_id }})"
           git push origin "$BRANCH"
 
           gh pr create --title "Update maintenance rollup" \
-            --body "Automated update from the Maintenance Inventory workflow (run ${{ github.run_id }}). Contains only maintenance-scan-state.json and maintenance-rollup.public.json (no exact alert counts — see policy/public-redaction.cjs)." \
+            --body "Automated update from the Maintenance Inventory workflow (run ${{ github.run_id }}). Contains only maintenance-scan-state.json." \
             --base main --head "$BRANCH"
 
           # Opening the PR with GITHUB_TOKEN creates CI's pull_request run but
@@ -191,3 +207,25 @@ jobs:
             exit 0
           fi
 
+      - name: Push rollup to the private data repository
+        if: steps.mode.outputs.dry_run != 'true'
+        env:
+          DATA_TOKEN: ${{ secrets.MAINTENANCE_DATA_TOKEN }}
+        run: |
+          if [ -z "$DATA_TOKEN" ]; then
+            echo "::warning::MAINTENANCE_DATA_TOKEN is not set; skipping publish."
+            exit 0
+          fi
+          rm -rf "$RUNNER_TEMP/data"
+          git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
+          cp maintenance-rollup.public.json "$RUNNER_TEMP/data/"
+          cd "$RUNNER_TEMP/data"
+          git add maintenance-rollup.public.json
+          if git diff --cached --quiet; then
+            echo "Rollup unchanged; nothing to push."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update maintenance rollup (run ${{ github.run_id }})"
+          git push origin HEAD
