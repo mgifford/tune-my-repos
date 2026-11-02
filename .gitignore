@@ -22,7 +22,8 @@ npm-debug.log*
 test-collapsible.html
 
 # Full rollup with exact Dependabot alert counts: private workflow artifact
-# only, never committed. maintenance-rollup.public.json (the reduced,
-# published version) is intentionally NOT listed here — it is committed.
+# only, never committed. maintenance-rollup.public.json (the reduced
+# version) lives in the private data repository and is never committed here.
 /maintenance-rollup.json
+/maintenance-rollup.public.json
 dependabot-proposals/

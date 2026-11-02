@@ -24,25 +24,46 @@
     </header>
 
     <main class="container">
-        <section class="input-section" aria-labelledby="dataSourceHeading">
-            <h2 id="dataSourceHeading">Data source</h2>
+        <section class="input-section" id="signInSection" aria-labelledby="signInHeading">
+            <h2 id="signInHeading">Sign in with GitHub</h2>
             <p>
-                This dashboard reads a <code>maintenance-rollup.public.json</code> file produced by a
-                scheduled, deterministic GitHub Actions workflow. No AI is involved in generating or
-                classifying this data. The published file never contains exact Dependabot alert counts
-                (see README.md); for exact counts, sign in and check a repository's own GitHub Security
-                tab. A static sample fixture is also available below for reviewing the interface without
-                live data.
+                This dashboard lists security and dependency findings for the repositories it scans, so
+                the data is kept in a private GitHub repository and is not published on this page.
+                Paste a read-only GitHub fine-grained personal access token with Contents access to the
+                private data repository to view it. The token stays in this browser tab (session
+                storage) and is only ever sent to <code>api.github.com</code>.
+            </p>
+            <form id="signInForm" novalidate>
+                <div class="form-group">
+                    <label for="tokenInput">GitHub access token</label>
+                    <input type="password" id="tokenInput" name="token" autocomplete="off" spellcheck="false" aria-describedby="tokenHelp signInError">
+                    <p id="tokenHelp" class="section-note">Fine-grained token, read-only Contents permission on the data repository. See SETUP.md.</p>
+                </div>
+                <p id="signInError" class="error-message" role="alert"></p>
+                <button type="submit" class="secondary-btn">Sign in</button>
+            </form>
+        </section>
+
+        <div id="dashboardData" hidden>
+        <section class="input-section" aria-labelledby="dataSourceHeading">
+            <h2 id="dataSourceHeading" tabindex="-1">Data source</h2>
+            <p>
+                This dashboard reads a rollup file produced by a scheduled, deterministic GitHub Actions
+                workflow and stored in a private repository. No AI is involved in generating or
+                classifying this data. The file never contains exact Dependabot alert counts
+                (see README.md); for exact counts, check a repository's own GitHub Security tab. A static
+                sample fixture is also available below for reviewing the interface.
             </p>
             <div class="form-group">
-                <label for="rollupSource">Rollup data file</label>
+                <label for="rollupSource">Rollup data</label>
                 <select id="rollupSource">
-                    <option value="maintenance-rollup.public.json" selected>Live rollup (maintenance-rollup.public.json)</option>
-                    <option value="fixtures/maintenance-rollup.sample.json">Sample fixture (no credentials required)</option>
+                    <option value="live" selected>Live rollup (private data repository)</option>
+                    <option value="fixtures/maintenance-rollup.sample.json">Sample fixture (fake data)</option>
                 </select>
             </div>
             <p id="rollupMeta" class="rollup-meta" role="status"></p>
             <p id="liveStatus" class="rollup-meta" role="status"></p>
+            <button type="button" id="signOutBtn" class="secondary-btn">Sign out</button>
         </section>
 
         <div class="accordion" id="findingsAccordion">
@@ -186,11 +207,13 @@
                 <button id="exportMarkdownBtn" class="secondary-btn" type="button">Export Markdown</button>
             </div>
         </section>
+        </div>
     </main>
 
     <script src="policy/policy-engine.cjs"></script>
     <script src="policy/policy-validator.cjs"></script>
     <script src="policy/public-redaction.cjs"></script>
+    <script src="policy/maintenance-auth.cjs"></script>
     <script src="policy/pr-view.cjs"></script>
     <script src="policy/coverage-help.cjs"></script>
     <script src="maintenance.js"></script>

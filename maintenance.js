@@ -7,6 +7,12 @@
  * rollup file itself; no AI involved in rendering or classification.
  */
 
+const LIVE_ROLLUP = 'live';
+const signInSection = document.getElementById('signInSection');
+const signInForm = document.getElementById('signInForm');
+const tokenInput = document.getElementById('tokenInput');
+const signInError = document.getElementById('signInError');
+const dashboardData = document.getElementById('dashboardData');
 const rollupSourceSelect = document.getElementById('rollupSource');
 const rollupMeta = document.getElementById('rollupMeta');
 const liveStatus = document.getElementById('liveStatus');
@@ -34,19 +40,47 @@ const sections = {
 };
 const emptyState = document.getElementById('emptyState');
 
-async function loadRollup(url) {
-    rollupMeta.textContent = `Loading ${url}…`;
+const TOKEN_KEY = 'tune-my-repos-maintenance-token';
+
+class AuthError extends Error {}
+
+function getToken() {
     try {
-        const [response, schema] = await Promise.all([fetch(url), getRollupSchema()]);
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        const data = await response.json();
+        return window.MaintenanceAuth.normalizeToken(sessionStorage.getItem(TOKEN_KEY));
+    } catch {
+        return null; // storage blocked: the user simply has to sign in again
+    }
+}
+
+async function fetchRollupJson(url, token) {
+    if (url !== LIVE_ROLLUP) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+    }
+    const request = window.MaintenanceAuth.buildDataRequest(token);
+    const response = await fetch(request.url, { headers: request.headers });
+    if (!response.ok) {
+        const message = window.MaintenanceAuth.describeAuthFailure(response.status);
+        throw (response.status === 401 || response.status === 403 || response.status === 404)
+            ? new AuthError(message)
+            : new Error(message);
+    }
+    return response.json();
+}
+
+async function loadRollup(url, token = getToken()) {
+    rollupMeta.textContent = url === LIVE_ROLLUP ? 'Loading the live rollup…' : `Loading ${url}…`;
+    try {
+        const [data, schema] = await Promise.all([fetchRollupJson(url, token), getRollupSchema()]);
         renderRollup(data, url, schema);
+        return true;
     } catch (error) {
-        rollupMeta.textContent = `Could not load ${url}: ${error.message}`;
+        rollupMeta.textContent = `Could not load the rollup: ${error.message}`;
         clearSections();
         showEmptyState();
+        if (error instanceof AuthError) throw error;
+        return false;
     }
 }
 
@@ -241,7 +275,6 @@ function renderFailed(items) {
     }
 }
 
-const LIVE_ROLLUP = 'maintenance-rollup.public.json';
 const LIVE_CHECK_LIMIT = 40; // GitHub allows 60 unauthenticated requests per hour per network
 const LIVE_CACHE_MS = 10 * 60 * 1000;
 
@@ -517,8 +550,65 @@ function exportAsMarkdown() {
     URL.revokeObjectURL(url);
 }
 
+function showSignedOut(message = '') {
+    try {
+        sessionStorage.removeItem(TOKEN_KEY);
+    } catch {
+        // storage blocked: nothing to clear
+    }
+    currentRollup = null;
+    clearSections();
+    hideEmptyState();
+    rollupMeta.textContent = '';
+    liveStatus.textContent = '';
+    tokenInput.value = '';
+    dashboardData.hidden = true;
+    signInSection.hidden = false;
+    signInError.textContent = message;
+}
+
+function showSignedIn() {
+    signInSection.hidden = true;
+    signInError.textContent = '';
+    dashboardData.hidden = false;
+    document.getElementById('dataSourceHeading').focus();
+}
+
+async function signIn(token, { fromForm }) {
+    try {
+        const ok = await loadRollup(LIVE_ROLLUP, token);
+        if (!ok && fromForm) {
+            signInError.textContent = 'The data could not be loaded. Try again shortly.';
+            return;
+        }
+        sessionStorage.setItem(TOKEN_KEY, token);
+        rollupSourceSelect.value = LIVE_ROLLUP;
+        showSignedIn();
+    } catch (error) {
+        showSignedOut(error.message);
+        if (fromForm) tokenInput.focus();
+    }
+}
+
+signInForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const token = window.MaintenanceAuth.normalizeToken(tokenInput.value);
+    if (!token) {
+        signInError.textContent = 'Enter your GitHub access token (no spaces).';
+        tokenInput.focus();
+        return;
+    }
+    signInError.textContent = 'Checking your token…';
+    signIn(token, { fromForm: true });
+});
+
+document.getElementById('signOutBtn').addEventListener('click', () => {
+    showSignedOut('You have been signed out.');
+    tokenInput.focus();
+});
+
 rollupSourceSelect.addEventListener('change', () => {
-    loadRollup(rollupSourceSelect.value);
+    loadRollup(rollupSourceSelect.value).catch((error) => showSignedOut(error.message));
 });
 exportJsonBtn.addEventListener('click', exportAsJSON);
 exportMarkdownBtn.addEventListener('click', exportAsMarkdown);
@@ -550,4 +640,5 @@ document.getElementById('collapseAllBtn').addEventListener('click', () => {
     for (const trigger of accordionTriggers) setTriggerExpanded(trigger, false);
 });
 
-loadRollup(rollupSourceSelect.value);
+const savedToken = getToken();
+if (savedToken) signIn(savedToken, { fromForm: false });
