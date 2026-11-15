@@ -1,0 +1,57 @@
+{
+  "description": "Check runs on three Dependabot PRs that the 2026-11-15T16:03Z rollup marked needs_repair because a Dependabot Pilot job failed or was cancelled. The pilot only labels PRs and requests auto-merge, so its jobs must not decide ci_status. Runs are reduced to name, status and conclusion, in GitHub API order.",
+  "cases": [
+    {
+      "pr": "mgifford/a11y-svg#61",
+      "source": "GET /repos/mgifford/a11y-svg/commits/f943c9989b2e94244cadd457b974ab6dde06d41e/check-runs, read 2026-11-15",
+      "dependency_class": "development",
+      "update_type": "minor",
+      "check_runs": [
+        { "name": "Request auto-merge if eligible", "status": "completed", "conclusion": "failure" },
+        { "name": "Label Dependabot PR", "status": "completed", "conclusion": "success" },
+        { "name": "Request auto-merge if eligible", "status": "completed", "conclusion": "cancelled" },
+        { "name": "Summary", "status": "completed", "conclusion": "success" },
+        { "name": "Contrast & Math", "status": "completed", "conclusion": "success" },
+        { "name": "Accessibility (axe + pa11y)", "status": "completed", "conclusion": "success" },
+        { "name": "SVG Lint", "status": "completed", "conclusion": "success" },
+        { "name": "Label Dependabot PR", "status": "completed", "conclusion": "cancelled" }
+      ],
+      "combined_status": { "state": "pending", "total_count": 0 },
+      "expected_ci_status": "passing",
+      "expected_risk_state": "eligible"
+    },
+    {
+      "pr": "mgifford/a11y-svg#62",
+      "source": "GET /repos/mgifford/a11y-svg/commits/a72550e40dda18e2a64056970741113c1960ccd6/check-runs, read 2026-11-15",
+      "dependency_class": "development",
+      "update_type": "major",
+      "check_runs": [
+        { "name": "Request auto-merge if eligible", "status": "completed", "conclusion": "success" },
+        { "name": "Summary", "status": "completed", "conclusion": "success" },
+        { "name": "Label Dependabot PR", "status": "completed", "conclusion": "success" },
+        { "name": "Request auto-merge if eligible", "status": "completed", "conclusion": "cancelled" },
+        { "name": "Accessibility (axe + pa11y)", "status": "completed", "conclusion": "success" },
+        { "name": "SVG Lint", "status": "completed", "conclusion": "success" },
+        { "name": "Contrast & Math", "status": "completed", "conclusion": "success" },
+        { "name": "Label Dependabot PR", "status": "completed", "conclusion": "cancelled" }
+      ],
+      "combined_status": { "state": "pending", "total_count": 0 },
+      "expected_ci_status": "passing",
+      "expected_risk_state": "needs_review"
+    },
+    {
+      "pr": "mgifford/tune-my-repos#115",
+      "source": "Reconstructed. The rollup recorded 'Request auto-merge if eligible' as failed; that run was replaced by a successful re-run at 2026-11-15T21:03Z, so the conclusion is set back to failure here. Other runs from GET /repos/mgifford/tune-my-repos/commits/062352848efa3c38f0aaa0bc7a4d3463ce9da824/check-runs, read 2026-11-15.",
+      "dependency_class": "github-actions",
+      "update_type": "patch",
+      "check_runs": [
+        { "name": "Request auto-merge if eligible", "status": "completed", "conclusion": "failure" },
+        { "name": "Label Dependabot PR", "status": "completed", "conclusion": "success" },
+        { "name": "npm test", "status": "completed", "conclusion": "success" }
+      ],
+      "combined_status": { "state": "pending", "total_count": 0 },
+      "expected_ci_status": "passing",
+      "expected_risk_state": "eligible"
+    }
+  ]
+}
