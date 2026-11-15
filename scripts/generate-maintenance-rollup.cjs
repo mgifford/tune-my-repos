@@ -508,6 +508,21 @@ function detectEcosystemFromFiles(filenames) {
   return 'unknown';
 }
 
+// Dependabot's default language labels seen on "unknown" PRs in the
+// 2026-11-15 rollup. Bare "python" is not mapped: pip, Poetry and uv share it.
+const ECOSYSTEM_BY_LABEL = { ruby: 'bundler', 'python:uv': 'uv' };
+
+/**
+ * Pure: a PR's ecosystem from its changed files, falling back to its
+ * Dependabot language label only when the files are not recognized.
+ */
+function resolveEcosystem(changedFiles, pr) {
+  const fromFiles = detectEcosystemFromFiles(changedFiles);
+  if (fromFiles !== 'unknown') return fromFiles;
+  const label = (pr.labels || []).map((l) => l.name.toLowerCase()).find((n) => Object.hasOwn(ECOSYSTEM_BY_LABEL, n));
+  return label ? ECOSYSTEM_BY_LABEL[label] : 'unknown';
+}
+
 function failedCheckDetail(checkRuns) {
   const failed = findFailedCheckRun(checkRuns);
   if (!failed) return null;
@@ -582,7 +597,7 @@ async function buildRepositoryEntry(policy, repoFullName, { skipPrWork = false, 
 
   for (const pr of pulls) {
     const changedFiles = await fetchChangedFiles(repoFullName, pr);
-    const ecosystem = detectEcosystemFromFiles(changedFiles);
+    const ecosystem = resolveEcosystem(changedFiles, pr);
     const manifestDir = npmManifestDir(changedFiles);
     const bodyUpdates = parseDependabotBodyUpdates(pr.body);
     const titleUpdate = parseDependabotTitle(pr.title);
@@ -914,6 +929,7 @@ module.exports = {
   inferDependencyClassFromLabels,
   classifyFromPackageJson,
   detectEcosystemFromFiles,
+  resolveEcosystem,
   computeRecommendedAction,
   computeHasUrgentAlerts,
   filterDiscoveredRepos,
