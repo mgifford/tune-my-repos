@@ -122,7 +122,10 @@
           "required": ["action", "reason"],
           "additionalProperties": false,
           "properties": {
-            "action": { "type": "string" },
+            "action": {
+              "type": "string",
+              "enum": ["review_security_alerts", "repair_failed_update_pr", "merge_eligible_updates", "human_review_required", "none"]
+            },
             "reason": { "type": "string", "maxLength": 500 }
           }
         }
@@ -148,7 +151,11 @@
         "labels": { "type": "array", "items": { "type": "string" } },
         "ci_status": { "type": "string", "enum": ["pending", "passing", "failing", "none", "unknown"] },
         "risk_state": { "type": "string", "enum": ["eligible", "needs_review", "needs_repair", "blocked", "ignored"] },
-        "reason": { "type": "string", "maxLength": 500 }
+        "reason": {
+          "type": "string",
+          "maxLength": 520,
+          "description": "Capped at 500 characters by the generator; a truncated reason gains a short marker."
+        }
       }
     },
     "failedUpdatePr": {
