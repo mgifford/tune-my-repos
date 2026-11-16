@@ -3,12 +3,17 @@
   "$id": "https://github.com/mgifford/tune-my-repos/policy/rollup.schema.json",
   "title": "Maintenance Rollup",
   "type": "object",
-  "required": ["schema_version", "run_timestamp", "policy_version", "repositories"],
+  "required": ["schema_version", "run_timestamp", "policy_version", "agents_md_blob_sha", "repositories"],
   "additionalProperties": false,
   "properties": {
     "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
     "run_timestamp": { "type": "string" },
     "policy_version": { "type": "string" },
+    "agents_md_blob_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Git blob SHA-1 of the AGENTS.md this run used, as AGENTS.md 'Report versioning' requires. Equals `git hash-object AGENTS.md`; `git log --find-object=<sha>` finds the commits that contain it."
+    },
     "repositories": {
       "type": "array",
       "items": { "$ref": "#/definitions/repositoryEntry" }
@@ -133,7 +138,7 @@
       "properties": {
         "number": { "type": "integer", "minimum": 1 },
         "url": { "type": "string" },
-        "ecosystem": { "type": "string" },
+        "ecosystem": { "type": "string", "enum": ["npm", "github_actions", "composer", "bundler", "uv", "unknown"] },
         "opened_at": { "type": "string" },
         "dependency_name": { "type": "string" },
         "version_from": { "type": "string" },

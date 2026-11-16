@@ -59,3 +59,21 @@ test('every dependabot PR risk_state in the fixture matches what classifyUpdate 
     );
   }
 });
+
+test('schema: the rollup must record the AGENTS.md it was produced under', () => {
+  const { agents_md_blob_sha: _omitted, ...withoutHash } = sampleRollup;
+  assert.match(validatePolicySchema(withoutHash, rollupSchema).join('\n'), /missing required property "agents_md_blob_sha"/);
+  const notAHash = { ...sampleRollup, agents_md_blob_sha: 'main' };
+  assert.match(validatePolicySchema(notAHash, rollupSchema).join('\n'), /agents_md_blob_sha: "main" does not match pattern/);
+});
+
+test('schema: ecosystem allows what the generator emits and rejects anything else', () => {
+  const { detectEcosystemFromFiles } = require('../scripts/generate-maintenance-rollup.cjs');
+  const allowed = rollupSchema.definitions.dependabotPr.properties.ecosystem.enum;
+  const fromFiles = [['.github/workflows/ci.yml'], ['package.json'], ['composer.lock'], ['README.md']].map(detectEcosystemFromFiles);
+  // bundler and uv come from the label fallback on feat/ecosystem-from-labels.
+  for (const value of [...fromFiles, 'bundler', 'uv']) assert.ok(allowed.includes(value), value);
+  const rollup = JSON.parse(JSON.stringify(sampleRollup));
+  rollup.repositories[0].dependabot_prs[0].ecosystem = 'maven';
+  assert.match(validatePolicySchema(rollup, rollupSchema).join('\n'), /ecosystem: "maven" is not one of/);
+});

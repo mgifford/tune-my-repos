@@ -15,6 +15,7 @@
  *        fetched, and alert/branch-protection coverage will read "unknown")
  */
 
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -49,6 +50,16 @@ function redact(text) {
 function cap(text, max) {
   const r = redact(text);
   return r.length > max ? `${r.slice(0, max)}… (truncated)` : r;
+}
+
+/**
+ * Pure: the git blob SHA-1 of a file's bytes, equal to `git hash-object`.
+ * Identifies the exact AGENTS.md a run used without needing git history,
+ * which the workflow's shallow checkout does not have.
+ * @param {Buffer} bytes
+ */
+function gitBlobSha(bytes) {
+  return crypto.createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
 }
 
 async function githubFetch(endpoint, { allow404 = false, raw = false } = {}) {
@@ -857,6 +868,9 @@ async function main() {
     schema_version: '1.0.0',
     run_timestamp: new Date().toISOString(),
     policy_version: policy.policy_version,
+    // Read here, not at load time: the Dependabot Pilot imports this module
+    // from a sparse checkout that has no AGENTS.md.
+    agents_md_blob_sha: gitBlobSha(fs.readFileSync(path.join(__dirname, '..', 'AGENTS.md'))),
     repositories,
   };
 
@@ -917,6 +931,7 @@ module.exports = {
   computeRecommendedAction,
   computeHasUrgentAlerts,
   filterDiscoveredRepos,
+  gitBlobSha,
 };
 
 if (require.main === module) {

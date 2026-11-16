@@ -307,3 +307,13 @@ test('hasCarryablePrData: only entries that recorded when PRs were read can be c
   assert.equal(hasCarryablePrData({ source_timestamp: '2026-10-13T18:42:00Z', dependabot_prs: [] }), false);
   assert.equal(hasCarryablePrData(undefined), false);
 });
+
+// --- AGENTS.md version recorded in the rollup (AGENTS.md "Report versioning") ---
+
+const { gitBlobSha } = require('../scripts/generate-maintenance-rollup.cjs');
+
+test('gitBlobSha: matches git hash-object, counting bytes rather than characters', () => {
+  assert.equal(gitBlobSha(Buffer.from('')), 'e69de29bb2d1d6434b8b29ae775ad8c2e48c5391');
+  assert.equal(gitBlobSha(Buffer.from('hello\n')), 'ce013625030ba8dba906f756967f9e9ca394464a');
+  assert.equal(gitBlobSha(Buffer.from('café\n')), '572eb43fe8e34fb87d01c69e01151ff696022924');
+});
