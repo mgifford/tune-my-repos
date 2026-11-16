@@ -14,3 +14,17 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+
+  # The site-check action's own packages (playwright-core, axe-core).
+  - package-ecosystem: "npm"
+    directory: "/.github/actions/site-check"
+    schedule:
+      interval: "weekly"
+    groups:
+      site-check-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "dependencies"
+      - "javascript"

@@ -1,0 +1,65 @@
+name: Site check
+description: >-
+  Serve a static GitHub Pages site from the checkout, open its pages in Chrome,
+  and fail only on problems the live site does not already have: JavaScript
+  errors, files that fail to load, broken internal links, and serious or
+  critical axe issues.
+
+# Use from a pull_request workflow in any repository (pin to a commit SHA):
+#
+#   jobs:
+#     site-check:
+#       name: Site check
+#       runs-on: ubuntu-latest
+#       timeout-minutes: 10
+#       steps:
+#         - uses: actions/checkout@<sha>
+#           with:
+#             persist-credentials: false
+#         # Sites with a build step: build here and set site-dir to the output.
+#         - uses: mgifford/tune-my-repos/.github/actions/site-check@<sha>
+#
+# Make "Site check" a required status check only after it passes on the
+# default branch; requiring a check that never runs blocks every merge.
+#
+# Uses the Google Chrome already installed on GitHub's Ubuntu runners; set
+# CHROME_PATH to use another Chrome. Needs no token and no write permission.
+
+inputs:
+  site-dir:
+    description: Directory that GitHub Pages serves (for example _site or dist after a build).
+    default: '.'
+  pages:
+    description: Pages to check, as paths from the site root separated by spaces or new lines. Empty means the home page plus pages it links to.
+    default: ''
+  max-pages:
+    description: Most pages to check when pages is empty.
+    default: '10'
+  base-path:
+    description: Path the site is served under. Empty means derived from the repository name and any CNAME file.
+    default: ''
+  live-url:
+    description: Live site to compare with. Empty means derived like base-path; "none" turns the comparison off.
+    default: ''
+  axe-impacts:
+    description: axe impact levels that count as problems.
+    default: 'serious,critical'
+
+runs:
+  using: composite
+  steps:
+    - name: Install site check
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci --ignore-scripts --no-audit --no-fund
+
+    - name: Check the site
+      shell: bash
+      env:
+        SITE_DIR: ${{ inputs.site-dir }}
+        PAGES: ${{ inputs.pages }}
+        MAX_PAGES: ${{ inputs.max-pages }}
+        BASE_PATH: ${{ inputs.base-path }}
+        LIVE_URL: ${{ inputs.live-url }}
+        AXE_IMPACTS: ${{ inputs.axe-impacts }}
+      run: node "$GITHUB_ACTION_PATH/site-check.cjs"
