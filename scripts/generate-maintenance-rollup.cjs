@@ -445,13 +445,20 @@ async function fetchOpenPulls(repoFullName) {
 
 const FAILING_CONCLUSIONS = ['failure', 'timed_out', 'cancelled', 'action_required', 'startup_failure'];
 
+// Job names in .github/workflows/dependabot-pilot.yml (a test keeps them in
+// step). That workflow labels PRs and requests auto-merge; it does not test
+// the update. Its own labels retrigger it, cancelling the earlier run, so
+// counting it as CI marked passing updates needs_repair (2026-11-15 rollup).
+const PILOT_CHECK_NAMES = ['Label Dependabot PR', 'Request auto-merge if eligible'];
+
 /**
  * Pure: derives one CI status from GitHub Actions check runs plus legacy
  * commit statuses. GitHub Actions reports only via check runs, and the
  * legacy combined status reads "pending" when no statuses exist at all, so
  * using it alone made every Actions-only PR look pending forever.
  * Skipped/neutral runs are ignored. All checks count, not only required
- * ones (required-check config needs admin scope to read).
+ * ones (required-check config needs admin scope to read), except the
+ * Dependabot Pilot's own jobs (PILOT_CHECK_NAMES).
  * @param {object[]|null} checkRuns - check_runs array, or null if unreadable
  * @param {object|null} combinedStatus - /status response, or null if unreadable
  * @returns {'passing'|'failing'|'pending'|'none'|'unknown'}
@@ -460,6 +467,7 @@ function summarizeCiStatus(checkRuns, combinedStatus) {
   if (checkRuns === null && combinedStatus === null) return 'unknown';
   const states = [];
   for (const run of checkRuns || []) {
+    if (PILOT_CHECK_NAMES.includes(run.name)) continue;
     if (run.status !== 'completed') states.push('pending');
     else if (FAILING_CONCLUSIONS.includes(run.conclusion)) states.push('failing');
     else if (run.conclusion === 'success') states.push('passing');
@@ -476,7 +484,8 @@ function summarizeCiStatus(checkRuns, combinedStatus) {
 }
 
 function findFailedCheckRun(checkRuns) {
-  return (checkRuns || []).find((run) => run.status === 'completed' && FAILING_CONCLUSIONS.includes(run.conclusion)) || null;
+  return (checkRuns || []).find((run) => !PILOT_CHECK_NAMES.includes(run.name)
+    && run.status === 'completed' && FAILING_CONCLUSIONS.includes(run.conclusion)) || null;
 }
 
 async function fetchCiState(repoFullName, pr) {
@@ -901,6 +910,7 @@ module.exports = {
   classifyFromPackageLock,
   npmManifestDir,
   summarizeCiStatus,
+  PILOT_CHECK_NAMES,
   combineBranchProtection,
   carryForwardPrData,
   hasCarryablePrData,
