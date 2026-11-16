@@ -1,7 +1,8 @@
 /**
  * Minimal, dependency-free JSON Schema (draft-07 subset) validator for the
- * maintenance policy file. Only implements the keywords actually used in
- * policy.schema.json — this is not a general-purpose validator.
+ * maintenance policy file and the rollup. Only implements the keywords
+ * actually used in policy.schema.json and rollup.schema.json — this is not
+ * a general-purpose validator.
  */
 
 function validateAgainstSchema(instance, schema, rootSchema = schema, path = '$') {
@@ -46,6 +47,9 @@ function validateAgainstSchema(instance, schema, rootSchema = schema, path = '$'
       errors.push(`${path}: expected array`);
       return errors;
     }
+    if (resolvedSchema.maxItems !== undefined && instance.length > resolvedSchema.maxItems) {
+      errors.push(`${path}: array longer than maxItems ${resolvedSchema.maxItems}`);
+    }
     if (resolvedSchema.items) {
       instance.forEach((item, i) => {
         errors.push(...validateAgainstSchema(item, resolvedSchema.items, rootSchema, `${path}[${i}]`));
@@ -64,6 +68,13 @@ function validateAgainstSchema(instance, schema, rootSchema = schema, path = '$'
       if (resolvedSchema.minLength && instance.length < resolvedSchema.minLength) {
         errors.push(`${path}: string shorter than minLength ${resolvedSchema.minLength}`);
       }
+      if (resolvedSchema.maxLength !== undefined && instance.length > resolvedSchema.maxLength) {
+        errors.push(`${path}: string longer than maxLength ${resolvedSchema.maxLength}`);
+      }
+    }
+  } else if (resolvedSchema.type === 'boolean') {
+    if (typeof instance !== 'boolean') {
+      errors.push(`${path}: expected boolean`);
     }
   } else if (resolvedSchema.type === 'integer') {
     if (!Number.isInteger(instance)) {
