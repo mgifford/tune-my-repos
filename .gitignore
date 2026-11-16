@@ -30,3 +30,5 @@ dependabot-proposals/
 
 # npm packages installed by the site-check action
 node_modules/
+/previous-rollup.public.json
+/maintenance-digest.md

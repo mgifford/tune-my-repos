@@ -110,6 +110,9 @@ jobs:
           fi
           git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data" || exit 0
           cp "$RUNNER_TEMP/data/maintenance-rollup.public.json" . 2>/dev/null || true
+          # Keep an untouched copy: the generator overwrites the file above, and
+          # the digest compares this run against what it replaced.
+          cp "$RUNNER_TEMP/data/maintenance-rollup.public.json" previous-rollup.public.json 2>/dev/null || true
 
       - name: Generate maintenance rollup
         id: generate
@@ -128,6 +131,13 @@ jobs:
       - name: Validate rollup files against the schema
         if: steps.mode.outputs.dry_run != 'true'
         run: node scripts/validate-rollup.cjs maintenance-rollup.json maintenance-rollup.public.json
+
+      # Deterministic, no model. The digest names repositories with urgent
+      # alerts, so it is written to disk for the private data repository only:
+      # it is not uploaded as an artifact and not printed to this public log.
+      - name: Generate delta digest
+        if: steps.mode.outputs.dry_run != 'true'
+        run: node scripts/generate-digest.cjs --previous previous-rollup.public.json --current maintenance-rollup.public.json --out maintenance-digest.md
 
       - name: Upload full rollup artifact (private, exact alert counts)
         if: steps.mode.outputs.dry_run != 'true'
@@ -226,8 +236,10 @@ jobs:
           rm -rf "$RUNNER_TEMP/data"
           git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
           cp maintenance-rollup.public.json "$RUNNER_TEMP/data/"
+          cp maintenance-digest.md "$RUNNER_TEMP/data/" 2>/dev/null || true
           cd "$RUNNER_TEMP/data"
           git add maintenance-rollup.public.json
+          git add maintenance-digest.md 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Rollup unchanged; nothing to push."
             exit 0

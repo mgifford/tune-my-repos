@@ -242,6 +242,26 @@ data is **not published from this repository at all**:
 Run `npm test` (uses Node's built-in test runner, no dependencies) to run the policy engine, schema
 validator, rollup generator, and fixture-conformance test suites in `test/`.
 
+### Keeping monitoring cheap
+
+Nothing here calls a model at runtime. Three mechanisms keep the cost of watching many repositories low:
+
+- **Conditional requests.** A repository that looks unchanged by `pushed_at` is confirmed with one
+  request for its open issue and pull request list, sent with the stored ETag. A 304 reply keeps the
+  skip, costs no primary rate limit, and catches pull requests from forks and new issues that a push
+  check cannot see. Any other outcome, including an unreadable list, does the full PR work. The run log
+  prints counts of the three outcomes.
+- **Delta digest.** `node scripts/generate-digest.cjs --previous <old> --current <new>` writes a short
+  Markdown list of what changed between two rollups: new urgent alerts, newly failing update PRs, new
+  pull requests from people, changed recommended actions, repositories added or removed. A quiet run is
+  one line. The workflow writes it to the private data repository only, because it names repositories
+  with urgent alerts. It is not uploaded as an artifact.
+- **Summary.** `node scripts/generate-digest.cjs --current <rollup> --summary` prints about ten lines of
+  totals. Give a reviewer (a person or a model) the digest and the summary, not the rollup.
+
+`templates/dependabot.yml` is a baseline for other repositories: weekly schedule, minor and patch
+updates grouped, majors kept separate, and a short cooldown for version updates.
+
 ### Phase 3 pilot: Dependabot auto-merge (tune-my-repos only)
 
 `tune-my-repos` is currently the **only** repository running the Dependabot pilot
