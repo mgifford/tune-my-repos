@@ -1,5 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const {
   redact,
@@ -10,6 +12,8 @@ const {
   inferDependencyClassFromLabels,
   classifyFromPackageJson,
   detectEcosystemFromFiles,
+  resolveEcosystem,
+  inferDependencyClass,
   computeRecommendedAction,
   computeHasUrgentAlerts,
   filterDiscoveredRepos,
@@ -144,6 +148,28 @@ test('detectEcosystemFromFiles: a composer lockfile change is composer', () => {
 
 test('detectEcosystemFromFiles: an unrecognized file set is unknown', () => {
   assert.equal(detectEcosystemFromFiles(['README.md']), 'unknown');
+});
+
+// --- Ecosystem from Dependabot's language label (2026-11-15 rollup) ---
+
+const labelFixture = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'ecosystem-label-prs.json'), 'utf8'));
+
+for (const c of labelFixture.cases) {
+  test(`resolveEcosystem: ${c.pr} is ${c.expected_ecosystem} from its label; dependency class stays unknown`, async () => {
+    const pr = { labels: c.labels.map((name) => ({ name })) };
+    assert.equal(detectEcosystemFromFiles(c.changed_files), 'unknown');
+    const ecosystem = resolveEcosystem(c.changed_files, pr);
+    assert.equal(ecosystem, c.expected_ecosystem);
+    assert.equal(await inferDependencyClass(pr, ecosystem, c.pr.split('#')[0], c.dependency_name, 'main'), 'unknown');
+  });
+}
+
+test('resolveEcosystem: recognized files win over a language label', () => {
+  assert.equal(resolveEcosystem(['package.json'], { labels: [{ name: 'ruby' }] }), 'npm');
+});
+
+test('resolveEcosystem: no recognized file or label stays unknown', () => {
+  assert.equal(resolveEcosystem(['README.md'], { labels: [{ name: 'dependencies' }, { name: 'constructor' }] }), 'unknown');
 });
 
 test('computeRecommendedAction: urgent security alerts take priority over everything else', () => {
