@@ -21,7 +21,15 @@ const path = require('node:path');
 
 const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.cjs');
 const { validatePolicySchema } = require('../policy/policy-validator.cjs');
-const { canSkipPrWork, recordScan, pruneToRepositories, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
+const {
+  canSkipPrWork,
+  canSkipAfterProbe,
+  getIssuesEtag,
+  recordIssuesEtag,
+  recordScan,
+  pruneToRepositories,
+  orderByActivityThenStaleness,
+} = require('../policy/scan-state.cjs');
 const { redactExactAlertCounts } = require('../policy/public-redaction.cjs');
 const { KNOWN_REPLACEMENTS, listDirectDependencies, evaluateLibraryAdvice } = require('../policy/library-advice.cjs');
 
@@ -62,15 +70,27 @@ function gitBlobSha(bytes) {
   return crypto.createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
 }
 
-async function githubFetch(endpoint, { allow404 = false, raw = false } = {}) {
+/**
+ * @param {string} endpoint
+ * @param {{allow404?: boolean, raw?: boolean, etag?: string|null}} [options]
+ *   etag: a stored ETag; sent as If-None-Match. A 304 reply is returned as
+ *   {ok: false, status: 304, notModified: true}, so a caller that ignores it
+ *   treats the data as unreadable, never as empty.
+ * @returns {Promise<{ok: boolean, status: number, data: any, etag?: string|null, notModified?: boolean}>}
+ */
+async function githubFetch(endpoint, { allow404 = false, raw = false, etag = null } = {}) {
   const headers = {
     Accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
   };
   if (token) headers.Authorization = `Bearer ${token}`;
+  if (etag) headers['If-None-Match'] = etag;
 
   const response = await fetch(`${API_BASE}${endpoint}`, { headers });
 
+  if (response.status === 304) {
+    return { ok: false, status: 304, notModified: true, data: null };
+  }
   if (response.status === 404 && allow404) {
     return { ok: false, status: 404, data: null };
   }
@@ -80,7 +100,28 @@ async function githubFetch(endpoint, { allow404 = false, raw = false } = {}) {
   if (!response.ok) {
     return { ok: false, status: response.status, data: null };
   }
-  return { ok: true, status: response.status, data: raw ? await response.text() : await response.json() };
+  return {
+    ok: true,
+    status: response.status,
+    etag: response.headers.get('etag'),
+    data: raw ? await response.text() : await response.json(),
+  };
+}
+
+/** One stable URL, so the ETag stored from one run matches the next run's request. */
+function openIssuesEndpoint(repoFullName) {
+  return `/repos/${repoFullName}/issues?state=open&per_page=100&sort=updated&direction=desc`;
+}
+
+/**
+ * Reads the open issues-and-PRs list, conditionally when an ETag is known.
+ * @returns {Promise<{outcome: 'not_modified'|'modified'|'unknown', items: object[]|null, etag: string|null}>}
+ */
+async function probeOpenIssues(repoFullName, storedEtag) {
+  const result = await githubFetch(openIssuesEndpoint(repoFullName), { allow404: true, etag: storedEtag });
+  if (result.notModified) return { outcome: 'not_modified', items: null, etag: storedEtag };
+  if (result.ok && Array.isArray(result.data)) return { outcome: 'modified', items: result.data, etag: result.etag || null };
+  return { outcome: 'unknown', items: null, etag: null };
 }
 
 /**
@@ -852,6 +893,7 @@ async function main() {
   const reposThisRun = orderedRepos.slice(0, maxRepos);
 
   const repositories = [];
+  const probeCounts = { not_modified: 0, modified: 0, unknown: 0 };
   for (const repoFullName of reposThisRun) {
     // Repo metadata is fetched once here (rather than inside
     // buildRepositoryEntry) because its pushed_at is needed up front to
@@ -869,9 +911,20 @@ async function main() {
     // Only skip when there is real PR data to carry forward: an entry
     // without pr_data_as_of was published before carry-forward existed (or
     // never had PRs read), so skipping would publish an empty PR list.
-    const skipPrWork = knownPushedAt !== null
+    const unchangedByPush = knownPushedAt !== null
       && hasCarryablePrData(previousEntries.get(repoFullName))
       && canSkipPrWork(scanState, repoFullName, knownPushedAt, policy.discovery.rescan_prs_after_days);
+
+    // pushed_at does not move for what does not push here: a pull request
+    // from a fork, or any issue. So a repository that looks unchanged is
+    // confirmed with one conditional request for its open issue/PR list: 304
+    // (free, not counted against the rate limit) keeps the skip; anything
+    // else does the work. A repository not already skippable is read without
+    // an ETag, to record one for next time.
+    const storedEtag = unchangedByPush ? getIssuesEtag(scanState, repoFullName) : null;
+    const probe = await probeOpenIssues(repoFullName, storedEtag);
+    const skipPrWork = canSkipAfterProbe(unchangedByPush && Boolean(storedEtag), probe.outcome);
+    probeCounts[probe.outcome] += 1;
 
     const entry = await buildRepositoryEntry(policy, repoFullName, {
       skipPrWork,
@@ -883,8 +936,13 @@ async function main() {
     repositories.push(entry);
     if (pushedAtForState) {
       scanState = recordScan(scanState, repoFullName, pushedAtForState);
+      scanState = recordIssuesEtag(scanState, repoFullName, probe.etag);
     }
   }
+
+  // Counts only, so the line is safe in a public log. A high not_modified
+  // share is the saving; many "unknown" means the issues list is unreadable.
+  console.log(`Issue/PR list probes: ${probeCounts.not_modified} not modified, ${probeCounts.modified} modified or first read, ${probeCounts.unknown} unreadable`);
 
   if (!dryRun) {
     fs.writeFileSync(scanStatePath, JSON.stringify(scanState, null, 2) + '\n');
@@ -931,6 +989,9 @@ async function main() {
 }
 
 module.exports = {
+  githubFetch,
+  openIssuesEndpoint,
+  probeOpenIssues,
   redact,
   cap,
   parseDependabotTitle,
