@@ -1,6 +1,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 
+const { classifyUpdate } = require('../policy/policy-engine.cjs');
 const {
   parseDependabotTitle,
   parseDependabotBodyUpdates,
@@ -11,6 +14,7 @@ const {
   npmManifestDir,
   summarizeCiStatus,
   findFailedCheckRun,
+  PILOT_CHECK_NAMES,
 } = require('../scripts/generate-maintenance-rollup.cjs');
 
 const run = (status, conclusion, name = 'test') => ({ status, conclusion, name });
@@ -49,6 +53,37 @@ test('findFailedCheckRun: returns the first failing run, ignoring skipped', () =
   const failed = findFailedCheckRun([run('completed', 'skipped', 'a'), run('completed', 'cancelled', 'b')]);
   assert.equal(failed.name, 'b');
   assert.equal(findFailedCheckRun([run('completed', 'success')]), null);
+});
+
+// --- Dependabot Pilot jobs are orchestration, not CI (2026-11-15 rollup) ---
+
+const pilotFixture = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'pilot-check-runs.json'), 'utf8'));
+const policy = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'maintenance-policy.json'), 'utf8'));
+
+for (const c of pilotFixture.cases) {
+  test(`pilot checks: ${c.pr} is classified from its remaining checks`, () => {
+    const ciStatus = summarizeCiStatus(c.check_runs, c.combined_status);
+    assert.equal(ciStatus, c.expected_ci_status);
+    assert.equal(findFailedCheckRun(c.check_runs), null);
+    const result = classifyUpdate(policy, {
+      repository: c.pr.split('#')[0],
+      dependency_class: c.dependency_class,
+      update_type: c.update_type,
+      required_ci_passed: ciStatus === 'passing',
+      required_check_failed: ciStatus === 'failing',
+    });
+    assert.equal(result.risk_state, c.expected_risk_state);
+  });
+}
+
+test('pilot checks: a PR whose only checks are pilot jobs has no CI, not passing CI', () => {
+  assert.equal(summarizeCiStatus([run('completed', 'success', 'Label Dependabot PR')], null), 'none');
+});
+
+test('pilot checks: the excluded names match the job names in dependabot-pilot.yml', () => {
+  const workflow = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'dependabot-pilot.yml'), 'utf8');
+  const jobNames = [...workflow.matchAll(/^ {4}name: (.+)$/gm)].map((m) => m[1].trim());
+  assert.deepEqual([...PILOT_CHECK_NAMES].sort(), jobNames.sort());
 });
 
 // --- Title and body parsing ---
