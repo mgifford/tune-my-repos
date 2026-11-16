@@ -1,0 +1,10 @@
+{
+  "name": "site-check",
+  "private": true,
+  "description": "Dependencies of the site-check action. Installed by action.yml with npm ci; remove this folder to roll the action back.",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "axe-core": "4.14.1",
+    "playwright-core": "1.65.1"
+  }
+}

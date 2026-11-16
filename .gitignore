@@ -27,3 +27,6 @@ test-collapsible.html
 /maintenance-rollup.json
 /maintenance-rollup.public.json
 dependabot-proposals/
+
+# npm packages installed by the site-check action
+node_modules/

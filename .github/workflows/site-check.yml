@@ -1,0 +1,26 @@
+name: Site check
+
+# Runs this repository's own site-check action against the dashboard pages on
+# every pull request, comparing with the live GitHub Pages site. Other
+# repositories call the action by commit SHA; see
+# .github/actions/site-check/action.yml.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  site-check:
+    name: Site check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check the site
+        uses: ./.github/actions/site-check
