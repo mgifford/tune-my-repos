@@ -1,0 +1,13 @@
+{
+  "description": "Dependabot PRs published with ecosystem \"unknown\" in the 2026-11-15T16:03Z rollup. detectEcosystemFromFiles does not recognize their lockfiles; Dependabot's language label names the ecosystem. Labels and changed files read from the GitHub API on 2026-11-15. No manifest was read, so dependency_class stays \"unknown\".",
+  "cases": [
+    { "pr": "mgifford/eu-plus-government-scans#158", "dependency_name": "activesupport", "labels": ["dependencies", "ruby"], "changed_files": ["Gemfile.lock"], "expected_ecosystem": "bundler" },
+    { "pr": "mgifford/dot-gov-scans#51", "dependency_name": "addressable", "labels": ["dependencies", "ruby"], "changed_files": ["Gemfile.lock"], "expected_ecosystem": "bundler" },
+    { "pr": "mgifford/edu-scans#38", "dependency_name": "activesupport", "labels": ["dependencies", "ruby"], "changed_files": ["Gemfile.lock"], "expected_ecosystem": "bundler" },
+    { "pr": "mgifford/Drupal-docs#4", "dependency_name": "rubyzip", "labels": ["dependencies", "ruby"], "changed_files": ["Gemfile.lock"], "expected_ecosystem": "bundler" },
+    { "pr": "mgifford/ACCESSIBILITY.md#165", "dependency_name": "json", "labels": ["dependencies", "ruby"], "changed_files": ["Gemfile.lock"], "expected_ecosystem": "bundler" },
+    { "pr": "mgifford/top-task-finder#59", "dependency_name": "json", "labels": ["dependencies", "ruby"], "changed_files": ["Gemfile.lock"], "expected_ecosystem": "bundler" },
+    { "pr": "mgifford/perception#5", "dependency_name": "activesupport", "labels": ["dependencies", "ruby"], "changed_files": ["Gemfile.lock"], "expected_ecosystem": "bundler" },
+    { "pr": "mgifford/wayback-extractor#11", "dependency_name": "certifi", "labels": ["dependencies", "python:uv"], "changed_files": ["uv.lock"], "expected_ecosystem": "uv" }
+  ]
+}
