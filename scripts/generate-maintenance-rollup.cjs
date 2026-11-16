@@ -458,8 +458,10 @@ const FAILING_CONCLUSIONS = ['failure', 'timed_out', 'cancelled', 'action_requir
 
 // Job names in .github/workflows/dependabot-pilot.yml (a test keeps them in
 // step). That workflow labels PRs and requests auto-merge; it does not test
-// the update. Its own labels retrigger it, cancelling the earlier run, so
-// counting it as CI marked passing updates needs_repair (2026-11-15 rollup).
+// the update, so its result says nothing about whether the update is safe.
+// In the 2026-11-15 rollup, cancelled pilot runs (Dependabot's own labels on
+// a new PR each start one) and a pilot permission error marked passing
+// updates needs_repair.
 const PILOT_CHECK_NAMES = ['Label Dependabot PR', 'Request auto-merge if eligible'];
 
 /**
