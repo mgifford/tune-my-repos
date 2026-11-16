@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "run_timestamp": "2026-10-03T00:00:00Z",
   "policy_version": "1.0.0",
+  "agents_md_blob_sha": "da0dfdbc241252a1df8549c52aab91db89219f9c",
   "repositories": [
     {
       "full_name": "mgifford/tune-my-repos",
@@ -34,7 +35,7 @@
           "number": 42,
           "url": "https://github.com/mgifford/tune-my-repos/pull/42",
           "opened_at": "2026-09-20T10:00:00Z",
-          "ecosystem": "github-actions",
+          "ecosystem": "github_actions",
           "dependency_name": "actions/checkout",
           "version_from": "v3",
           "version_to": "v4",
