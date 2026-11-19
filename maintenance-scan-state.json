@@ -2,563 +2,555 @@
   "schema_version": "1.0.0",
   "repositories": {
     "mgifford/a11y-contracting": {
-      "last_scanned": "2026-11-18T17:47:03.660Z",
+      "last_scanned": "2026-11-19T17:57:46.438Z",
       "last_pushed_at": "2023-12-07T16:27:47Z"
     },
     "mgifford/a11y-courses": {
-      "last_scanned": "2026-11-18T17:47:09.650Z",
+      "last_scanned": "2026-11-19T17:57:51.308Z",
       "last_pushed_at": "2020-03-06T14:25:35Z"
     },
     "mgifford/a11y-maps": {
-      "last_scanned": "2026-11-18T17:46:31.851Z",
+      "last_scanned": "2026-11-19T17:57:19.634Z",
       "last_pushed_at": "2026-10-24T09:43:00Z"
     },
     "mgifford/a11y-mermaid-studio": {
-      "last_scanned": "2026-11-18T17:46:43.568Z",
+      "last_scanned": "2026-11-19T17:57:29.228Z",
       "last_pushed_at": "2026-06-16T11:57:05Z"
     },
     "mgifford/a11y-svg": {
-      "last_scanned": "2026-11-18T17:45:59.676Z",
+      "last_scanned": "2026-11-19T17:56:55.718Z",
       "last_pushed_at": "2026-11-16T01:38:38Z"
     },
     "mgifford/a11y-voting": {
-      "last_scanned": "2026-11-18T17:47:06.794Z",
+      "last_scanned": "2026-11-19T17:57:48.985Z",
       "last_pushed_at": "2021-09-20T12:23:27Z"
     },
     "mgifford/A11yFirst-CKEditor5-Plugin": {
-      "last_scanned": "2026-11-18T17:46:46.694Z",
+      "last_scanned": "2026-11-19T17:57:32.359Z",
       "last_pushed_at": "2026-05-18T00:33:21Z"
     },
     "mgifford/Accessibility-Resources-1": {
-      "last_scanned": "2026-11-18T17:47:06.178Z",
+      "last_scanned": "2026-11-19T17:57:48.458Z",
       "last_pushed_at": "2021-09-23T12:29:14Z"
     },
     "mgifford/accessibility-sandbox": {
-      "last_scanned": "2026-11-18T17:46:24.244Z",
+      "last_scanned": "2026-11-19T17:57:13.131Z",
       "last_pushed_at": "2026-11-02T18:10:25Z"
     },
     "mgifford/accessibility-skills": {
-      "last_scanned": "2026-11-18T17:46:14.795Z",
+      "last_scanned": "2026-11-19T17:57:05.219Z",
       "last_pushed_at": "2026-11-12T07:53:11Z"
     },
     "mgifford/ACCESSIBILITY.md": {
-      "last_scanned": "2026-11-18T17:46:04.384Z",
+      "last_scanned": "2026-11-19T17:56:59.913Z",
       "last_pushed_at": "2026-11-15T21:00:37Z"
     },
     "mgifford/accessible-buildings": {
-      "last_scanned": "2026-11-18T17:46:20.521Z",
+      "last_scanned": "2026-11-19T17:57:09.954Z",
       "last_pushed_at": "2026-11-02T19:30:15Z"
     },
     "mgifford/ai-browser-test": {
-      "last_scanned": "2026-11-18T17:46:26.859Z",
+      "last_scanned": "2026-11-19T17:57:15.427Z",
       "last_pushed_at": "2026-10-30T10:46:17Z"
     },
     "mgifford/AirScript": {
-      "last_scanned": "2026-11-18T17:46:00.814Z",
+      "last_scanned": "2026-11-19T17:56:56.856Z",
       "last_pushed_at": "2026-11-15T22:04:13Z"
     },
     "mgifford/airtime2": {
-      "last_scanned": "2026-11-18T17:46:31.252Z",
+      "last_scanned": "2026-11-19T17:57:19.076Z",
       "last_pushed_at": "2026-10-24T09:46:21Z"
     },
     "mgifford/alt-text-scan": {
-      "last_scanned": "2026-11-18T17:46:25.617Z",
+      "last_scanned": "2026-11-19T17:57:14.270Z",
       "last_pushed_at": "2026-11-01T09:00:37Z"
     },
     "mgifford/apca-wcag2": {
-      "last_scanned": "2026-11-18T17:46:42.983Z",
+      "last_scanned": "2026-11-19T17:57:28.660Z",
       "last_pushed_at": "2026-07-13T23:56:37Z"
     },
     "mgifford/arrm-checklist": {
-      "last_scanned": "2026-11-18T17:47:00.466Z",
+      "last_scanned": "2026-11-19T17:57:43.861Z",
       "last_pushed_at": "2025-08-15T17:46:35Z"
     },
     "mgifford/audio-news": {
-      "last_scanned": "2026-11-18T17:46:39.166Z",
+      "last_scanned": "2026-11-19T17:57:25.588Z",
       "last_pushed_at": "2026-09-14T00:41:54Z"
     },
     "mgifford/bellwether": {
-      "last_scanned": "2026-11-18T17:46:29.918Z",
+      "last_scanned": "2026-11-19T17:57:18.109Z",
       "last_pushed_at": "2026-10-30T10:38:45Z"
     },
     "mgifford/caart": {
-      "last_scanned": "2026-11-18T17:47:01.718Z",
+      "last_scanned": "2026-11-19T17:57:44.886Z",
       "last_pushed_at": "2025-07-29T22:02:20Z"
     },
     "mgifford/checker-suite": {
-      "last_scanned": "2026-11-18T17:47:09.149Z",
+      "last_scanned": "2026-11-19T17:57:50.849Z",
       "last_pushed_at": "2021-01-13T17:07:55Z"
     },
     "mgifford/content-first-wireframe": {
-      "last_scanned": "2026-11-18T17:46:19.330Z",
+      "last_scanned": "2026-11-19T17:57:09.022Z",
       "last_pushed_at": "2026-11-02T19:30:57Z"
     },
     "mgifford/contrast-plus": {
-      "last_scanned": "2026-11-18T17:45:59.076Z",
+      "last_scanned": "2026-11-19T17:56:55.175Z",
       "last_pushed_at": "2026-11-16T12:37:49Z"
     },
     "mgifford/d5-charter": {
-      "last_scanned": "2026-11-18T17:47:13.420Z",
+      "last_scanned": "2026-11-19T17:57:54.203Z",
       "last_pushed_at": "2017-10-21T17:25:33Z"
     },
     "mgifford/daily-cap": {
-      "last_scanned": "2026-11-18T17:45:47.217Z",
+      "last_scanned": "2026-11-19T17:56:51.913Z",
       "last_pushed_at": "2026-11-18T04:25:49Z"
     },
     "mgifford/daily-dap": {
-      "last_scanned": "2026-11-18T17:45:50.748Z",
-      "last_pushed_at": "2026-11-17T19:18:44Z"
+      "last_scanned": "2026-11-19T17:56:49.702Z",
+      "last_pushed_at": "2026-11-18T18:46:16Z"
     },
     "mgifford/daily-hhs": {
-      "last_scanned": "2026-11-18T17:46:23.074Z",
+      "last_scanned": "2026-11-19T17:57:12.090Z",
       "last_pushed_at": "2026-11-02T18:11:10Z"
     },
     "mgifford/design-system-scan": {
-      "last_scanned": "2026-11-18T17:46:47.359Z",
+      "last_scanned": "2026-11-19T17:57:32.864Z",
       "last_pushed_at": "2026-04-28T14:50:16Z"
     },
     "mgifford/DiDay": {
-      "last_scanned": "2026-11-18T17:46:06.727Z",
+      "last_scanned": "2026-11-19T17:57:01.952Z",
       "last_pushed_at": "2026-11-15T02:26:37Z"
     },
     "mgifford/digitalbuyingguide.org": {
-      "last_scanned": "2026-11-18T17:46:57.610Z",
+      "last_scanned": "2026-11-19T17:57:41.394Z",
       "last_pushed_at": "2025-10-29T15:18:59Z"
     },
     "mgifford/DigitalPolicies": {
-      "last_scanned": "2026-11-18T17:46:45.519Z",
+      "last_scanned": "2026-11-19T17:57:31.158Z",
       "last_pushed_at": "2026-06-01T19:21:20Z"
     },
     "mgifford/ditap-1-pager": {
-      "last_scanned": "2026-11-18T17:46:37.879Z",
+      "last_scanned": "2026-11-19T17:57:24.683Z",
       "last_pushed_at": "2026-09-15T12:31:34Z"
     },
     "mgifford/dot-gov-scans": {
-      "last_scanned": "2026-11-18T17:45:39.179Z",
-      "last_pushed_at": "2026-11-18T13:56:32Z"
+      "last_scanned": "2026-11-19T17:56:42.085Z",
+      "last_pushed_at": "2026-11-19T14:25:10Z"
     },
     "mgifford/dpg-dpi-govstack-map": {
-      "last_scanned": "2026-11-18T17:46:14.227Z",
+      "last_scanned": "2026-11-19T17:57:04.633Z",
       "last_pushed_at": "2026-11-13T07:39:37Z"
     },
     "mgifford/Drupal-Accessibility-Quicksheet": {
-      "last_scanned": "2026-11-18T17:47:11.513Z",
+      "last_scanned": "2026-11-19T17:57:52.757Z",
       "last_pushed_at": "2018-01-01T22:51:35Z"
     },
     "mgifford/Drupal-CLF-2.0-Theme": {
-      "last_scanned": "2026-11-18T17:47:16.008Z",
+      "last_scanned": "2026-11-19T17:57:56.132Z",
       "last_pushed_at": "2009-08-19T00:34:11Z"
     },
     "mgifford/drupal-cms": {
-      "last_scanned": "2026-11-18T17:45:57.734Z",
+      "last_scanned": "2026-11-19T17:56:54.547Z",
       "last_pushed_at": "2026-11-16T13:29:23Z"
     },
     "mgifford/drupal-core": {
-      "last_scanned": "2026-11-18T17:45:58.353Z",
-      "last_pushed_at": "2026-11-16T13:14:15Z"
+      "last_scanned": "2026-11-19T17:56:36.847Z",
+      "last_pushed_at": "2026-11-19T17:35:38Z"
     },
     "mgifford/drupal-core-lab": {
-      "last_scanned": "2026-11-18T17:45:33.536Z",
-      "last_pushed_at": "2026-11-18T17:07:39Z"
+      "last_scanned": "2026-11-19T17:56:38.979Z",
+      "last_pushed_at": "2026-11-19T17:33:00Z"
     },
     "mgifford/drupal-diff": {
-      "last_scanned": "2026-11-18T17:46:44.872Z",
+      "last_scanned": "2026-11-19T17:57:30.643Z",
       "last_pushed_at": "2026-06-04T16:24:11Z"
     },
     "mgifford/Drupal-docs": {
-      "last_scanned": "2026-11-18T17:46:12.861Z",
+      "last_scanned": "2026-11-19T17:57:03.551Z",
       "last_pushed_at": "2026-11-13T16:58:41Z"
     },
     "mgifford/drupal-open-dash": {
-      "last_scanned": "2026-11-18T17:46:05.491Z",
+      "last_scanned": "2026-11-19T17:57:00.948Z",
       "last_pushed_at": "2026-11-15T04:04:39Z"
     },
     "mgifford/EchoLocate": {
-      "last_scanned": "2026-11-18T17:46:15.475Z",
+      "last_scanned": "2026-11-19T17:57:05.773Z",
       "last_pushed_at": "2026-11-11T23:34:06Z"
     },
     "mgifford/edu-scans": {
-      "last_scanned": "2026-11-18T17:45:38.134Z",
-      "last_pushed_at": "2026-11-18T13:56:47Z"
+      "last_scanned": "2026-11-19T17:56:43.842Z",
+      "last_pushed_at": "2026-11-19T14:24:43Z"
     },
     "mgifford/eiii_crawler": {
-      "last_scanned": "2026-11-18T17:47:08.498Z",
+      "last_scanned": "2026-11-19T17:57:50.344Z",
       "last_pushed_at": "2021-01-13T17:12:39Z"
     },
     "mgifford/eu-plus-government-scans": {
-      "last_scanned": "2026-11-18T17:45:34.607Z",
-      "last_pushed_at": "2026-11-18T16:56:41Z"
+      "last_scanned": "2026-11-19T17:56:35.544Z",
+      "last_pushed_at": "2026-11-19T17:36:02Z"
     },
     "mgifford/federal-contracting-skills": {
-      "last_scanned": "2026-11-18T17:46:49.753Z",
+      "last_scanned": "2026-11-19T17:57:34.831Z",
       "last_pushed_at": "2026-04-17T02:24:17Z"
     },
     "mgifford/Find-Overlays": {
-      "last_scanned": "2026-11-18T17:45:57.040Z",
+      "last_scanned": "2026-11-19T17:56:54.068Z",
       "last_pushed_at": "2026-11-16T13:50:16Z"
     },
     "mgifford/vital-core": {
-      "last_scanned": "2026-11-18T17:45:54.324Z",
-      "last_pushed_at": "2026-11-17T15:28:35Z"
+      "last_scanned": "2026-11-19T17:56:41.359Z",
+      "last_pushed_at": "2026-11-19T16:23:59Z"
     },
     "mgifford/mgifford.github.io": {
-      "last_scanned": "2026-11-18T17:45:55.728Z",
+      "last_scanned": "2026-11-19T17:56:52.858Z",
       "last_pushed_at": "2026-11-16T15:52:38Z"
     },
     "mgifford/wcag-spine": {
-      "last_scanned": "2026-11-18T17:45:40.381Z",
-      "last_pushed_at": "2026-11-18T09:41:43Z"
+      "last_scanned": "2026-11-19T17:56:46.746Z",
+      "last_pushed_at": "2026-11-19T09:50:22Z"
     },
     "mgifford/tune-my-repos": {
-      "last_scanned": "2026-11-18T17:45:53.734Z",
-      "last_pushed_at": "2026-11-17T18:08:05Z"
+      "last_scanned": "2026-11-19T17:56:50.354Z",
+      "last_pushed_at": "2026-11-18T17:47:57Z"
     },
     "mgifford/open-scans": {
-      "last_scanned": "2026-11-18T17:45:52.737Z",
-      "last_pushed_at": "2026-11-17T19:13:09Z"
+      "last_scanned": "2026-11-19T17:56:38.283Z",
+      "last_pushed_at": "2026-11-19T17:34:36Z"
     },
     "mgifford/EchoDeMontolieu": {
-      "last_scanned": "2026-11-18T17:46:35.894Z",
+      "last_scanned": "2026-11-19T17:57:22.941Z",
       "last_pushed_at": "2026-10-12T04:38:04Z"
     },
     "mgifford/top-task-finder": {
-      "last_scanned": "2026-11-18T17:46:13.524Z",
+      "last_scanned": "2026-11-19T17:57:04.115Z",
       "last_pushed_at": "2026-11-13T16:37:35Z"
     },
     "mgifford/smart-cookbook": {
-      "last_scanned": "2026-11-18T17:46:21.164Z",
+      "last_scanned": "2026-11-19T17:57:10.419Z",
       "last_pushed_at": "2026-11-02T19:30:11Z"
     },
     "mgifford/open-susty-scans": {
-      "last_scanned": "2026-11-18T17:46:01.448Z",
+      "last_scanned": "2026-11-19T17:56:57.370Z",
       "last_pushed_at": "2026-11-15T22:00:51Z"
     },
     "mgifford/inclusive-emergency-readiness": {
-      "last_scanned": "2026-11-18T17:46:02.740Z",
+      "last_scanned": "2026-11-19T17:56:58.570Z",
       "last_pushed_at": "2026-11-15T21:04:21Z"
     },
     "mgifford/wai-yaml-ld": {
-      "last_scanned": "2026-11-18T17:46:02.094Z",
+      "last_scanned": "2026-11-19T17:56:57.931Z",
       "last_pushed_at": "2026-11-15T22:00:05Z"
     },
     "mgifford/w3c-a11y-maturity-model": {
-      "last_scanned": "2026-11-18T17:45:46.287Z",
+      "last_scanned": "2026-11-19T17:56:51.353Z",
       "last_pushed_at": "2026-11-18T04:53:56Z"
     },
     "mgifford/pdf-crawler": {
-      "last_scanned": "2026-11-18T17:46:03.676Z",
+      "last_scanned": "2026-11-19T17:56:59.425Z",
       "last_pushed_at": "2026-11-15T21:02:34Z"
     },
     "mgifford/gh-open-dash": {
-      "last_scanned": "2026-11-18T17:46:28.148Z",
+      "last_scanned": "2026-11-19T17:57:16.536Z",
       "last_pushed_at": "2026-10-30T10:45:39Z"
     },
     "mgifford/ox.ca": {
-      "last_scanned": "2026-11-18T17:46:18.710Z",
+      "last_scanned": "2026-11-19T17:57:08.539Z",
       "last_pushed_at": "2026-11-05T13:01:26Z"
     },
     "mgifford/neighbourhood-solar": {
-      "last_scanned": "2026-11-18T17:46:36.589Z",
+      "last_scanned": "2026-11-19T17:57:23.421Z",
       "last_pushed_at": "2026-10-10T21:31:10Z"
     },
     "mgifford/wayback-extractor": {
-      "last_scanned": "2026-11-18T17:46:00.260Z",
+      "last_scanned": "2026-11-19T17:56:56.284Z",
       "last_pushed_at": "2026-11-15T22:05:17Z"
     },
     "mgifford/SUSTAINABILITY.md": {
-      "last_scanned": "2026-11-18T17:46:19.900Z",
+      "last_scanned": "2026-11-19T17:57:09.536Z",
       "last_pushed_at": "2026-11-02T19:30:18Z"
     },
     "mgifford/wai-linkedobjects": {
-      "last_scanned": "2026-11-18T17:46:22.451Z",
+      "last_scanned": "2026-11-19T17:57:11.511Z",
       "last_pushed_at": "2026-11-02T18:14:48Z"
     },
     "mgifford/FOSDEM-website": {
-      "last_scanned": "2026-11-18T17:45:54.922Z",
+      "last_scanned": "2026-11-19T17:56:52.348Z",
       "last_pushed_at": "2026-11-17T13:50:05Z"
     },
     "mgifford/gh-summary": {
-      "last_scanned": "2026-11-18T17:46:04.964Z",
+      "last_scanned": "2026-11-19T17:57:00.414Z",
       "last_pushed_at": "2026-11-15T05:37:08Z"
     },
     "mgifford/whisper-slides": {
-      "last_scanned": "2026-11-18T17:46:24.960Z",
+      "last_scanned": "2026-11-19T17:57:13.725Z",
       "last_pushed_at": "2026-11-02T18:10:14Z"
     },
     "mgifford/markdown-slides-editor": {
-      "last_scanned": "2026-11-18T17:46:37.174Z",
+      "last_scanned": "2026-11-19T17:57:24.165Z",
       "last_pushed_at": "2026-09-24T12:58:37Z"
     },
     "mgifford/openapi-reference": {
-      "last_scanned": "2026-11-18T17:46:21.745Z",
+      "last_scanned": "2026-11-19T17:57:10.897Z",
       "last_pushed_at": "2026-11-02T19:29:58Z"
     },
     "mgifford/wsg-mooc": {
-      "last_scanned": "2026-11-18T17:46:27.613Z",
+      "last_scanned": "2026-11-19T17:57:16.033Z",
       "last_pushed_at": "2026-10-30T10:45:59Z"
     },
     "mgifford/open-accessibility-workbench": {
-      "last_scanned": "2026-11-18T17:46:33.261Z",
+      "last_scanned": "2026-11-19T17:57:20.733Z",
       "last_pushed_at": "2026-10-23T21:39:12Z"
     },
     "mgifford/OpenWealth": {
-      "last_scanned": "2026-11-18T17:46:23.657Z",
+      "last_scanned": "2026-11-19T17:57:12.616Z",
       "last_pushed_at": "2026-11-02T18:11:01Z"
     },
     "mgifford/unosw.plus": {
-      "last_scanned": "2026-11-18T17:46:26.287Z",
+      "last_scanned": "2026-11-19T17:57:14.929Z",
       "last_pushed_at": "2026-10-30T10:48:51Z"
     },
     "mgifford/open-site-review": {
-      "last_scanned": "2026-11-18T17:46:38.530Z",
+      "last_scanned": "2026-11-19T17:57:25.133Z",
       "last_pushed_at": "2026-09-15T12:26:38Z"
     },
     "mgifford/firefox-energy-scanner": {
-      "last_scanned": "2026-11-18T17:45:31.298Z",
-      "last_pushed_at": "2026-11-18T17:42:49Z"
+      "last_scanned": "2026-11-19T17:56:45.828Z",
+      "last_pushed_at": "2026-11-19T10:25:58Z"
     },
     "mgifford/open-data-guide": {
-      "last_scanned": "2026-11-18T17:46:32.560Z",
+      "last_scanned": "2026-11-19T17:57:20.184Z",
       "last_pushed_at": "2026-10-23T21:41:57Z"
     },
     "mgifford/sunclipse": {
-      "last_scanned": "2026-11-18T17:46:39.771Z",
+      "last_scanned": "2026-11-19T17:57:26.094Z",
       "last_pushed_at": "2026-09-13T15:18:24Z"
     },
     "mgifford/ontario-home-energy-futures": {
-      "last_scanned": "2026-11-18T17:46:40.327Z",
+      "last_scanned": "2026-11-19T17:57:26.582Z",
       "last_pushed_at": "2026-08-12T05:29:44Z"
     },
     "mgifford/upstream-first": {
-      "last_scanned": "2026-11-18T17:46:29.306Z",
+      "last_scanned": "2026-11-19T17:57:17.562Z",
       "last_pushed_at": "2026-10-30T10:40:12Z"
     },
     "mgifford/wsg-webmcp-experiment": {
-      "last_scanned": "2026-11-18T17:46:40.923Z",
+      "last_scanned": "2026-11-19T17:57:27.087Z",
       "last_pushed_at": "2026-07-27T07:09:02Z"
     },
     "mgifford/Hex-Bicup-Rotor": {
-      "last_scanned": "2026-11-18T17:46:41.646Z",
+      "last_scanned": "2026-11-19T17:57:27.586Z",
       "last_pushed_at": "2026-07-23T21:04:17Z"
     },
     "mgifford/generated_content_a11y": {
-      "last_scanned": "2026-11-18T17:46:42.389Z",
+      "last_scanned": "2026-11-19T17:57:28.065Z",
       "last_pushed_at": "2026-07-21T01:29:12Z"
     },
     "mgifford/perception": {
-      "last_scanned": "2026-11-18T17:46:16.655Z",
+      "last_scanned": "2026-11-19T17:57:06.944Z",
       "last_pushed_at": "2026-11-10T22:14:45Z"
     },
     "mgifford/susty-house": {
-      "last_scanned": "2026-11-18T17:46:44.174Z",
+      "last_scanned": "2026-11-19T17:57:30.047Z",
       "last_pushed_at": "2026-06-08T14:10:57Z"
     },
     "mgifford/timezone-helper": {
-      "last_scanned": "2026-11-18T17:46:46.106Z",
+      "last_scanned": "2026-11-19T17:57:31.620Z",
       "last_pushed_at": "2026-05-23T18:22:18Z"
     },
     "mgifford/find-publiccode.yml": {
-      "last_scanned": "2026-11-18T17:46:28.788Z",
+      "last_scanned": "2026-11-19T17:57:17.086Z",
       "last_pushed_at": "2026-10-30T10:41:36Z"
     },
     "mgifford/STYLES.md": {
-      "last_scanned": "2026-11-18T17:46:48.004Z",
+      "last_scanned": "2026-11-19T17:57:33.312Z",
       "last_pushed_at": "2026-04-25T18:52:10Z"
     },
     "mgifford/TraceA11y": {
-      "last_scanned": "2026-11-18T17:46:48.541Z",
+      "last_scanned": "2026-11-19T17:57:33.854Z",
       "last_pushed_at": "2026-04-25T02:03:41Z"
     },
     "mgifford/python-acr": {
-      "last_scanned": "2026-11-18T17:46:49.116Z",
+      "last_scanned": "2026-11-19T17:57:34.354Z",
       "last_pushed_at": "2026-04-17T02:55:18Z"
     },
     "mgifford/pen-archive": {
-      "last_scanned": "2026-11-18T17:46:17.340Z",
+      "last_scanned": "2026-11-19T17:57:07.474Z",
       "last_pushed_at": "2026-11-10T21:27:34Z"
     },
     "mgifford/html2html": {
-      "last_scanned": "2026-11-18T17:46:50.317Z",
+      "last_scanned": "2026-11-19T17:57:35.346Z",
       "last_pushed_at": "2026-04-04T17:22:43Z"
     },
     "mgifford/mermaid-graphs": {
-      "last_scanned": "2026-11-18T17:46:30.538Z",
+      "last_scanned": "2026-11-19T17:57:18.619Z",
       "last_pushed_at": "2026-10-27T11:25:39Z"
     },
     "mgifford/procurement-ld": {
-      "last_scanned": "2026-11-18T17:46:50.945Z",
+      "last_scanned": "2026-11-19T17:57:35.857Z",
       "last_pushed_at": "2026-02-28T22:55:17Z"
     },
     "mgifford/We4Authors": {
-      "last_scanned": "2026-11-18T17:46:51.498Z",
+      "last_scanned": "2026-11-19T17:57:36.400Z",
       "last_pushed_at": "2026-01-20T22:00:52Z"
     },
     "mgifford/risky-weather": {
-      "last_scanned": "2026-11-18T17:46:52.101Z",
+      "last_scanned": "2026-11-19T17:57:36.867Z",
       "last_pushed_at": "2026-01-06T15:00:42Z"
     },
     "mgifford/show-suggester": {
-      "last_scanned": "2026-11-18T17:46:52.679Z",
+      "last_scanned": "2026-11-19T17:57:37.355Z",
       "last_pushed_at": "2026-01-05T16:13:11Z"
     },
     "mgifford/learn-github-game": {
-      "last_scanned": "2026-11-18T17:46:53.320Z",
+      "last_scanned": "2026-11-19T17:57:37.895Z",
       "last_pushed_at": "2026-01-05T16:12:34Z"
     },
     "mgifford/foss4gov": {
-      "last_scanned": "2026-11-18T17:46:53.973Z",
+      "last_scanned": "2026-11-19T17:57:38.369Z",
       "last_pushed_at": "2025-12-12T14:16:43Z"
     },
     "mgifford/w3c-tpac-arrm-breakout": {
-      "last_scanned": "2026-11-18T17:46:54.642Z",
+      "last_scanned": "2026-11-19T17:57:38.844Z",
       "last_pushed_at": "2025-11-11T01:17:17Z"
     },
     "mgifford/w3c-tpac-susty-breakout": {
-      "last_scanned": "2026-11-18T17:46:55.278Z",
+      "last_scanned": "2026-11-19T17:57:39.331Z",
       "last_pushed_at": "2025-11-09T23:40:44Z"
     },
     "mgifford/Food-W3C-Kobe": {
-      "last_scanned": "2026-11-18T17:46:55.873Z",
+      "last_scanned": "2026-11-19T17:57:39.893Z",
       "last_pushed_at": "2025-11-06T15:53:12Z"
     },
     "mgifford/w3c-tpac-template": {
-      "last_scanned": "2026-11-18T17:46:56.398Z",
+      "last_scanned": "2026-11-19T17:57:40.368Z",
       "last_pushed_at": "2025-11-01T19:18:42Z"
     },
     "mgifford/Food-FWD50-Ottawa": {
-      "last_scanned": "2026-11-18T17:46:57.068Z",
+      "last_scanned": "2026-11-19T17:57:40.869Z",
       "last_pushed_at": "2025-10-29T15:22:49Z"
     },
     "mgifford/latest-news": {
-      "last_scanned": "2026-11-18T17:46:58.185Z",
+      "last_scanned": "2026-11-19T17:57:41.894Z",
       "last_pushed_at": "2025-10-06T16:03:39Z"
     },
     "mgifford/Opquast": {
-      "last_scanned": "2026-11-18T17:46:58.767Z",
+      "last_scanned": "2026-11-19T17:57:42.380Z",
       "last_pushed_at": "2025-09-08T14:55:20Z"
     },
     "mgifford/oss-procurement": {
-      "last_scanned": "2026-11-18T17:46:59.293Z",
+      "last_scanned": "2026-11-19T17:57:42.900Z",
       "last_pushed_at": "2025-09-06T18:01:58Z"
     },
     "mgifford/User-Interface-Options-UIO-Bookmarklet": {
-      "last_scanned": "2026-11-18T17:46:59.934Z",
+      "last_scanned": "2026-11-19T17:57:43.344Z",
       "last_pushed_at": "2025-09-01T15:28:06Z"
     },
     "mgifford/print-css-bookmarklet": {
-      "last_scanned": "2026-11-18T17:47:01.047Z",
+      "last_scanned": "2026-11-19T17:57:44.377Z",
       "last_pushed_at": "2025-07-31T14:07:14Z"
     },
     "mgifford/github-a11y-scanner": {
-      "last_scanned": "2026-11-18T17:47:02.327Z",
+      "last_scanned": "2026-11-19T17:57:45.409Z",
       "last_pushed_at": "2025-07-24T14:36:52Z"
     },
     "mgifford/wsg-priority": {
-      "last_scanned": "2026-11-18T17:47:02.998Z",
+      "last_scanned": "2026-11-19T17:57:45.890Z",
       "last_pushed_at": "2025-07-17T16:18:51Z"
     },
     "mgifford/open-source-contracting": {
-      "last_scanned": "2026-11-18T17:47:04.337Z",
+      "last_scanned": "2026-11-19T17:57:46.945Z",
       "last_pushed_at": "2023-05-05T14:00:54Z"
     },
     "mgifford/Personas": {
-      "last_scanned": "2026-11-18T17:47:04.899Z",
+      "last_scanned": "2026-11-19T17:57:47.451Z",
       "last_pushed_at": "2022-06-01T14:24:08Z"
     },
     "mgifford/sustainability-contracting": {
-      "last_scanned": "2026-11-18T17:47:05.597Z",
+      "last_scanned": "2026-11-19T17:57:47.969Z",
       "last_pushed_at": "2022-03-31T12:40:15Z"
     },
     "mgifford/reader-mode-testing": {
-      "last_scanned": "2026-11-18T17:47:07.363Z",
+      "last_scanned": "2026-11-19T17:57:49.408Z",
       "last_pushed_at": "2021-06-23T22:15:21Z"
     },
     "mgifford/python-gsheets": {
-      "last_scanned": "2026-11-18T17:47:07.952Z",
+      "last_scanned": "2026-11-19T17:57:49.866Z",
       "last_pushed_at": "2021-04-20T15:38:16Z"
     },
     "mgifford/gifsack-or-wolford": {
-      "last_scanned": "2026-11-18T17:47:10.280Z",
+      "last_scanned": "2026-11-19T17:57:51.806Z",
       "last_pushed_at": "2019-08-17T16:57:12Z"
     },
     "mgifford/Ottawa-Business-Waste-Reduction": {
-      "last_scanned": "2026-11-18T17:47:10.911Z",
+      "last_scanned": "2026-11-19T17:57:52.290Z",
       "last_pushed_at": "2018-01-23T14:15:08Z"
     },
     "mgifford/Thursday-Ted-Talk-Tapas": {
-      "last_scanned": "2026-11-18T17:47:12.162Z",
+      "last_scanned": "2026-11-19T17:57:53.291Z",
       "last_pushed_at": "2017-11-20T11:02:09Z"
     },
     "mgifford/recycling": {
-      "last_scanned": "2026-11-18T17:47:12.866Z",
+      "last_scanned": "2026-11-19T17:57:53.751Z",
       "last_pushed_at": "2017-11-17T02:18:26Z"
     },
     "mgifford/osm-rohingya-crisis": {
-      "last_scanned": "2026-11-18T17:47:14.056Z",
+      "last_scanned": "2026-11-19T17:57:54.656Z",
       "last_pushed_at": "2017-10-02T17:10:11Z"
     },
     "mgifford/READi": {
-      "last_scanned": "2026-11-18T17:47:14.637Z",
+      "last_scanned": "2026-11-19T17:57:55.185Z",
       "last_pushed_at": "2017-05-01T20:15:45Z"
     },
     "mgifford/GoC-IT-Plan": {
-      "last_scanned": "2026-11-18T17:47:15.190Z",
+      "last_scanned": "2026-11-19T17:57:55.630Z",
       "last_pushed_at": "2016-07-04T18:36:34Z"
     },
     "mgifford/vital-core-data": {
-      "last_scanned": "2026-11-18T17:45:35.407Z",
-      "last_pushed_at": "2026-11-18T16:45:32Z"
+      "last_scanned": "2026-11-19T17:56:39.722Z",
+      "last_pushed_at": "2026-11-19T16:50:23Z"
     },
     "mgifford/pdf-alt-fixer": {
-      "last_scanned": "2026-11-18T17:46:34.611Z",
+      "last_scanned": "2026-11-19T17:57:21.698Z",
       "last_pushed_at": "2026-10-15T21:47:18Z"
     },
     "mgifford/pdf_alt_text": {
-      "last_scanned": "2026-11-18T17:46:35.231Z",
+      "last_scanned": "2026-11-19T17:57:22.315Z",
       "last_pushed_at": "2026-10-15T16:40:51Z"
     },
     "mgifford/permutations": {
-      "last_scanned": "2026-11-18T17:46:33.865Z",
+      "last_scanned": "2026-11-19T17:57:21.207Z",
       "last_pushed_at": "2026-10-20T20:15:03Z"
     },
     "mgifford/vital-core-nsf": {
-      "last_scanned": "2026-11-18T17:46:07.267Z",
+      "last_scanned": "2026-11-19T17:57:02.467Z",
       "last_pushed_at": "2026-11-15T01:55:28Z"
     },
     "mgifford/vital-core-nsf-data": {
-      "last_scanned": "2026-11-18T17:45:32.301Z",
-      "last_pushed_at": "2026-11-18T17:36:24Z"
-    },
-    "mgifford/vital-core-lgd-data": {
-      "last_scanned": "2026-11-18T17:45:29.830Z",
-      "last_pushed_at": "2026-11-18T17:44:10Z"
-    },
-    "mgifford/vital-core-lgd": {
-      "last_scanned": "2026-11-18T17:46:08.049Z",
-      "last_pushed_at": "2026-11-15T01:46:52Z"
+      "last_scanned": "2026-11-19T17:56:44.555Z",
+      "last_pushed_at": "2026-11-19T13:44:48Z"
     },
     "mgifford/mena-policy-observatory": {
-      "last_scanned": "2026-11-18T17:46:17.952Z",
+      "last_scanned": "2026-11-19T17:57:07.959Z",
       "last_pushed_at": "2026-11-10T19:17:16Z"
     },
     "mgifford/html2sign-language": {
-      "last_scanned": "2026-11-18T17:46:16.034Z",
+      "last_scanned": "2026-11-19T17:57:06.299Z",
       "last_pushed_at": "2026-11-11T23:29:50Z"
     },
     "mgifford/openacr-release-evidence": {
-      "last_scanned": "2026-11-18T17:45:36.159Z",
+      "last_scanned": "2026-11-19T17:56:50.801Z",
       "last_pushed_at": "2026-11-18T15:38:10Z"
     },
     "mgifford/open-market-research-mcp": {
-      "last_scanned": "2026-11-18T17:46:08.741Z",
+      "last_scanned": "2026-11-19T17:57:02.995Z",
       "last_pushed_at": "2026-11-13T21:07:21Z"
     },
     "mgifford/WCAG_by_Role": {
-      "last_scanned": "2026-11-18T17:46:06.080Z",
+      "last_scanned": "2026-11-19T17:57:01.432Z",
       "last_pushed_at": "2026-11-15T02:33:08Z"
     },
     "mgifford/Containers-Hamlet": {
-      "last_scanned": "2026-11-18T17:45:56.333Z",
+      "last_scanned": "2026-11-19T17:56:53.325Z",
       "last_pushed_at": "2026-11-16T13:53:45Z"
     }
   }
