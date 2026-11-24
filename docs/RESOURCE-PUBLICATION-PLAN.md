@@ -110,6 +110,38 @@ A failure stops publication. There is no "publish anyway" path.
 Do not publish the raw ledger or the inventory evidence file. Do not add a
 second public copy of the maintenance rollup.
 
+## Publishing the sanitized Pages aggregate
+
+The public Pages page currently defaults to the committed synthetic sample. To
+publish the real aggregate:
+
+1. **Complete a second clean private cycle.** The monthly
+   `resource-cycle.yml` workflow runs on the first of each month and publishes
+   only to the private data repository.
+2. **Generate the aggregate from the evidence set you intend to publish.** A
+   CI-generated report contains GitHub API/Actions evidence only; local
+   CodeCarbon energy is `unavailable` unless a local measurement was imported
+   into the ledger before aggregation. Do not present the CI report as if it
+   included laptop energy.
+3. **Add the sanitized files at a tracked public path.** GitHub Pages cannot
+   read the private data repository, so the aggregate must be committed to this
+   public repository (for example `resource-rollup.public.json` at the root) or
+   copied in by a workflow that has private-repository access and opens a PR.
+4. **Switch the dashboard default.** Change `resources.html`/`resources.js`
+   from the sample fixture to the tracked aggregate. Keep the sample as a
+   fallback option.
+5. **Open a PR with the aggregate + default change.** The PR must pass:
+   - `npm test`;
+   - the site check (it will fail if the default points at a missing file);
+   - the resource schema validation and privacy scan;
+   - human review.
+6. **Merge.** Pages deploys from `main`; verify the live page and its 10 tables.
+7. **Rollback** by reverting the public aggregate/default commit. The private
+   ledger and report remain intact.
+
+Never publish the raw ledger, task records, raw CSVs, exact alert counts,
+repository names, prompts, transcripts or evidence paths.
+
 ## Cadence
 
 - **Maintenance inventory:** unchanged daily schedule.
