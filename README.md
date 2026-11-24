@@ -348,7 +348,7 @@ npm run resource:report
 npm run resource:sample
 npm run resource:validate -- fixtures/resource/resource-events.synthetic.jsonl
 
-# Static dashboard (uses the sample fixture when no live report exists)
+# Static dashboard (defaults to the sample fixture until a real report is published)
 python3 -m http.server 8000
 # http://localhost:8000/resources.html
 ```

@@ -73,6 +73,14 @@ test('the CSV export has a header and includes coverage', () => {
   assert.match(csv, /remote_ai,requests,count,2/);
 });
 
+test('the dashboard defaults to a tracked fixture so CI does not request an unpublished report', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'resources.html'), 'utf8');
+  const fixtureOption = html.match(/<option value="fixtures\/resource\/resource-rollup\.sample\.json"[^>]*>/)?.[0] || '';
+  const liveOption = html.match(/<option value="reports\/resources\/resource-rollup\.public\.json"[^>]*>/)?.[0] || '';
+  assert.match(fixtureOption, /selected/);
+  assert.doesNotMatch(liveOption, /selected/);
+});
+
 test('the static page has a labelled source control, live status and no sign-in token field', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'resources.html'), 'utf8');
   assert.match(html, /<label for="resourceSource">Resource rollup<\/label>/);

@@ -29,7 +29,7 @@
         <section class="resource-intro" aria-labelledby="introHeading">
             <h2 id="introHeading">What this view shows</h2>
             <p>
-                This page reads a sanitized, aggregate resource rollup. It reports local
+                This page reads a sanitized, aggregate resource rollup. It defaults to the committed synthetic sample; the live sanitized report is an opt-in source until it is published. It reports local
                 computational measurements, provider-reported AI token categories, estimated remote
                 inference energy where a licensed local factor dataset exists, and the quality of
                 each measurement. It deliberately does <strong>not</strong> calculate a single
@@ -53,8 +53,8 @@
             <div class="form-group">
                 <label for="resourceSource">Resource rollup</label>
                 <select id="resourceSource">
-                    <option value="reports/resources/resource-rollup.public.json" selected>Published sanitized rollup</option>
-                    <option value="fixtures/resource/resource-rollup.sample.json">Synthetic sample fixture</option>
+                    <option value="fixtures/resource/resource-rollup.sample.json" selected>Synthetic sample fixture (default)</option>
+                    <option value="reports/resources/resource-rollup.public.json">Published sanitized rollup (when present)</option>
                 </select>
             </div>
             <p id="resourceStatus" class="rollup-meta" role="status">Loading resource rollup…</p>
