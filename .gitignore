@@ -32,3 +32,10 @@ dependabot-proposals/
 node_modules/
 /previous-rollup.public.json
 /maintenance-digest.md
+
+# Local resource accounting: raw measurements, ledgers, tasks and generated
+# resource reports stay local. Only explicitly sanitized samples are committed.
+/.resource-cache/
+/reports/resources/
+/emissions.csv
+/maintenance-inventory.resource.jsonl

@@ -1,0 +1,235 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_kind": "per-token",
+  "dataset": "cleer",
+  "dataset_version": "synthetic-1.0.0",
+  "methodology_version": "CLEER-Text-0926",
+  "boundary": "accelerator-inference",
+  "license": "Synthetic test fixture (not a real license)",
+  "license_url": null,
+  "synthetic": true,
+  "source_url": null,
+  "generated_at": "2026-11-24",
+  "checksum": "sha256:e82d9689f1556d6859a4231740799c675ffa1bf2a58409a00bc12c827f6336c7",
+  "notes": [
+    "Fabricated coefficients for offline estimator tests only. Not a CLEER release."
+  ],
+  "units": {
+    "uncached_input": "Wh/token",
+    "cached_input": "Wh/token",
+    "cache_creation": "Wh/token",
+    "output": "Wh/token"
+  },
+  "models": [
+    {
+      "id": "claude-sonnet-4-5-synthetic",
+      "display_name": "Claude Sonnet 4.5 Synthetic",
+      "provider": "Anthropic",
+      "mapping": "exact",
+      "confidence": 0.9,
+      "proxy_for": null,
+      "aliases": [
+        {
+          "id": "claude-sonnet-4-5-synthetic-20260101",
+          "source": "synthetic fixture alias"
+        }
+      ],
+      "uncached_input": {
+        "mean": 3e-7,
+        "sd": 6e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cached_input": {
+        "mean": 1e-7,
+        "sd": 2e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cache_creation": {
+        "mean": null,
+        "sd": null,
+        "unit": "Wh/token",
+        "basis": "unavailable",
+        "note": "CLEER does not publish a cache-creation coefficient in this fixture."
+      },
+      "output": {
+        "mean": 0.0000012,
+        "sd": 2.4e-7,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      }
+    },
+    {
+      "id": "gpt-5-synthetic",
+      "display_name": "GPT-5 Synthetic",
+      "provider": "OpenAI",
+      "mapping": "exact",
+      "confidence": 0.8,
+      "proxy_for": null,
+      "aliases": [
+        {
+          "id": "gpt-5-synthetic-2026-01-01",
+          "source": "synthetic fixture alias"
+        }
+      ],
+      "uncached_input": {
+        "mean": 2e-7,
+        "sd": 4e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cached_input": {
+        "mean": 5e-8,
+        "sd": 1e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cache_creation": {
+        "mean": null,
+        "sd": null,
+        "unit": "Wh/token",
+        "basis": "unavailable",
+        "note": null
+      },
+      "output": {
+        "mean": 8e-7,
+        "sd": 1.6e-7,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      }
+    },
+    {
+      "id": "proxy-model-synthetic",
+      "display_name": "Proxy Model Synthetic",
+      "provider": "Synthetic AI Group",
+      "mapping": "explicit_proxy",
+      "confidence": 0.5,
+      "proxy_for": "frontier-model-alias",
+      "aliases": [
+        {
+          "id": "frontier-model-alias",
+          "source": "synthetic proxy documentation"
+        }
+      ],
+      "uncached_input": {
+        "mean": 4e-7,
+        "sd": 1.2e-7,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cached_input": {
+        "mean": 1.5e-7,
+        "sd": 4.5e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cache_creation": {
+        "mean": 3e-7,
+        "sd": 9e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "output": {
+        "mean": 0.0000015,
+        "sd": 4.5e-7,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      }
+    },
+    {
+      "id": "ambiguous-model-a",
+      "display_name": "Ambiguous A",
+      "provider": "Synthetic",
+      "mapping": "exact",
+      "confidence": 0.4,
+      "proxy_for": null,
+      "aliases": [
+        {
+          "id": "ambiguous-alias",
+          "source": "synthetic fixture alias"
+        }
+      ],
+      "uncached_input": {
+        "mean": 1e-7,
+        "sd": 2e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cached_input": {
+        "mean": null,
+        "sd": null,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cache_creation": {
+        "mean": null,
+        "sd": null,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "output": {
+        "mean": 0.000001,
+        "sd": 2e-7,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      }
+    },
+    {
+      "id": "ambiguous-model-b",
+      "display_name": "Ambiguous B",
+      "provider": "Synthetic",
+      "mapping": "exact",
+      "confidence": 0.4,
+      "proxy_for": null,
+      "aliases": [
+        {
+          "id": "ambiguous-alias",
+          "source": "synthetic fixture alias"
+        }
+      ],
+      "uncached_input": {
+        "mean": 2e-7,
+        "sd": 4e-8,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cached_input": {
+        "mean": null,
+        "sd": null,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "cache_creation": {
+        "mean": null,
+        "sd": null,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      },
+      "output": {
+        "mean": 0.000002,
+        "sd": 4e-7,
+        "unit": "Wh/token",
+        "basis": "estimated",
+        "note": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mgifford/tune-my-repos/policy/resource-task.schema.json",
+  "title": "Tune My Repos resource task record",
+  "description": "Schema version 1.0.0. A stable maintenance task and its verification state. Task records are local-only; public reports use a hashed task reference and enums, never labels or evidence paths.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "project",
+    "activity",
+    "kind",
+    "label",
+    "issue",
+    "pull_request",
+    "expected_deliverable",
+    "state",
+    "verified",
+    "started_at",
+    "completed_at",
+    "updated_at",
+    "revision",
+    "resource_event_ids",
+    "verification_evidence",
+    "attempts",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "task_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{0,119}$" },
+    "project": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "activity": {
+      "enum": [
+        "issue-intake",
+        "issue-analysis",
+        "code-exploration",
+        "patch-development",
+        "model-evaluation",
+        "phpunit-execution",
+        "playwright-testing",
+        "accessibility-scanning",
+        "lighthouse-testing",
+        "validation",
+        "environment-setup",
+        "composer-install",
+        "cache-rebuild",
+        "documentation-generation",
+        "resource-measurement",
+        "github-actions",
+        "infrastructure",
+        "monitoring",
+        "unknown",
+        "test-suite",
+        "noop",
+        "repository-inventory",
+        "incremental-inventory",
+        "dependency-classification",
+        "policy-evaluation",
+        "security-alert-review",
+        "dependabot-repair",
+        "documentation-maintenance",
+        "accessibility-regression",
+        "repository-configuration",
+        "ai-assisted-investigation",
+        "static-dashboard-generation",
+        "resource-aggregation",
+        "benchmark"
+      ]
+    },
+    "kind": {
+      "enum": [
+        "issue-reproduction",
+        "patch-development",
+        "accessibility-evaluation",
+        "tooling",
+        "maintenance",
+        "investigation",
+        "documentation",
+        "resource-accounting",
+        "benchmark",
+        "other"
+      ]
+    },
+    "label": { "type": ["string", "null"], "maxLength": 300 },
+    "issue": { "type": ["string", "null"], "maxLength": 80 },
+    "pull_request": { "type": ["string", "null"], "maxLength": 80 },
+    "expected_deliverable": {
+      "enum": [
+        "reproduction",
+        "variant",
+        "patch",
+        "interdiff",
+        "phpunit-test",
+        "playwright-evidence",
+        "accessibility-findings",
+        "lighthouse-measurements",
+        "comparison-evidence",
+        "documentation",
+        "issue-comment-draft",
+        "investigation-report",
+        "inventory",
+        "classification",
+        "benchmark-report",
+        "resource-report",
+        "none",
+        "other"
+      ]
+    },
+    "state": {
+      "enum": [
+        "planned",
+        "in_progress",
+        "completed_verified",
+        "completed_unverified",
+        "failed",
+        "abandoned",
+        "blocked",
+        "unknown"
+      ]
+    },
+    "verified": { "type": "boolean" },
+    "started_at": { "type": ["string", "null"], "maxLength": 40 },
+    "completed_at": { "type": ["string", "null"], "maxLength": 40 },
+    "updated_at": { "type": "string", "maxLength": 40 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "replaces": { "type": ["integer", "null"], "minimum": 1 },
+    "resource_event_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+    },
+    "verification_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "reference", "summary", "recorded_at"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "enum": ["command", "test", "review", "artifact", "manual", "other"] },
+          "reference": { "type": ["string", "null"], "maxLength": 300 },
+          "summary": { "type": ["string", "null"], "maxLength": 300 },
+          "recorded_at": { "type": "string", "maxLength": 40 }
+        }
+      }
+    },
+    "attempts": {
+      "type": "object",
+      "required": ["total", "failed", "retries"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "retries": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string", "maxLength": 500 } },
+    "private": { "type": "object", "additionalProperties": true }
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-11-24T00:00:00.000Z",
+  "window": {
+    "start": "2026-11-20T10:00:00.000Z",
+    "end": "2026-11-20T15:05:00.000Z"
+  },
+  "event_count": 8,
+  "project_count": 1,
+  "task_count": 5,
+  "local_computing": {
+    "events": 3,
+    "wall_ms": 34900,
+    "cpu_seconds": 4,
+    "peak_rss_bytes": 83886080,
+    "energy": {
+      "estimated_wh": 0.039,
+      "measured_wh": null,
+      "coverage": "partial",
+      "methods": [
+        "codecarbon-process-energy-model"
+      ],
+      "boundaries": [
+        "process-and-descendants",
+        "unavailable"
+      ]
+    },
+    "emissions_gco2e": 0.0001014,
+    "hardware": [
+      {
+        "cpu_model": "Apple M2",
+        "cpu_threads": 8,
+        "gpu_available": false,
+        "events": 2
+      },
+      {
+        "cpu_model": null,
+        "cpu_threads": null,
+        "gpu_available": null,
+        "events": 1
+      }
+    ]
+  },
+  "remote_ai": {
+    "requests": 2,
+    "complete_estimates": 0,
+    "partial_estimates": 1,
+    "unavailable_estimates": 1,
+    "tokens": {
+      "input_total": 8500,
+      "uncached_input": 1500,
+      "cache_creation": 2000,
+      "cache_read": 5000,
+      "output": 550,
+      "reasoning": null,
+      "model_requests": 2
+    },
+    "by_provider": [
+      {
+        "provider": "anthropic",
+        "requests": 1,
+        "input_total": 8000,
+        "output": 500
+      },
+      {
+        "provider": "openai",
+        "requests": 1,
+        "input_total": 500,
+        "output": 50
+      }
+    ],
+    "by_model": [
+      {
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5-synthetic-20260101",
+        "requests": 1,
+        "input_total": 8000,
+        "output": 500,
+        "energy_mean_wh": null,
+        "energy_standard_deviation_wh": null,
+        "coverage": "partial",
+        "methodology": "CLEER-Text-0926"
+      },
+      {
+        "provider": "openai",
+        "model": "mystery-model-9000-2026-02-01",
+        "requests": 1,
+        "input_total": 500,
+        "output": 50,
+        "energy_mean_wh": null,
+        "energy_standard_deviation_wh": null,
+        "coverage": "unavailable",
+        "methodology": "CLEER-Text-0926"
+      }
+    ],
+    "energy_by_methodology": [
+      {
+        "source": "cleer",
+        "dataset_version": "synthetic-1.0.0",
+        "methodology_version": "CLEER-Text-0926",
+        "boundary": "accelerator-inference",
+        "requests": 2,
+        "mean_wh": null,
+        "standard_deviation_wh": null,
+        "coverage": "partial"
+      }
+    ],
+    "cost": {
+      "reported_usd": 0.0123,
+      "estimated_usd": null,
+      "currency": "USD"
+    },
+    "unsupported_models": [
+      {
+        "model": "mystery-model-9000-2026-02-01",
+        "requests": 1,
+        "reason": "mapping:unsupported"
+      }
+    ]
+  },
+  "maintenance": {
+    "by_activity": [
+      {
+        "activity": "incremental-inventory",
+        "events": 1,
+        "wall_ms": 17400,
+        "cpu_seconds": null,
+        "estimated_wh": 0.014,
+        "emissions_gco2e": 0.000036400000000000004,
+        "coverage": "partial"
+      },
+      {
+        "activity": "repository-inventory",
+        "events": 1,
+        "wall_ms": 12500,
+        "cpu_seconds": null,
+        "estimated_wh": 0.025,
+        "emissions_gco2e": 0.000065,
+        "coverage": "partial"
+      },
+      {
+        "activity": "test-suite",
+        "events": 1,
+        "wall_ms": 5000,
+        "cpu_seconds": 4,
+        "estimated_wh": null,
+        "emissions_gco2e": null,
+        "coverage": "unavailable"
+      }
+    ],
+    "verified_tasks": 1,
+    "unverified_tasks": 3,
+    "failed_tasks": 1,
+    "api": {
+      "requests": 42,
+      "status_200": 30,
+      "status_304": 8,
+      "failed": 1,
+      "cache_hits": 8,
+      "cache_misses": 34,
+      "repositories_evaluated": 8,
+      "repositories_skipped": 2,
+      "carried_forward": 1,
+      "security_checks": 8,
+      "complete": true,
+      "requests_per_evaluated_repository": 5.25,
+      "cache_hit_rate": 0.19047619047619047,
+      "not_modified_rate": 0.19047619047619047
+    },
+    "ci": {
+      "workflow_runs": 1,
+      "workflow_elapsed_ms": 150000,
+      "job_elapsed_ms": 150000,
+      "failed_runs": 0,
+      "retried_runs": 0,
+      "cancelled_runs": 0,
+      "potentially_superseded_runs": 0
+    }
+  },
+  "measurement_quality": {
+    "measured": 3,
+    "provider_reported": 3,
+    "derived": 0,
+    "estimated": 2,
+    "partial": 7,
+    "unavailable": 0
+  },
+  "functional_units": [
+    {
+      "unit": "per_verified_task",
+      "label": "Wh per verified maintenance task",
+      "value_wh": 0.025,
+      "denominator": 1,
+      "coverage": "partial",
+      "reason": "Partial coverage: some energy components or hardware are unavailable."
+    },
+    {
+      "unit": "per_evaluated_repository",
+      "label": "Wh per repository evaluated",
+      "value_wh": 0.004875,
+      "denominator": 8,
+      "coverage": "partial",
+      "reason": "Numerator is energy for inventory activities in this window, not benchmark or test energy."
+    }
+  ],
+  "monitoring": {
+    "events": 1,
+    "duration_ms": 12,
+    "cpu_seconds": 0.04794,
+    "estimated_wh": null,
+    "ledger_bytes": 4096,
+    "raw_bytes": 8192
+  },
+  "limitations": [
+    "Local energy from CodeCarbon is modelled, not directly measured; on the Apple Silicon baseline CPU energy is load-based, RAM energy is modelled and GPU telemetry is unavailable.",
+    "Remote inference energy is available only for models with a local per-token factor dataset. The current public CLEER release publishes per-session energy, not per-token coefficients, so request-level CLEER estimates are unavailable.",
+    "CLEER and EcoLogits estimates are never added together or averaged into a new estimate.",
+    "Operational carbon emissions use a regional annual average intensity and do not include embodied or construction emissions unless explicitly labelled.",
+    "A partial energy estimate is not total inference or workflow energy. Coverage is shown next to every total.",
+    "No single sustainability score is calculated, and no baseline energy is subtracted automatically."
+  ]
+}
