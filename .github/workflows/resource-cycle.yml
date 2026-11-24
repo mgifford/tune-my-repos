@@ -37,8 +37,8 @@ jobs:
     timeout-minutes: 30
 
     env:
-      RESOURCE_CACHE_DIR: ${{ runner.temp }}/resource-cache
-      RESOURCE_REPORTS_DIR: ${{ runner.temp }}/resource-report
+      RESOURCE_CACHE_DIR: ${{ github.workspace }}/.resource-cache
+      RESOURCE_REPORTS_DIR: ${{ github.workspace }}/resource-report
       # Measurement focus: do not spend time on npm registry lookups.
       LIBRARY_ADVICE_REGISTRY: 'off'
 
@@ -63,12 +63,12 @@ jobs:
           mkdir -p "$RESOURCE_CACHE_DIR" "$RESOURCE_REPORTS_DIR"
           node scripts/generate-maintenance-rollup.cjs \
             --dry-run \
-            --resource-out="$RUNNER_TEMP/maintenance-inventory.resource.jsonl"
+            --resource-out="$GITHUB_WORKSPACE/maintenance-inventory.resource.jsonl"
 
       - name: Import evidence and aggregate
         run: |
           node scripts/import-resource-evidence.cjs \
-            --events="$RUNNER_TEMP/maintenance-inventory.resource.jsonl"
+            --events="$GITHUB_WORKSPACE/maintenance-inventory.resource.jsonl"
           node scripts/generate-resource-rollup.cjs \
             --out="$RESOURCE_REPORTS_DIR" \
             --quiet
@@ -76,7 +76,7 @@ jobs:
       - name: Validate evidence and aggregate
         run: |
           node scripts/validate-resource.cjs \
-            "$RUNNER_TEMP/maintenance-inventory.resource.jsonl" \
+            "$GITHUB_WORKSPACE/maintenance-inventory.resource.jsonl" \
             "$RESOURCE_REPORTS_DIR/resource-rollup.public.json"
 
       - name: Publish aggregate to the private data repository
@@ -108,8 +108,8 @@ jobs:
         with:
           name: resource-cycle-evidence
           path: |
-            ${{ runner.temp }}/maintenance-inventory.resource.jsonl
-            ${{ runner.temp }}/resource-report/
+            ${{ github.workspace }}/maintenance-inventory.resource.jsonl
+            ${{ github.workspace }}/resource-report/
           retention-days: 90
           if-no-files-found: error
 
