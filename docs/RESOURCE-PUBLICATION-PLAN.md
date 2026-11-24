@@ -5,6 +5,20 @@ weakening the maintenance reporting security model. The plan is deliberately
 staged: collect locally first, publish aggregate-only evidence second, and only
 then consider a public Pages view.
 
+## Status (2026-11-24)
+
+- Stage 1 completed: local measurements, sanitized rollup, schema validation and
+  privacy scan.
+- Stage 2 completed for the first measurement: `resource-rollup.public.json`,
+  `RESOURCE-SUMMARY.md` and `resource-summary.csv` were committed to the
+  private `mgifford/tune-my-repos-data` repository (commit `2f2a48d`).
+- Stage 3 not started. A second reviewed private cycle should precede any
+  Pages publication.
+- The first authenticated inventory measurement evaluated 141/141
+  repositories with 1,037 API requests. A later run with the previous rollup
+  present is needed to exercise 304/cache reuse; do not repeat runs solely to
+  benchmark that.
+
 ## Goals
 
 - Show local computing, GitHub API efficiency, GitHub Actions elapsed time and
