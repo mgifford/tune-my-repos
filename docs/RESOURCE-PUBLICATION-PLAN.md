@@ -9,14 +9,19 @@ then consider a public Pages view.
 
 - Stage 1 completed: local measurements, sanitized rollup, schema validation and
   privacy scan.
-- Stage 2 completed for the first measurement: `resource-rollup.public.json`,
-  `RESOURCE-SUMMARY.md` and `resource-summary.csv` were committed to the
-  private `mgifford/tune-my-repos-data` repository (commit `2f2a48d`).
-- Stage 3 not started. A second reviewed private cycle should precede any
-  Pages publication.
-- The first authenticated inventory measurement evaluated 141/141
-  repositories with 1,037 API requests. A later run with the previous rollup
-  present is needed to exercise 304/cache reuse; do not repeat runs solely to
+- Stage 2 completed twice:
+  - first local measurement, private data commit `2f2a48d`;
+  - first monthly workflow run `45511468266`, private data commit `6f94069`.
+- The monthly `.github/workflows/resource-cycle.yml` run completed successfully
+  in 3m 1s: 142/142 repositories evaluated, 1,044 API requests, 7.35
+  requests/evaluated repository, 0 rate limits, workflow elapsed 174,947 ms,
+  summed job execution 172,277 ms.
+- Stage 3 is not started. The remaining decision is whether to publish an
+  API/Actions-only aggregate (local CodeCarbon energy will show as unavailable)
+  or add a sanitized local energy evidence file to the monthly aggregation
+  first.
+- No 304s/cache hits were observed because the workflow still has no previous
+  rollup/ETag state in its temporary ledger. Do not repeat runs solely to
   benchmark that.
 
 ## Goals
