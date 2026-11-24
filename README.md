@@ -242,6 +242,149 @@ data is **not published from this repository at all**:
 Run `npm test` (uses Node's built-in test runner, no dependencies) to run the policy engine, schema
 validator, rollup generator, and fixture-conformance test suites in `test/`.
 
+### Keeping monitoring cheap
+
+Nothing here calls a model at runtime. Three mechanisms keep the cost of watching many repositories low:
+
+- **Conditional requests.** A repository that looks unchanged by `pushed_at` is confirmed with one
+  request for its open issue and pull request list, sent with the stored ETag. A 304 reply keeps the
+  skip, costs no primary rate limit, and catches pull requests from forks and new issues that a push
+  check cannot see. Any other outcome, including an unreadable list, does the full PR work. The run log
+  prints counts of the three outcomes.
+- **Delta digest.** `node scripts/generate-digest.cjs --previous <old> --current <new>` writes a short
+  Markdown list of what changed between two rollups: new urgent alerts, newly failing update PRs, new
+  pull requests from people, changed recommended actions, repositories added or removed. A quiet run is
+  one line. The workflow writes it to the private data repository only, because it names repositories
+  with urgent alerts. It is not uploaded as an artifact.
+- **Summary.** `node scripts/generate-digest.cjs --current <rollup> --summary` prints about ten lines of
+  totals. Give a reviewer (a person or a model) the digest and the summary, not the rollup.
+
+`templates/dependabot.yml` is a baseline for other repositories: weekly schedule, minor and patch
+updates grouped, majors kept separate, and a short cooldown for version updates.
+
+## Resource Accounting
+
+Tune My Repos now has a deterministic, local resource-accounting layer for the
+work it performs. It is deliberately **not** a single sustainability score and
+it does not use AI to measure, classify, aggregate, or explain resources.
+
+```text
+local command / CodeCarbon CSV / AI usage record
+                    |
+                    v
+      versioned resource evidence (schema 1.0.0)
+                    |
+                    v
+      local ledger + task records (gitignored)
+                    |
+                    v
+   sanitized aggregate rollup (JSON, Markdown, CSV)
+```
+
+### Status
+
+- **Phase 1 (local baseline): implemented.** CodeCarbon 3.3.3 CSV units were
+  audited, the original `emissions.csv` is analyzed in
+  [docs/CODECARBON.md](docs/CODECARBON.md), and `scripts/resource-run.cjs`
+  measures any command with optional offline CodeCarbon.
+- **Phase 2 (CLEER-ready telemetry): implemented.** Provider-neutral AI request
+  records, token-category normalization, model matching, a versioned per-token
+  factor interface, uncertainty preservation, synthetic fixtures, and an
+  accessible static dashboard.
+- **Not implemented:** live AI-assisted maintenance, actual CLEER per-token
+  coefficients, portfolio-wide CI consumption beyond the current inventory
+  run, portfolio-wide evidence import, and a published production resource
+  report. GitHub API counters are emitted by the inventory generator; Actions
+  run/job metadata is opt-in. See
+  [docs/AI-RESOURCE-ACCOUNTING.md](docs/AI-RESOURCE-ACCOUNTING.md) for the
+  handoff and the CLEER licence/coefficient blocker.
+
+### What it measures, and what it does not
+
+| Component | Evidence | Boundary |
+|---|---|---|
+| Local command | `/usr/bin/time` CPU, peak RSS, wall clock; optional CodeCarbon energy/emissions | tracked process and descendants |
+| Remote AI inference | provider-reported token categories; CLEER/EcoLogits estimates only when a licensed local factor dataset exists | accelerator inference (or the dataset's labelled boundary) |
+| GitHub Actions | workflow/job metadata and elapsed time; run/jobs API collection is opt-in for occasional runs | hosted runner elapsed time, **not** CPU time or electricity |
+| GitHub API | request/status/304/cache/byte/security-check counters from the instrumented inventory generator | request counts, never converted to energy by an arbitrary factor |
+
+CodeCarbon is optional. The Node.js application and the full test suite work
+without Python or CodeCarbon. No telemetry is sent to CodeCarbon's services; the
+wrapper uses offline mode so no geographic lookup is made. Raw measurements,
+ledgers, task labels and evidence paths stay in `.resource-cache/` (gitignored).
+Only explicitly sanitized aggregates are publishable.
+
+### Commands
+
+```bash
+# Measure one command with process accounting only
+node scripts/resource-run.cjs \
+  --activity=test-suite --task=maintenance-baseline -- npm test
+
+# Measure with optional offline CodeCarbon
+CODECARBON_BIN="$HOME/.venvs/codecarbon/bin/codecarbon" \
+  node scripts/resource-run.cjs \
+    --activity=repository-inventory --task=incremental-inventory \
+    --codecarbon -- node scripts/generate-maintenance-rollup.cjs
+
+# Controlled benchmark: repetitions, median, variability, overhead
+node scripts/resource-benchmark.cjs --workload=test-suite --repetitions=3
+node scripts/resource-benchmark.cjs --workload=noop --repetitions=5 --codecarbon
+
+# Task lifecycle (a successful command is not a verified outcome)
+node scripts/resource-task.cjs start repository-inventory \
+  --activity=repository-inventory --deliverable=inventory
+node scripts/resource-task.cjs verify repository-inventory \
+  --evidence-kind=artifact --evidence=reports/resources/RESOURCE-SUMMARY.md
+
+# One instrumented inventory run (API counters only; do not loop it)
+node scripts/generate-maintenance-rollup.cjs --dry-run \
+  --resource-out=maintenance-inventory.resource.jsonl
+node scripts/import-resource-evidence.cjs \
+  --events=maintenance-inventory.resource.jsonl
+
+# Sanitized reports (JSON + Markdown + CSV) and schema validation
+npm run resource:report
+npm run resource:sample
+npm run resource:validate -- fixtures/resource/resource-events.synthetic.jsonl
+
+# Static dashboard (defaults to the sample fixture until a real report is published)
+python3 -m http.server 8000
+# http://localhost:8000/resources.html
+```
+
+### Files and documents
+
+- `scripts/resource-run.cjs` — optional CodeCarbon wrapper; preserves exit
+  status; unique raw directory per measurement; overlap detection.
+- `scripts/resource-benchmark.cjs` — configurable, fixture-only benchmark
+  facility; no repeated GitHub API traffic.
+- `scripts/generate-resource-rollup.cjs` — aggregate-only, privacy-scanned
+  reports.
+- `scripts/import-resource-evidence.cjs` — CodeCarbon CSV, AI usage, CLEER
+  dashboard coverage import.
+- `policy/resource-evidence.schema.json`, `resource-task.schema.json`,
+  `resource-factor.schema.json`, `resource-rollup.schema.json` — versioned
+  contracts.
+- [docs/RESOURCE-METHODOLOGY.md](docs/RESOURCE-METHODOLOGY.md) — units,
+  boundaries, uncertainty, functional units.
+- [docs/RESOURCE-BASELINE.md](docs/RESOURCE-BASELINE.md) — the measured local
+  baseline, benchmark table and its limits.
+- [docs/CODECARBON.md](docs/CODECARBON.md) — the actual CSV audit and Apple
+  Silicon limits.
+- [docs/AI-RESOURCE-ACCOUNTING.md](docs/AI-RESOURCE-ACCOUNTING.md) — AI
+  telemetry, CLEER findings and handoff.
+- [docs/RESOURCE-PRIVACY.md](docs/RESOURCE-PRIVACY.md) — privacy review.
+- [docs/RESOURCE-PUBLICATION-PLAN.md](docs/RESOURCE-PUBLICATION-PLAN.md) — staged,
+  privacy-gated publication plan.
+- [docs/DRUPAL-CORE-LAB-ALIGNMENT.md](docs/DRUPAL-CORE-LAB-ALIGNMENT.md) —
+  shared evidence format.
+
+The existing accessibility, security, governance and verification
+requirements are unchanged. Resource accounting cannot bypass private
+repository exclusions, private maintenance reporting, ETag/cache validation,
+scan prioritization, or required CI gates.
+
 ### Phase 3 pilot: Dependabot auto-merge (tune-my-repos only)
 
 `tune-my-repos` is currently the **only** repository running the Dependabot pilot
@@ -403,7 +546,16 @@ maintainer reviewed and merged.
 
 ### Runtime AI use
 
-**No AI is used at runtime.** When the application runs in a browser, it calls the GitHub REST API directly using vanilla JavaScript. No LLM or AI inference service is invoked during normal operation.
+**No AI is used at runtime.** When the application runs in a browser, it calls the GitHub REST API directly using vanilla JavaScript. No LLM or AI inference service is invoked during normal operation. The resource-accounting scripts, ledger, aggregation, reports and dashboard are also deterministic; they do not call a model. The AI usage records in `fixtures/resource/` are synthetic test fixtures, not live provider requests.
+
+### AI-assisted development of the resource-accounting layer
+
+The resource-accounting implementation, tests and documentation in this change
+were developed with an AI coding agent (DeepSeek Harness) under human review.
+The agent wrote code and tests; it did not make live AI requests, did not
+measure resources with AI, and is not part of the runtime system. Any future
+AI-assisted maintenance must follow the task, evidence, budget and verification
+requirements in `AGENTS.md` and `docs/AI-RESOURCE-ACCOUNTING.md`.
 
 ### Browser-based AI
 

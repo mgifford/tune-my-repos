@@ -1,0 +1,44 @@
+# Token-economical Dependabot baseline for a repository.
+#
+# Copy to .github/dependabot.yml and keep only the ecosystems the repository
+# uses. The goal is fewer, larger, later PRs:
+#   - weekly instead of daily, so each ecosystem opens PRs once a week;
+#   - minor and patch updates grouped into a single PR per ecosystem;
+#   - major updates left as separate PRs, because they need a human decision;
+#   - a cooldown, so a release must be a few days old before it is proposed.
+#
+# The cooldown applies to version updates only. Security updates are not
+# delayed by it. Check the current option names in the GitHub documentation
+# before relying on them:
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 3
+    groups:
+      actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 3
+    groups:
+      npm-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "dependencies"
+      - "javascript"

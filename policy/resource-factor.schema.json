@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mgifford/tune-my-repos/policy/resource-factor.schema.json",
+  "title": "Local AI inference energy factor dataset",
+  "description": "Schema version 1.0.0. A versioned, locally available factor dataset. Per-token factors are required for request-level estimation; session-only datasets are accepted for coverage reporting but cannot be converted into request-level energy without published token workloads.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dataset_kind",
+    "dataset",
+    "dataset_version",
+    "methodology_version",
+    "boundary",
+    "license",
+    "synthetic",
+    "units",
+    "models"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "dataset_kind": { "enum": ["per-token", "session-only"] },
+    "dataset": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "dataset_version": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "methodology_version": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "boundary": { "enum": ["accelerator-inference", "accelerator-and-host", "facility", "lifecycle"] },
+    "license": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "license_url": { "type": ["string", "null"], "maxLength": 300 },
+    "synthetic": { "type": "boolean" },
+    "source_url": { "type": ["string", "null"], "maxLength": 300 },
+    "generated_at": { "type": ["string", "null"], "maxLength": 40 },
+    "checksum": { "type": ["string", "null"], "maxLength": 120 },
+    "source_checksum": { "type": ["string", "null"], "maxLength": 120 },
+    "notes": { "type": "array", "items": { "type": "string", "maxLength": 500 } },
+    "units": {
+      "type": "object",
+      "required": ["uncached_input", "cached_input", "cache_creation", "output"],
+      "additionalProperties": false,
+      "properties": {
+        "uncached_input": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "cached_input": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "cache_creation": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "output": { "type": "string", "minLength": 1, "maxLength": 40 }
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "display_name", "provider", "mapping", "confidence", "aliases"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "display_name": { "type": ["string", "null"], "maxLength": 200 },
+          "provider": { "type": ["string", "null"], "maxLength": 80 },
+          "mapping": { "enum": ["exact", "documented_alias", "explicit_proxy", "unsupported"] },
+          "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "source"],
+              "additionalProperties": false,
+              "properties": {
+                "id": { "type": "string", "minLength": 1, "maxLength": 200 },
+                "source": { "type": "string", "minLength": 1, "maxLength": 300 }
+              }
+            }
+          },
+          "proxy_for": { "type": ["string", "null"], "maxLength": 200 },
+          "uncached_input": { "$ref": "#/definitions/coefficient" },
+          "cached_input": { "$ref": "#/definitions/coefficient" },
+          "cache_creation": { "$ref": "#/definitions/coefficient" },
+          "output": { "$ref": "#/definitions/coefficient" },
+          "session_results": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["unit", "energy_wh_mean", "energy_wh_sd", "carbon_gco2e_mean", "carbon_gco2e_sd"],
+              "additionalProperties": false,
+              "properties": {
+                "unit": { "type": "string", "maxLength": 80 },
+                "energy_wh_mean": { "type": ["number", "null"], "minimum": 0 },
+                "energy_wh_sd": { "type": ["number", "null"], "minimum": 0 },
+                "carbon_gco2e_mean": { "type": ["number", "null"], "minimum": 0 },
+                "carbon_gco2e_sd": { "type": ["number", "null"], "minimum": 0 }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "coefficient": {
+      "type": "object",
+      "required": ["mean", "sd", "unit", "basis"],
+      "additionalProperties": false,
+      "properties": {
+        "mean": { "type": ["number", "null"], "minimum": 0 },
+        "sd": { "type": ["number", "null"], "minimum": 0 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "basis": { "enum": ["measured", "provider-reported", "estimated", "unavailable"] },
+        "note": { "type": ["string", "null"], "maxLength": 400 }
+      }
+    }
+  }
+}

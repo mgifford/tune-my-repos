@@ -3,6 +3,12 @@
   "private": true,
   "description": "Deterministic maintenance control plane and repository analysis dashboard.",
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "resource:run": "node scripts/resource-run.cjs",
+    "resource:task": "node scripts/resource-task.cjs",
+    "resource:benchmark": "node scripts/resource-benchmark.cjs",
+    "resource:report": "node scripts/generate-resource-rollup.cjs",
+    "resource:sample": "node scripts/generate-resource-rollup.cjs --sample --out reports/resources/sample",
+    "resource:validate": "node scripts/validate-resource.cjs"
   }
 }

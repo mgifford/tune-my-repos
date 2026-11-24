@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.1.0",
+  "generatedAt": "2026-10-30",
+  "dataUpdated": "2026-09-29",
+  "methodology": {
+    "engine": "CLEER-Text-0926",
+    "accounting": "Closed-AI-Emissions-Methodology-0926",
+    "capability_and_cost_source": "Synthetic fixture",
+    "capability_and_cost_snapshot": "2026-09"
+  },
+  "scenario": {
+    "grid": "synthetic fixture grid",
+    "grid_gco2e_per_kwh": 640,
+    "facility": "synthetic fixture facility",
+    "note": "Fabricated values for offline tests only."
+  },
+  "batchSizes": [32, 64],
+  "workloads": {
+    "chat.light": {
+      "use_case": "Chat",
+      "tier": "Light",
+      "unit": "one synthetic session",
+      "description": "Synthetic one-turn session for tests."
+    },
+    "agentic.typical": {
+      "use_case": "Agentic",
+      "tier": "Typical",
+      "unit": "one synthetic session",
+      "description": "Synthetic agentic session for tests."
+    }
+  },
+  "models": [
+    {
+      "name": "Synthetic Model A",
+      "kind": "Closed",
+      "provider": "Synthetic AI Group",
+      "serving": "GPU",
+      "estimation_basis": "CLEER proxy estimation",
+      "confidence": 0.5,
+      "hardware": "B200",
+      "intelligence_index": 40,
+      "release_month": "2026-01",
+      "selected_batch_size": null,
+      "proxies": [{ "name": "Synthetic Donor", "weight": 1 }],
+      "verbosity_factor": 1.1,
+      "results": {
+        "chat.light": {
+          "energy_wh": { "mean": 1.2, "sd": 0.2 },
+          "carbon_gco2e": { "mean": 0.768, "sd": 0.128 },
+          "cost_usd": 0.01,
+          "energy_components_wh": { "accelerator": 0.5, "host": 0.2, "idle": 0.1, "cooling": 0.4 },
+          "carbon_components_gco2e": { "operational": 0.74, "embodied": 0.02, "construction": 0.008 },
+          "batch_curve_wh": [1.3, 1.1]
+        },
+        "agentic.typical": {
+          "energy_wh": { "mean": 30.0, "sd": 5.0 },
+          "carbon_gco2e": { "mean": 19.2, "sd": 3.2 },
+          "cost_usd": 0.25,
+          "energy_components_wh": { "accelerator": 12.0, "host": 5.0, "idle": 2.0, "cooling": 11.0 },
+          "carbon_components_gco2e": { "operational": 18.5, "embodied": 0.5, "construction": 0.2 },
+          "batch_curve_wh": [32.0, 28.0]
+        }
+      }
+    },
+    {
+      "name": "Synthetic Model B",
+      "kind": "Open",
+      "provider": "Synthetic Open",
+      "serving": "GPU",
+      "estimation_basis": "Directly measured",
+      "confidence": null,
+      "hardware": "H100",
+      "intelligence_index": 30,
+      "release_month": "2025-12",
+      "selected_batch_size": 64,
+      "proxies": [],
+      "verbosity_factor": null,
+      "results": {
+        "chat.light": {
+          "energy_wh": { "mean": 0.8, "sd": null },
+          "carbon_gco2e": { "mean": 0.512, "sd": null },
+          "cost_usd": null,
+          "energy_components_wh": { "accelerator": 0.3, "host": 0.1, "idle": 0.1, "cooling": 0.3 },
+          "carbon_components_gco2e": { "operational": 0.49, "embodied": 0.015, "construction": 0.007 },
+          "batch_curve_wh": [0.9, 0.75]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+/* Resource dashboard: additive styles layered on styles.css. */
+
+.resource-intro,
+.resource-controls,
+.resource-section {
+    background: var(--background);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: calc(var(--spacing) * 1.5);
+    margin-bottom: calc(var(--spacing) * 1.5);
+}
+
+.resource-section h2 {
+    margin-bottom: calc(var(--spacing) / 2);
+}
+
+.resource-section h3 {
+    margin-top: calc(var(--spacing) * 1.25);
+    margin-bottom: calc(var(--spacing) / 2);
+    font-size: 1.05rem;
+}
+
+.resource-controls .form-group {
+    margin-bottom: var(--spacing);
+}
+
+.resource-controls .export-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--spacing) / 2);
+    align-items: center;
+    margin-top: var(--spacing);
+}
+
+.resource-controls .export-controls h3 {
+    flex-basis: 100%;
+    margin: 0 0 calc(var(--spacing) / 2);
+    font-size: 1rem;
+}
+
+.resource-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: calc(var(--spacing) / 2) 0 var(--spacing);
+    font-size: 0.95rem;
+}
+
+.resource-section caption {
+    caption-side: top;
+    text-align: left;
+    font-weight: 600;
+    padding-bottom: calc(var(--spacing) / 3);
+}
+
+.resource-section th,
+.resource-section td {
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.resource-section th {
+    font-weight: 600;
+}
+
+.resource-section .numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.table-description {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0 0 calc(var(--spacing) / 3);
+}
+
+.resource-section ul {
+    margin-left: 1.25rem;
+}
+
+.resource-section li {
+    margin-bottom: 0.35rem;
+}
+
+/* Narrow screens: keep the table readable without hiding data. */
+@media (max-width: 700px) {
+    .resource-section table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .resource-section caption {
+        white-space: normal;
+    }
+}
+
+@media (forced-colors: active) {
+    .resource-section th,
+    .resource-section td {
+        border-bottom-color: CanvasText;
+    }
+}
+
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.skip-link:focus {
+    left: var(--spacing);
+    top: var(--spacing);
+    width: auto;
+    height: auto;
+    z-index: 1000;
+    padding: 0.75rem 1rem;
+    background: var(--background);
+    color: var(--text);
+    border: 2px solid currentColor;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}

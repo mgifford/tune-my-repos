@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Deterministic resource accounting for local maintenance workloads and remote AI inference: energy, emissions, tokens, measurement quality and uncertainty. No single sustainability score.">
+    <title>Resource Accounting - Tune My Repos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="resources.css">
+</head>
+<body>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>Resource Accounting</h1>
+                    <p class="tagline">Local computing, remote inference and measurement quality for repository maintenance</p>
+                </div>
+                <nav aria-label="Dashboards">
+                    <a href="index.html">Repository Analysis</a>
+                    <a href="maintenance.html">Maintenance Control Plane</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" id="mainContent">
+        <section class="resource-intro" aria-labelledby="introHeading">
+            <h2 id="introHeading">What this view shows</h2>
+            <p>
+                This page reads a sanitized, aggregate resource rollup. It defaults to the committed synthetic sample; the live sanitized report is an opt-in source until it is published. It reports local
+                computational measurements, provider-reported AI token categories, estimated remote
+                inference energy where a licensed local factor dataset exists, and the quality of
+                each measurement. It deliberately does <strong>not</strong> calculate a single
+                sustainability score.
+            </p>
+            <p id="privacyNote" class="section-note">
+                The published rollup contains no repository names, task labels, commands, filesystem
+                paths, prompts, transcripts, session identifiers or private maintenance findings.
+                Raw measurements stay local. See
+                <a href="docs/RESOURCE-PRIVACY.md">the resource privacy review</a>.
+            </p>
+            <p class="section-note">
+                Energy is reported in Wh, operational emissions in gCO2e, CPU time in CPU-seconds,
+                elapsed time in milliseconds and memory in bytes. Missing data is shown as “—” and is
+                not zero. A partial estimate is labelled as partial.
+            </p>
+        </section>
+
+        <section class="resource-controls" aria-labelledby="dataSourceHeading">
+            <h2 id="dataSourceHeading">Data source</h2>
+            <div class="form-group">
+                <label for="resourceSource">Resource rollup</label>
+                <select id="resourceSource">
+                    <option value="fixtures/resource/resource-rollup.sample.json" selected>Synthetic sample fixture (default)</option>
+                    <option value="reports/resources/resource-rollup.public.json">Published sanitized rollup (when present)</option>
+                </select>
+            </div>
+            <p id="resourceStatus" class="rollup-meta" role="status">Loading resource rollup…</p>
+            <p id="resourceError" class="error-message" role="alert"></p>
+            <div class="export-controls" role="group" aria-labelledby="exportHeading">
+                <h3 id="exportHeading">Export this view</h3>
+                <button type="button" id="exportResourceJson" class="secondary-btn" disabled>Download JSON</button>
+                <button type="button" id="exportResourceCsv" class="secondary-btn" disabled>Download CSV</button>
+            </div>
+        </section>
+
+        <noscript>
+            <p class="error-message" role="alert">
+                This dashboard needs JavaScript to load the resource rollup. The same data is
+                available as JSON, Markdown and CSV reports in the repository's
+                <code>reports/resources/</code> directory when generated locally.
+            </p>
+        </noscript>
+
+        <div id="resourceContent"></div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Deterministic resource accounting. No AI is used at runtime to collect, aggregate or
+                render this page. No telemetry is sent anywhere.
+            </p>
+            <p><a href="README.md">README</a> · <a href="docs/RESOURCE-METHODOLOGY.md">Methodology</a> · <a href="docs/CODECARBON.md">CodeCarbon notes</a> · <a href="docs/AI-RESOURCE-ACCOUNTING.md">AI accounting</a> · <a href="docs/RESOURCE-PRIVACY.md">Privacy</a></p>
+        </div>
+    </footer>
+
+    <script src="policy/policy-validator.cjs"></script>
+    <script src="policy/resource-view.cjs"></script>
+    <script src="resources.js"></script>
+</body>
+</html>

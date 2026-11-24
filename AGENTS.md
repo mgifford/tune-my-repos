@@ -587,6 +587,48 @@ Remember:
 
 ---
 
+## Resource-conscious operation (sustainability)
+
+Sustainability is an engineering constraint, not a claim. Apply this section
+when a task involves repository maintenance, testing, scanning, or AI use.
+
+- Prefer deterministic tooling. Do not add AI inference to measure, classify,
+  aggregate, or explain resource consumption.
+- Reuse existing evidence and cached data; do not re-read unchanged files or
+  re-run a full scan when a targeted check answers the question.
+- Use targeted tests during development and the full suite before handoff.
+  Preserve all required verification; do not trade correctness for a lower
+  measurement.
+- Avoid unnecessary background processes, services, containers, and repeated
+  benchmarks. Do not run longer than the decision requires.
+- Record significant maintenance tasks with a stable task id. Record failed
+  attempts and retries as consumed resources, not as zero.
+- Capture provider-reported token usage when AI is used. Distinguish uncached
+  input, cache creation, cache reads, output, and reasoning; do not infer tokens
+  from text length or billing cost.
+- Measure local resources with CodeCarbon or an equivalent tool when it is
+  appropriate and available. CodeCarbon is optional; the application and tests
+  must work without Python or CodeCarbon.
+- Use CLEER-compatible, locally available factors for remote inference energy
+  only after their licence, units, boundary, and model mapping are verified.
+  Never invent coefficients or substitute a different model silently.
+- Separate local process energy, remote inference energy, GitHub Actions
+  runtime, and GitHub API request counts. Do not add or average different
+  boundaries or methodologies.
+- Report uncertainty and coverage. A partial estimate is not a total. Missing
+  data is not zero.
+- Avoid unsupported environmental claims. No single sustainability score, no
+  invented water or embodied-carbon value, no compliance claim without evidence.
+- Evaluate resources per verified outcome only when the denominator and
+  measurement coverage support it. Absolute totals remain primary.
+- Minimize monitoring overhead. Record the collector's own cost separately.
+- Keep raw measurements, tasks, prompts, transcripts, credentials, and private
+  repository names local. Publish only explicitly sanitized aggregates.
+
+The detailed method is in `docs/RESOURCE-METHODOLOGY.md`; CodeCarbon limits are
+in `docs/CODECARBON.md`; AI accounting and the CLEER handoff are in
+`docs/AI-RESOURCE-ACCOUNTING.md`; privacy is in `docs/RESOURCE-PRIVACY.md`.
+
 ## Contact and escalation
 
 Defer to maintainer contact defined in the repository.

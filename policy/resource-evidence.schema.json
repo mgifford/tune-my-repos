@@ -1,0 +1,813 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mgifford/tune-my-repos/policy/resource-evidence.schema.json",
+  "title": "Tune My Repos resource evidence event",
+  "description": "Schema version 1.0.0. One normalized measurement from one source. The core fields reuse Drupal Core Lab's resource event terminology (project, task, activity, tool, environment, outcome, validation, source, measurements, quality). Tune My Repos adds energy, emissions, measurement and github_api objects. Missing values are null; a measured zero stays zero. Provider-reported, measured, derived and estimated values remain distinct.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "measurement_id",
+    "event_type",
+    "recorded_at",
+    "occurred_at",
+    "duration_ms",
+    "project",
+    "issue",
+    "variant",
+    "task",
+    "activity",
+    "tool",
+    "model",
+    "provider",
+    "environment",
+    "outcome",
+    "validation",
+    "commit",
+    "patch",
+    "source",
+    "measurements",
+    "quality"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "event_id": { "$ref": "#/definitions/sha256" },
+    "measurement_id": { "type": "string", "minLength": 8, "maxLength": 120 },
+    "event_type": {
+      "enum": [
+        "ai-usage",
+        "process",
+        "container",
+        "github-actions",
+        "github-api",
+        "prompt-size",
+        "context-size",
+        "budget",
+        "monitoring",
+        "manual",
+        "ai-request"
+      ]
+    },
+    "recorded_at": { "$ref": "#/definitions/timestamp" },
+    "occurred_at": { "$ref": "#/definitions/timestamp" },
+    "duration_ms": { "type": ["number", "null"], "minimum": 0 },
+    "project": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "issue": { "type": ["string", "null"], "maxLength": 80 },
+    "variant": { "type": ["string", "null"], "maxLength": 120 },
+    "task": { "$ref": "#/definitions/task" },
+    "activity": { "$ref": "#/definitions/activity" },
+    "tool": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "model": { "type": ["string", "null"], "maxLength": 200 },
+    "provider": { "type": ["string", "null"], "maxLength": 80 },
+    "environment": { "$ref": "#/definitions/environment" },
+    "outcome": { "enum": ["success", "failure", "cancelled", "partial", "unknown"] },
+    "validation": { "enum": ["passed", "failed", "not-run", "unknown"] },
+    "commit": { "type": ["string", "null"], "maxLength": 64 },
+    "patch": { "type": ["string", "null"], "maxLength": 200 },
+    "source": { "$ref": "#/definitions/source" },
+    "measurements": { "$ref": "#/definitions/measurements" },
+    "ai": { "$ref": "#/definitions/ai" },
+    "quality": { "$ref": "#/definitions/quality" },
+    "source_key": { "type": ["string", "null"], "maxLength": 200 },
+    "supersedes": { "type": ["string", "null"], "maxLength": 64 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "private": { "type": "object", "additionalProperties": true }
+  },
+  "definitions": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+    },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "activity": {
+      "enum": [
+        "issue-intake",
+        "issue-analysis",
+        "code-exploration",
+        "patch-development",
+        "model-evaluation",
+        "phpunit-execution",
+        "playwright-testing",
+        "accessibility-scanning",
+        "lighthouse-testing",
+        "validation",
+        "environment-setup",
+        "composer-install",
+        "cache-rebuild",
+        "documentation-generation",
+        "resource-measurement",
+        "github-actions",
+        "infrastructure",
+        "monitoring",
+        "unknown",
+        "test-suite",
+        "noop",
+        "repository-inventory",
+        "incremental-inventory",
+        "dependency-classification",
+        "policy-evaluation",
+        "security-alert-review",
+        "dependabot-repair",
+        "documentation-maintenance",
+        "accessibility-regression",
+        "repository-configuration",
+        "ai-assisted-investigation",
+        "static-dashboard-generation",
+        "resource-aggregation",
+        "benchmark"
+      ]
+    },
+    "task": {
+      "type": "object",
+      "required": ["id", "label", "execution_id", "kind", "state", "expected_deliverable", "verified"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "label": { "type": ["string", "null"], "maxLength": 300 },
+        "execution_id": { "type": ["string", "null"], "maxLength": 200 },
+        "kind": {
+          "enum": [
+            null,
+            "issue-reproduction",
+            "patch-development",
+            "accessibility-evaluation",
+            "tooling",
+            "maintenance",
+            "investigation",
+            "documentation",
+            "resource-accounting",
+            "benchmark",
+            "other"
+          ]
+        },
+        "state": {
+          "enum": [
+            null,
+            "planned",
+            "in_progress",
+            "blocked",
+            "paused",
+            "completed_claimed",
+            "completed_unverified",
+            "completed_verified",
+            "failed",
+            "abandoned",
+            "unknown"
+          ]
+        },
+        "expected_deliverable": {
+          "enum": [
+            null,
+            "reproduction",
+            "variant",
+            "patch",
+            "interdiff",
+            "phpunit-test",
+            "playwright-evidence",
+            "accessibility-findings",
+            "lighthouse-measurements",
+            "comparison-evidence",
+            "documentation",
+            "issue-comment-draft",
+            "investigation-report",
+            "inventory",
+            "classification",
+            "benchmark-report",
+            "resource-report",
+            "none",
+            "other"
+          ]
+        },
+        "verified": { "type": ["boolean", "null"] }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "required": ["os", "node", "runner", "ddev", "docker"],
+      "additionalProperties": false,
+      "properties": {
+        "os": { "type": ["string", "null"], "maxLength": 160 },
+        "node": { "type": ["string", "null"], "maxLength": 40 },
+        "runner": { "type": ["string", "null"], "maxLength": 80 },
+        "ddev": { "type": ["string", "null"], "maxLength": 80 },
+        "docker": { "type": ["string", "null"], "maxLength": 80 },
+        "arch": { "type": ["string", "null"], "maxLength": 40 },
+        "python": { "type": ["string", "null"], "maxLength": 40 },
+        "codecarbon": { "type": ["string", "null"], "maxLength": 40 },
+        "cpu_model": { "type": ["string", "null"], "maxLength": 160 },
+        "cpu_threads": { "type": ["integer", "null"], "minimum": 1 },
+        "ram_total_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "gpu_model": { "type": ["string", "null"], "maxLength": 160 },
+        "gpu_available": { "type": ["boolean", "null"] },
+        "container": { "type": ["string", "null"], "maxLength": 120 },
+        "virtualization": { "type": ["string", "null"], "maxLength": 120 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["adapter", "method", "confidence", "reference"],
+      "additionalProperties": false,
+      "properties": {
+        "adapter": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "method": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "confidence": { "enum": ["measured", "provider-reported", "derived", "estimated", "unavailable"] },
+        "reference": { "type": ["string", "null"], "maxLength": 300 }
+      }
+    },
+    "measurements": {
+      "type": "object",
+      "required": [
+        "tokens",
+        "cost",
+        "tools",
+        "context",
+        "latency",
+        "cpu",
+        "memory",
+        "io",
+        "network",
+        "github",
+        "energy",
+        "emissions",
+        "measurement"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tokens": { "$ref": "#/definitions/tokens" },
+        "cost": { "$ref": "#/definitions/cost" },
+        "tools": { "$ref": "#/definitions/tools" },
+        "context": { "$ref": "#/definitions/context" },
+        "latency": { "$ref": "#/definitions/latency" },
+        "cpu": { "$ref": "#/definitions/cpu" },
+        "memory": { "$ref": "#/definitions/memory" },
+        "io": { "$ref": "#/definitions/io" },
+        "network": { "$ref": "#/definitions/network" },
+        "github": { "$ref": "#/definitions/github" },
+        "energy": { "$ref": "#/definitions/energy" },
+        "emissions": { "$ref": "#/definitions/emissions" },
+        "measurement": { "$ref": "#/definitions/measurement" },
+        "benchmark": { "$ref": "#/definitions/benchmark" },
+        "github_api": { "$ref": "#/definitions/github_api" }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "required": [
+        "input_total",
+        "uncached_input",
+        "cache_creation",
+        "cache_read",
+        "output",
+        "reasoning",
+        "reasoning_included_in_output",
+        "model_requests",
+        "token_basis",
+        "provider_fields"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "input_total": { "type": ["integer", "null"], "minimum": 0 },
+        "uncached_input": { "type": ["integer", "null"], "minimum": 0 },
+        "cache_creation": { "type": ["integer", "null"], "minimum": 0 },
+        "cache_read": { "type": ["integer", "null"], "minimum": 0 },
+        "output": { "type": ["integer", "null"], "minimum": 0 },
+        "reasoning": { "type": ["integer", "null"], "minimum": 0 },
+        "reasoning_included_in_output": { "type": ["boolean", "null"] },
+        "model_requests": { "type": ["integer", "null"], "minimum": 0 },
+        "token_basis": { "enum": ["provider-reported", "estimated", "unavailable"] },
+        "provider_fields": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "required": ["reported_usd", "estimated_usd", "basis", "note", "currency"],
+      "additionalProperties": false,
+      "properties": {
+        "reported_usd": { "type": ["number", "null"], "minimum": 0 },
+        "estimated_usd": { "type": ["number", "null"], "minimum": 0 },
+        "basis": {
+          "enum": [
+            "provider-reported",
+            "client-reported-estimate",
+            "estimated",
+            "subscription-allowance",
+            "unavailable"
+          ]
+        },
+        "note": { "type": ["string", "null"], "maxLength": 400 },
+        "currency": { "type": ["string", "null"], "maxLength": 8 }
+      }
+    },
+    "tools": {
+      "type": "object",
+      "required": ["invocations", "result_bytes", "repeated_reads", "errors"],
+      "additionalProperties": false,
+      "properties": {
+        "invocations": { "type": ["integer", "null"], "minimum": 0 },
+        "result_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "repeated_reads": { "type": ["integer", "null"], "minimum": 0 },
+        "errors": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "context": {
+      "type": "object",
+      "required": ["start_tokens", "average_tokens", "growth_tokens"],
+      "additionalProperties": false,
+      "properties": {
+        "start_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "average_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "growth_tokens": { "type": ["integer", "null"] }
+      }
+    },
+    "latency": {
+      "type": "object",
+      "required": ["api_ms", "tool_ms", "time_to_first_token_ms", "output_tokens_per_second"],
+      "additionalProperties": false,
+      "properties": {
+        "api_ms": { "type": ["number", "null"], "minimum": 0 },
+        "tool_ms": { "type": ["number", "null"], "minimum": 0 },
+        "time_to_first_token_ms": { "type": ["number", "null"], "minimum": 0 },
+        "output_tokens_per_second": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "cpu": {
+      "type": "object",
+      "required": ["user_seconds", "system_seconds", "total_seconds", "cpu_percent", "measurement", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "user_seconds": { "type": ["number", "null"], "minimum": 0 },
+        "system_seconds": { "type": ["number", "null"], "minimum": 0 },
+        "total_seconds": { "type": ["number", "null"], "minimum": 0 },
+        "cpu_percent": { "type": ["number", "null"], "minimum": 0 },
+        "measurement": { "enum": ["measured", "sampled", "derived", "unavailable"] },
+        "source": { "type": ["string", "null"], "maxLength": 120 }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "required": ["peak_rss_bytes", "peak_container_bytes", "peak_php_mb", "measurement"],
+      "additionalProperties": false,
+      "properties": {
+        "peak_rss_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "peak_container_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "peak_php_mb": { "type": ["number", "null"], "minimum": 0 },
+        "measurement": { "enum": ["measured", "sampled", "unavailable"] }
+      }
+    },
+    "io": {
+      "type": "object",
+      "required": ["read_ops", "write_ops", "read_bytes", "write_bytes", "measurement"],
+      "additionalProperties": false,
+      "properties": {
+        "read_ops": { "type": ["integer", "null"], "minimum": 0 },
+        "write_ops": { "type": ["integer", "null"], "minimum": 0 },
+        "read_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "write_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "measurement": { "enum": ["measured", "sampled", "derived", "unavailable"] }
+      }
+    },
+    "network": {
+      "type": "object",
+      "required": ["rx_bytes", "tx_bytes", "measurement"],
+      "additionalProperties": false,
+      "properties": {
+        "rx_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "tx_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "measurement": { "enum": ["measured", "sampled", "unavailable"] }
+      }
+    },
+    "github": {
+      "type": "object",
+      "required": [
+        "workflow",
+        "job",
+        "event",
+        "runner",
+        "attempt",
+        "potentially_superseded",
+        "billable_minutes",
+        "queue_seconds",
+        "run_id",
+        "job_id",
+        "conclusion",
+        "started_at",
+        "completed_at",
+        "artifact_retention_days",
+        "cache_bytes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "workflow": { "type": ["string", "null"], "maxLength": 200 },
+        "job": { "type": ["string", "null"], "maxLength": 200 },
+        "event": { "type": ["string", "null"], "maxLength": 80 },
+        "runner": { "type": ["string", "null"], "maxLength": 120 },
+        "attempt": { "type": ["integer", "null"], "minimum": 1 },
+        "potentially_superseded": { "type": ["boolean", "null"] },
+        "billable_minutes": { "type": ["number", "null"], "minimum": 0 },
+        "queue_seconds": { "type": ["number", "null"], "minimum": 0 },
+        "run_id": { "type": ["string", "null"], "maxLength": 80 },
+        "job_id": { "type": ["string", "null"], "maxLength": 80 },
+        "conclusion": { "type": ["string", "null"], "maxLength": 40 },
+        "started_at": { "type": ["string", "null"], "maxLength": 40 },
+        "completed_at": { "type": ["string", "null"], "maxLength": 40 },
+        "artifact_retention_days": { "type": ["integer", "null"], "minimum": 0 },
+        "cache_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "job_elapsed_ms": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "energy": {
+      "type": "object",
+      "required": [
+        "boundary",
+        "method",
+        "source",
+        "source_version",
+        "measured_wh",
+        "estimated_wh",
+        "mean_wh",
+        "standard_deviation_wh",
+        "lower_wh",
+        "upper_wh",
+        "interval_method",
+        "basis",
+        "coverage",
+        "components",
+        "source_values",
+        "hardware",
+        "dataset",
+        "by_category",
+        "sensitivity",
+        "unestimated_categories",
+        "estimated_tokens",
+        "total_tokens",
+        "uncertainty_correlation",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "boundary": {
+          "enum": [
+            "tracked-process",
+            "process-and-descendants",
+            "cpu-package",
+            "cpu-and-gpu",
+            "whole-system",
+            "virtual-machine",
+            "container",
+            "external-infrastructure",
+            "accelerator-inference",
+            "unavailable"
+          ]
+        },
+        "method": { "type": ["string", "null"], "maxLength": 200 },
+        "source": { "type": ["string", "null"], "maxLength": 80 },
+        "source_version": { "type": ["string", "null"], "maxLength": 80 },
+        "measured_wh": { "type": ["number", "null"], "minimum": 0 },
+        "estimated_wh": { "type": ["number", "null"], "minimum": 0 },
+        "mean_wh": { "type": ["number", "null"], "minimum": 0 },
+        "standard_deviation_wh": { "type": ["number", "null"], "minimum": 0 },
+        "lower_wh": { "type": ["number", "null"], "minimum": 0 },
+        "upper_wh": { "type": ["number", "null"], "minimum": 0 },
+        "interval_method": { "type": ["string", "null"], "maxLength": 160 },
+        "basis": { "enum": ["measured", "provider-reported", "derived", "estimated", "unavailable"] },
+        "coverage": { "enum": ["complete", "partial", "unavailable"] },
+        "components": {
+          "type": "object",
+          "required": ["cpu_wh", "gpu_wh", "ram_wh", "accelerator_wh", "host_wh", "cooling_wh", "idle_wh"],
+          "additionalProperties": false,
+          "properties": {
+            "cpu_wh": { "type": ["number", "null"], "minimum": 0 },
+            "gpu_wh": { "type": ["number", "null"], "minimum": 0 },
+            "ram_wh": { "type": ["number", "null"], "minimum": 0 },
+            "accelerator_wh": { "type": ["number", "null"], "minimum": 0 },
+            "host_wh": { "type": ["number", "null"], "minimum": 0 },
+            "cooling_wh": { "type": ["number", "null"], "minimum": 0 },
+            "idle_wh": { "type": ["number", "null"], "minimum": 0 }
+          }
+        },
+        "source_values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "value", "unit", "quantity"],
+            "additionalProperties": false,
+            "properties": {
+              "field": { "type": "string", "minLength": 1, "maxLength": 120 },
+              "value": { "type": ["number", "null"] },
+              "unit": { "type": "string", "minLength": 1, "maxLength": 40 },
+              "quantity": { "type": "string", "minLength": 1, "maxLength": 40 }
+            }
+          }
+        },
+        "hardware": {
+          "type": "object",
+          "required": [
+            "cpu_model",
+            "cpu_threads",
+            "gpu_model",
+            "gpu_available",
+            "ram_total_bytes",
+            "tracking_mode",
+            "country_iso_code",
+            "region",
+            "pue",
+            "wue"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "cpu_model": { "type": ["string", "null"], "maxLength": 160 },
+            "cpu_threads": { "type": ["integer", "null"], "minimum": 1 },
+            "gpu_model": { "type": ["string", "null"], "maxLength": 160 },
+            "gpu_available": { "type": ["boolean", "null"] },
+            "ram_total_bytes": { "type": ["integer", "null"], "minimum": 0 },
+            "tracking_mode": { "type": ["string", "null"], "maxLength": 40 },
+            "country_iso_code": { "type": ["string", "null"], "maxLength": 8 },
+            "region": { "type": ["string", "null"], "maxLength": 120 },
+            "pue": { "type": ["number", "null"], "minimum": 0 },
+            "wue": { "type": ["number", "null"], "minimum": 0 }
+          }
+        },
+        "dataset": {
+          "type": "object",
+          "required": ["name", "version", "checksum", "license", "methodology_version"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": ["string", "null"], "maxLength": 120 },
+            "version": { "type": ["string", "null"], "maxLength": 80 },
+            "checksum": { "type": ["string", "null"], "maxLength": 120 },
+            "license": { "type": ["string", "null"], "maxLength": 120 },
+            "methodology_version": { "type": ["string", "null"], "maxLength": 120 }
+          }
+        },
+        "by_category": {
+          "type": "object",
+          "required": ["uncached_input_wh", "cached_input_wh", "cache_creation_wh", "output_wh"],
+          "additionalProperties": false,
+          "properties": {
+            "uncached_input_wh": { "type": ["number", "null"], "minimum": 0 },
+            "cached_input_wh": { "type": ["number", "null"], "minimum": 0 },
+            "cache_creation_wh": { "type": ["number", "null"], "minimum": 0 },
+            "output_wh": { "type": ["number", "null"], "minimum": 0 }
+          }
+        },
+        "sensitivity": {
+          "type": ["object", "null"],
+          "required": ["cache_creation_wh", "method", "included_in_mean"],
+          "additionalProperties": false,
+          "properties": {
+            "cache_creation_wh": { "type": ["number", "null"], "minimum": 0 },
+            "method": { "type": "string", "maxLength": 160 },
+            "included_in_mean": { "type": "boolean" }
+          }
+        },
+        "unestimated_categories": { "type": "array", "items": { "type": "string", "maxLength": 80 } },
+        "estimated_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "total_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "uncertainty_correlation": { "type": ["string", "null"], "maxLength": 200 },
+        "notes": { "type": "array", "items": { "type": "string", "maxLength": 500 } }
+      }
+    },
+    "emissions": {
+      "type": "object",
+      "required": [
+        "boundary",
+        "gco2e",
+        "gco2e_per_kwh",
+        "carbon_intensity_source",
+        "region",
+        "country_iso_code",
+        "methodology",
+        "basis",
+        "coverage",
+        "components",
+        "source_values"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "boundary": { "enum": ["operational-electricity", "provider-reported-operational", "lifecycle", "unavailable"] },
+        "gco2e": { "type": ["number", "null"], "minimum": 0 },
+        "gco2e_per_kwh": { "type": ["number", "null"], "minimum": 0 },
+        "carbon_intensity_source": { "type": ["string", "null"], "maxLength": 300 },
+        "carbon_intensity_year": { "type": ["integer", "null"], "minimum": 1900, "maximum": 2200 },
+        "uncertainty": { "type": ["string", "null"], "maxLength": 400 },
+        "region": { "type": ["string", "null"], "maxLength": 120 },
+        "country_iso_code": { "type": ["string", "null"], "maxLength": 8 },
+        "methodology": { "type": ["string", "null"], "maxLength": 200 },
+        "basis": { "enum": ["measured", "provider-reported", "derived", "estimated", "unavailable"] },
+        "coverage": { "enum": ["complete", "partial", "unavailable"] },
+        "components": {
+          "type": "object",
+          "required": ["operational_gco2e", "embodied_gco2e", "construction_gco2e"],
+          "additionalProperties": false,
+          "properties": {
+            "operational_gco2e": { "type": ["number", "null"], "minimum": 0 },
+            "embodied_gco2e": { "type": ["number", "null"], "minimum": 0 },
+            "construction_gco2e": { "type": ["number", "null"], "minimum": 0 }
+          }
+        },
+        "source_values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "value", "unit"],
+            "additionalProperties": false,
+            "properties": {
+              "field": { "type": "string", "minLength": 1, "maxLength": 120 },
+              "value": { "type": ["number", "null"] },
+              "unit": { "type": "string", "minLength": 1, "maxLength": 40 }
+            }
+          }
+        }
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "required": [
+        "id",
+        "tool",
+        "tool_version",
+        "exit_status",
+        "signal",
+        "timed_out",
+        "wall_ms",
+        "inner_wall_ms",
+        "overhead_ms",
+        "sampling_interval_ms",
+        "lock_wait_ms",
+        "overlap",
+        "concurrent_measurements",
+        "cache_state",
+        "repeats"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 8, "maxLength": 120 },
+        "tool": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "tool_version": { "type": ["string", "null"], "maxLength": 40 },
+        "exit_status": { "type": ["integer", "null"] },
+        "signal": { "type": ["string", "null"], "maxLength": 40 },
+        "timed_out": { "type": "boolean" },
+        "wall_ms": { "type": ["number", "null"], "minimum": 0 },
+        "inner_wall_ms": { "type": ["number", "null"], "minimum": 0 },
+        "overhead_ms": { "type": ["number", "null"] },
+        "sampling_interval_ms": { "type": ["number", "null"], "minimum": 0 },
+        "lock_wait_ms": { "type": ["number", "null"], "minimum": 0 },
+        "overlap": { "type": "boolean" },
+        "concurrent_measurements": { "type": "integer", "minimum": 0 },
+        "cache_state": { "enum": ["cold", "warm", null] },
+        "repeats": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "benchmark": {
+      "type": "object",
+      "required": ["workload", "repetition", "repetitions", "cache_state", "baseline", "summary", "runs", "statistics"],
+      "additionalProperties": false,
+      "properties": {
+        "workload": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "repetition": { "type": "integer", "minimum": 1 },
+        "repetitions": { "type": "integer", "minimum": 1 },
+        "cache_state": { "enum": ["cold", "warm"] },
+        "baseline": { "type": ["string", "null"], "maxLength": 80 },
+        "summary": { "type": "boolean" },
+        "runs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["repetition", "cache_state", "wall_ms", "cpu_seconds", "peak_rss_bytes", "energy_wh", "emissions_gco2e", "coverage"],
+            "additionalProperties": false,
+            "properties": {
+              "repetition": { "type": "integer", "minimum": 1 },
+              "cache_state": { "enum": ["cold", "warm"] },
+              "wall_ms": { "type": ["number", "null"], "minimum": 0 },
+              "cpu_seconds": { "type": ["number", "null"], "minimum": 0 },
+              "peak_rss_bytes": { "type": ["integer", "null"], "minimum": 0 },
+              "energy_wh": { "type": ["number", "null"], "minimum": 0 },
+              "emissions_gco2e": { "type": ["number", "null"], "minimum": 0 },
+              "coverage": { "enum": ["complete", "partial", "unavailable"] }
+            }
+          }
+        },
+        "statistics": {
+          "type": "object",
+          "required": ["n", "median", "minimum", "maximum", "standard_deviation", "interquartile_range"],
+          "additionalProperties": false,
+          "properties": {
+            "n": { "type": "integer", "minimum": 0 },
+            "median": { "type": ["number", "null"] },
+            "minimum": { "type": ["number", "null"] },
+            "maximum": { "type": ["number", "null"] },
+            "standard_deviation": { "type": ["number", "null"] },
+            "interquartile_range": { "type": ["number", "null"] }
+          }
+        }
+      }
+    },
+    "github_api": {
+      "type": "object",
+      "required": [
+        "requests",
+        "status_200",
+        "status_304",
+        "failed",
+        "rate_limited",
+        "cache_hits",
+        "cache_misses",
+        "repositories_discovered",
+        "repositories_evaluated",
+        "repositories_skipped",
+        "carried_forward",
+        "security_checks",
+        "response_bytes",
+        "freshness"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "requests": { "type": ["integer", "null"], "minimum": 0 },
+        "status_200": { "type": ["integer", "null"], "minimum": 0 },
+        "status_304": { "type": ["integer", "null"], "minimum": 0 },
+        "failed": { "type": ["integer", "null"], "minimum": 0 },
+        "rate_limited": { "type": ["integer", "null"], "minimum": 0 },
+        "cache_hits": { "type": ["integer", "null"], "minimum": 0 },
+        "cache_misses": { "type": ["integer", "null"], "minimum": 0 },
+        "repositories_discovered": { "type": ["integer", "null"], "minimum": 0 },
+        "repositories_evaluated": { "type": ["integer", "null"], "minimum": 0 },
+        "repositories_skipped": { "type": ["integer", "null"], "minimum": 0 },
+        "carried_forward": { "type": ["integer", "null"], "minimum": 0 },
+        "security_checks": { "type": ["integer", "null"], "minimum": 0 },
+        "response_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "freshness": { "type": ["string", "null"], "maxLength": 120 },
+        "complete": { "type": ["boolean", "null"] }
+      }
+    },
+    "ai": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "session_id_hash",
+        "requested_model",
+        "resolved_model",
+        "model_alias",
+        "streaming",
+        "reasoning",
+        "retries",
+        "tool_invocations",
+        "tool_result_bytes",
+        "time_to_first_token_ms",
+        "output_tokens_per_second",
+        "context_window_utilization",
+        "modality",
+        "api_region",
+        "service_tier",
+        "batch",
+        "cache_lifetime",
+        "routing",
+        "outcome"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "request_id": { "type": ["string", "null"], "maxLength": 200 },
+        "session_id_hash": { "type": ["string", "null"], "maxLength": 64 },
+        "requested_model": { "type": ["string", "null"], "maxLength": 200 },
+        "resolved_model": { "type": ["string", "null"], "maxLength": 200 },
+        "model_version": { "type": ["string", "null"], "maxLength": 200 },
+        "model_alias": { "type": ["string", "null"], "maxLength": 200 },
+        "streaming": { "type": ["boolean", "null"] },
+        "reasoning": {
+          "type": "object",
+          "required": ["enabled", "effort", "budget_tokens"],
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": ["boolean", "null"] },
+            "effort": { "type": ["string", "null"], "maxLength": 40 },
+            "budget_tokens": { "type": ["integer", "null"], "minimum": 0 }
+          }
+        },
+        "retries": { "type": ["integer", "null"], "minimum": 0 },
+        "tool_invocations": { "type": ["integer", "null"], "minimum": 0 },
+        "tool_result_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "time_to_first_token_ms": { "type": ["number", "null"], "minimum": 0 },
+        "output_tokens_per_second": { "type": ["number", "null"], "minimum": 0 },
+        "context_window_utilization": { "type": ["number", "null"], "minimum": 0 },
+        "modality": { "type": ["string", "null"], "maxLength": 40 },
+        "api_region": { "type": ["string", "null"], "maxLength": 80 },
+        "service_tier": { "type": ["string", "null"], "maxLength": 80 },
+        "batch": { "type": ["boolean", "null"] },
+        "cache_lifetime": { "type": ["string", "null"], "maxLength": 80 },
+        "routing": { "type": ["string", "null"], "maxLength": 200 },
+        "outcome": { "enum": ["success", "failure", "cancelled", "partial", "unknown"] }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "required": ["completeness", "missing", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "completeness": { "enum": ["complete", "partial", "estimated", "unavailable"] },
+        "missing": { "type": "array", "items": { "type": "string", "maxLength": 120 } },
+        "notes": { "type": "array", "items": { "type": "string", "maxLength": 500 } },
+        "warnings": { "type": "array", "items": { "type": "string", "maxLength": 120 } }
+      }
+    }
+  }
+}

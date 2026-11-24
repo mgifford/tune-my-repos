@@ -49,9 +49,48 @@ function recordScan(state, repoFullName, pushedAt, nowIso = new Date().toISOStri
     ...state,
     repositories: {
       ...state.repositories,
-      [repoFullName]: { last_scanned: nowIso, last_pushed_at: pushedAt },
+      // Spread the previous entry so fields recorded separately (the issues
+      // ETag) survive a rescan.
+      [repoFullName]: { ...state.repositories[repoFullName], last_scanned: nowIso, last_pushed_at: pushedAt },
     },
   };
+}
+
+/**
+ * The ETag of this repository's open issues-and-PRs list from the last run
+ * that read it, or null. GitHub lists pull requests as issues, so one list
+ * covers both; a conditional request with this value returns 304 (free, and
+ * not counted against the rate limit) while nothing in the list changed.
+ * @returns {string|null}
+ */
+function getIssuesEtag(state, repoFullName) {
+  return getRepoState(state, repoFullName)?.issues_etag || null;
+}
+
+/**
+ * Returns a new state with the repository's issues ETag set. A missing ETag
+ * leaves the stored one alone. Does not mutate the input; does nothing for a
+ * repository with no entry yet (recordScan creates it).
+ */
+function recordIssuesEtag(state, repoFullName, etag) {
+  const entry = getRepoState(state, repoFullName);
+  if (!entry || !etag) return state;
+  return {
+    ...state,
+    repositories: { ...state.repositories, [repoFullName]: { ...entry, issues_etag: etag } },
+  };
+}
+
+/**
+ * Whether PR/CI work may be skipped after probing the issues list. The
+ * pushed_at check alone misses what does not push to this repository: a
+ * pull request from a fork, or any issue. Anything but a confirmed 304
+ * (changed, unreadable, or never probed) means "do the work".
+ * @param {boolean} unchangedByPush - the result of canSkipPrWork
+ * @param {'not_modified'|'modified'|'unknown'|undefined} probe
+ */
+function canSkipAfterProbe(unchangedByPush, probe) {
+  return unchangedByPush === true && probe === 'not_modified';
 }
 
 /**
@@ -129,6 +168,9 @@ const ScanState = {
   getRepoState,
   canSkipPrWork,
   recordScan,
+  getIssuesEtag,
+  recordIssuesEtag,
+  canSkipAfterProbe,
   pruneToRepositories,
   orderByStaleness,
   orderByActivityThenStaleness,

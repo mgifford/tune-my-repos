@@ -21,9 +21,18 @@ const path = require('node:path');
 
 const { classifyUpdate, getRepositoryTier, isRepositoryInPolicy, repositoryMatchesPattern } = require('../policy/policy-engine.cjs');
 const { validatePolicySchema } = require('../policy/policy-validator.cjs');
-const { canSkipPrWork, recordScan, pruneToRepositories, orderByActivityThenStaleness } = require('../policy/scan-state.cjs');
+const {
+  canSkipPrWork,
+  canSkipAfterProbe,
+  getIssuesEtag,
+  recordIssuesEtag,
+  recordScan,
+  pruneToRepositories,
+  orderByActivityThenStaleness,
+} = require('../policy/scan-state.cjs');
 const { redactExactAlertCounts } = require('../policy/public-redaction.cjs');
 const { KNOWN_REPLACEMENTS, listDirectDependencies, evaluateLibraryAdvice } = require('../policy/library-advice.cjs');
+const { makeEvent } = require('./lib/resource/event.cjs');
 
 const MAX_FAILURE_SUMMARY_CHARS = 500;
 // GitHub allows 60 unauthenticated requests/hour; a repository costs
@@ -34,6 +43,39 @@ const API_BASE = 'https://api.github.com';
 
 const token = process.env.MAINTENANCE_RO_TOKEN || process.env.GITHUB_TOKEN || '';
 const dryRun = process.argv.includes('--dry-run');
+const resourceOutArg = process.argv.find((arg) => arg.startsWith('--resource-out='));
+const resourceOutPath = resourceOutArg ? path.resolve(resourceOutArg.slice('--resource-out='.length)) : null;
+
+// Measured API/cache counters for this run. These are counts of requests this
+// process actually made; they are never converted into energy.
+function createApiMetrics() {
+  return {
+    requests: 0,
+    status_200: 0,
+    status_304: 0,
+    failed: 0,
+    rate_limited: 0,
+    cache_hits: 0,
+    cache_misses: 0,
+    repositories_discovered: 0,
+    repositories_evaluated: 0,
+    repositories_skipped: 0,
+    carried_forward: 0,
+    security_checks: 0,
+    response_bytes: 0,
+    completeness: null,
+    freshness: null,
+  };
+}
+let apiMetrics = createApiMetrics();
+function resetApiMetrics() {
+  apiMetrics = createApiMetrics();
+  return apiMetrics;
+}
+
+function isSecurityEndpoint(endpoint) {
+  return /\/(dependabot\/alerts|secret-scanning|code-scanning|branches\/|rules\/branches)/.test(endpoint);
+}
 // Set LIBRARY_ADVICE_REGISTRY=off to skip npm registry lookups (curated
 // rules still apply).
 const registryLookups = process.env.LIBRARY_ADVICE_REGISTRY !== 'off';
@@ -62,15 +104,52 @@ function gitBlobSha(bytes) {
   return crypto.createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
 }
 
-async function githubFetch(endpoint, { allow404 = false, raw = false } = {}) {
+/**
+ * @param {string} endpoint
+ * @param {{allow404?: boolean, raw?: boolean, etag?: string|null}} [options]
+ *   etag: a stored ETag; sent as If-None-Match. A 304 reply is returned as
+ *   {ok: false, status: 304, notModified: true}, so a caller that ignores it
+ *   treats the data as unreadable, never as empty.
+ * @returns {Promise<{ok: boolean, status: number, data: any, etag?: string|null, notModified?: boolean}>}
+ */
+async function githubFetch(endpoint, {
+  allow404 = false,
+  raw = false,
+  etag = null,
+  authToken = token,
+  security = false,
+  cacheCheck = false,
+  count = true,
+} = {}) {
   const headers = {
     Accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  if (authToken) headers.Authorization = `Bearer ${authToken}`;
+  if (etag) headers['If-None-Match'] = etag;
 
+  if (count) apiMetrics.requests += 1;
   const response = await fetch(`${API_BASE}${endpoint}`, { headers });
+  // Read the body once so response bytes are measured, then parse it. A 304
+  // has no body. This does not alter the existing ok/304/404/403 contract.
+  const bodyText = response.status === 304 ? '' : await response.text();
+  if (count) apiMetrics.response_bytes += Buffer.byteLength(bodyText, 'utf8');
+  if (count && response.status === 200) apiMetrics.status_200 += 1;
+  if (count && response.status === 304) apiMetrics.status_304 += 1;
+  if (count && response.status >= 400 && response.status !== 304) apiMetrics.failed += 1;
+  const remaining = response.headers.get('x-ratelimit-remaining');
+  if (count && (response.status === 429 || (response.status === 403 && (remaining === '0' || response.headers.get('retry-after'))))) {
+    apiMetrics.rate_limited += 1;
+  }
+  if (count && cacheCheck) {
+    if (response.status === 304) apiMetrics.cache_hits += 1;
+    else if (response.status === 200) apiMetrics.cache_misses += 1;
+  }
+  if (count && (security || isSecurityEndpoint(endpoint))) apiMetrics.security_checks += 1;
 
+  if (response.status === 304) {
+    return { ok: false, status: 304, notModified: true, data: null };
+  }
   if (response.status === 404 && allow404) {
     return { ok: false, status: 404, data: null };
   }
@@ -80,7 +159,31 @@ async function githubFetch(endpoint, { allow404 = false, raw = false } = {}) {
   if (!response.ok) {
     return { ok: false, status: response.status, data: null };
   }
-  return { ok: true, status: response.status, data: raw ? await response.text() : await response.json() };
+  let data = null;
+  if (raw) data = bodyText;
+  else if (bodyText) data = JSON.parse(bodyText);
+  return {
+    ok: true,
+    status: response.status,
+    etag: response.headers.get('etag'),
+    data,
+  };
+}
+
+/** One stable URL, so the ETag stored from one run matches the next run's request. */
+function openIssuesEndpoint(repoFullName) {
+  return `/repos/${repoFullName}/issues?state=open&per_page=100&sort=updated&direction=desc`;
+}
+
+/**
+ * Reads the open issues-and-PRs list, conditionally when an ETag is known.
+ * @returns {Promise<{outcome: 'not_modified'|'modified'|'unknown', items: object[]|null, etag: string|null}>}
+ */
+async function probeOpenIssues(repoFullName, storedEtag) {
+  const result = await githubFetch(openIssuesEndpoint(repoFullName), { allow404: true, etag: storedEtag, cacheCheck: true });
+  if (result.notModified) return { outcome: 'not_modified', items: null, etag: storedEtag };
+  if (result.ok && Array.isArray(result.data)) return { outcome: 'modified', items: result.data, etag: result.etag || null };
+  return { outcome: 'unknown', items: null, etag: null };
 }
 
 /**
@@ -410,7 +513,7 @@ async function fetchDependabotAlerts(repoFullName) {
 }
 
 async function fetchSecurityAndAnalysis(repoFullName) {
-  const result = await githubFetch(`/repos/${repoFullName}`);
+  const result = await githubFetch(`/repos/${repoFullName}`, { security: true });
   if (!result.ok) return null;
   return result.data;
 }
@@ -809,7 +912,310 @@ function ownerMismatchWarning(policy, runningOwner) {
     'If this is your copy, set discovery.owners and repositories.include to your own account (see README).';
 }
 
+
+/**
+ * Optional GitHub Actions metadata. Environment values cost no API calls. The
+ * run/jobs API is queried only when RESOURCE_COLLECT_ACTIONS=1 (a deliberate,
+ * occasional measurement), using GITHUB_TOKEN rather than the read-only scan
+ * token. Job/workflow elapsed values collected while the job is still running
+ * are lower bounds and are labelled as such.
+ */
+async function collectActionsMetrics({ authToken: actionToken = process.env.GITHUB_TOKEN || token } = {}) {
+  if (process.env.GITHUB_ACTIONS !== 'true') return null;
+  const metrics = {
+    workflow: process.env.GITHUB_WORKFLOW || null,
+    job: process.env.GITHUB_JOB || null,
+    event: process.env.GITHUB_EVENT_NAME || null,
+    runner: process.env.RUNNER_ENVIRONMENT || process.env.RUNNER_OS || null,
+    attempt: Number(process.env.GITHUB_RUN_ATTEMPT) || null,
+    potentially_superseded: null,
+    billable_minutes: null,
+    queue_seconds: null,
+    run_id: process.env.GITHUB_RUN_ID || null,
+    job_id: null,
+    conclusion: null,
+    started_at: null,
+    completed_at: null,
+    artifact_retention_days: null,
+    cache_bytes: null,
+    job_elapsed_ms: null,
+    workflow_elapsed_ms: null,
+    api_available: false,
+    requested: process.env.RESOURCE_COLLECT_ACTIONS === '1',
+    note: 'GitHub Actions does not expose CPU time, electricity or billable minutes through this API surface.',
+  };
+  if (!metrics.requested || !metrics.run_id || !process.env.GITHUB_REPOSITORY) return metrics;
+
+  const repo = process.env.GITHUB_REPOSITORY;
+  const run = await githubFetch(`/repos/${repo}/actions/runs/${metrics.run_id}`, {
+    allow404: true,
+    authToken: actionToken,
+    count: false,
+  });
+  if (run.ok && run.data) {
+    metrics.api_available = true;
+    metrics.workflow = run.data.name || metrics.workflow;
+    metrics.event = run.data.event || metrics.event;
+    metrics.attempt = run.data.run_attempt || metrics.attempt;
+    metrics.conclusion = run.data.conclusion || null;
+    metrics.started_at = run.data.run_started_at || run.data.created_at || null;
+    metrics.completed_at = run.data.status === 'completed' ? (run.data.updated_at || null) : null;
+    if (metrics.started_at) {
+      const startMs = Date.parse(metrics.started_at);
+      const endMs = metrics.completed_at ? Date.parse(metrics.completed_at) : Date.now();
+      if (Number.isFinite(startMs) && Number.isFinite(endMs) && endMs >= startMs) {
+        metrics.workflow_elapsed_ms = endMs - startMs;
+      }
+      if (run.data.created_at) {
+        const createdMs = Date.parse(run.data.created_at);
+        if (Number.isFinite(createdMs) && startMs >= createdMs) metrics.queue_seconds = (startMs - createdMs) / 1000;
+      }
+    }
+    metrics.run_id = String(run.data.id || metrics.run_id);
+  }
+
+  const jobs = await githubFetch(`/repos/${repo}/actions/runs/${metrics.run_id}/jobs?filter=latest&per_page=100`, {
+    allow404: true,
+    authToken: actionToken,
+    count: false,
+  });
+  if (jobs.ok && Array.isArray(jobs.data?.jobs)) {
+    const jobList = jobs.data.jobs;
+    const matching = jobList.find((job) => job.name === metrics.job) || jobList[0] || null;
+    if (matching) {
+      metrics.job = matching.name || metrics.job;
+      metrics.job_id = matching.id ? String(matching.id) : null;
+      metrics.conclusion = matching.conclusion || metrics.conclusion;
+      metrics.started_at = metrics.started_at || matching.started_at || null;
+      metrics.completed_at = matching.completed_at || metrics.completed_at;
+      if (Array.isArray(matching.labels) && matching.labels.length) metrics.runner = matching.labels.join(', ');
+    }
+    // Sum all job execution times, including matrix children, so this is not
+    // confused with the workflow's wall-clock elapsed time.
+    let totalJobMs = 0;
+    let anyJob = false;
+    for (const job of jobList) {
+      if (!job.started_at) continue;
+      const start = Date.parse(job.started_at);
+      const end = job.completed_at ? Date.parse(job.completed_at) : Date.now();
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) continue;
+      totalJobMs += end - start;
+      anyJob = true;
+    }
+    if (anyJob) metrics.job_elapsed_ms = totalJobMs;
+  }
+  if (!metrics.api_available) metrics.note += ' The Actions API was unavailable; only environment metadata is recorded.';
+  return metrics;
+}
+
+function actionsOutcome(conclusion) {
+  if (conclusion === 'success') return 'success';
+  if (conclusion === 'failure' || conclusion === 'timed_out' || conclusion === 'action_required') return 'failure';
+  if (conclusion === 'cancelled') return 'cancelled';
+  if (conclusion === 'skipped') return 'partial';
+  return 'unknown';
+}
+
+/** Build the local resource evidence for one inventory run. Counts only; no repository names. */
+function buildInventoryResourceEvents({
+  startedAt,
+  endedAt,
+  actions = null,
+  project = process.env.GITHUB_REPOSITORY || 'local/tune-my-repos',
+  commit = process.env.GITHUB_SHA || null,
+  runId = process.env.GITHUB_RUN_ID || null,
+  attempt = process.env.GITHUB_RUN_ATTEMPT || null,
+  dryRun: isDryRun = false,
+  candidateCount = 0,
+  evaluatedCount = 0,
+  carriedForward = 0,
+  probeCounts = {},
+} = {}) {
+  const measurementId = `inventory:${runId ? `${runId}:${attempt || '1'}` : startedAt}`.slice(0, 120);
+  const complete = apiMetrics.completeness === true;
+  const api = {
+    requests: apiMetrics.requests,
+    status_200: apiMetrics.status_200,
+    status_304: apiMetrics.status_304,
+    failed: apiMetrics.failed,
+    rate_limited: apiMetrics.rate_limited,
+    cache_hits: apiMetrics.cache_hits,
+    cache_misses: apiMetrics.cache_misses,
+    repositories_discovered: candidateCount,
+    repositories_evaluated: evaluatedCount,
+    repositories_skipped: Math.max(0, candidateCount - evaluatedCount),
+    carried_forward: carriedForward,
+    security_checks: apiMetrics.security_checks,
+    response_bytes: apiMetrics.response_bytes,
+    freshness: endedAt,
+    complete,
+  };
+  const warnings = [];
+  if (!complete) warnings.push('incomplete-inventory-scan');
+  if (apiMetrics.rate_limited > 0) warnings.push('github-rate-limit-response');
+  if (actions && actions.requested && !actions.api_available) warnings.push('github-actions-api-unavailable');
+  const durationMs = Math.max(0, Date.parse(endedAt) - Date.parse(startedAt));
+  const common = {
+    project,
+    commit,
+    issue: null,
+    variant: null,
+    task: {
+      id: 'repository-inventory',
+      label: 'Portfolio repository inventory',
+      execution_id: `run:${startedAt}`,
+      kind: 'maintenance',
+      state: 'completed_unverified',
+      expected_deliverable: 'inventory',
+      verified: false,
+    },
+    environment: {
+      os: `${process.platform} ${process.arch}`,
+      node: process.version,
+      runner: process.env.GITHUB_ACTIONS === 'true' ? 'github-actions' : 'local',
+      ddev: null,
+      docker: null,
+      arch: process.arch,
+    },
+    validation: 'not-run',
+    model: null,
+    provider: null,
+  };
+  const events = [makeEvent({
+    ...common,
+    measurement_id: measurementId,
+    event_type: 'github-api',
+    occurred_at: startedAt,
+    duration_ms: durationMs,
+    activity: 'repository-inventory',
+    tool: 'github-rest-api',
+    outcome: complete ? 'success' : 'partial',
+    source: {
+      adapter: 'inventory-generator',
+      method: 'instrumented githubFetch counters',
+      confidence: 'measured',
+      reference: null,
+    },
+    measurements: {
+      github_api: api,
+      cpu: { measurement: 'unavailable' },
+      memory: { measurement: 'unavailable' },
+      network: { rx_bytes: null, tx_bytes: null, measurement: 'unavailable' },
+      measurement: {
+        id: measurementId,
+        tool: 'inventory-generator',
+        tool_version: null,
+        exit_status: 0,
+        signal: null,
+        timed_out: false,
+        wall_ms: durationMs,
+        inner_wall_ms: durationMs,
+        overhead_ms: null,
+        sampling_interval_ms: null,
+        lock_wait_ms: null,
+        overlap: false,
+        concurrent_measurements: 0,
+        cache_state: null,
+        repeats: 1,
+      },
+    },
+    quality: {
+      completeness: 'partial',
+      missing: ['energy', 'emissions', 'cpu', 'memory', 'tokens', 'cost', 'network'],
+      notes: [
+        'GitHub API request counts are not converted into energy.',
+        `Issue/PR probe outcomes: ${probeCounts.not_modified || 0} not modified, ${probeCounts.modified || 0} modified/first read, ${probeCounts.unknown || 0} unreadable.`,
+        complete ? 'Every candidate repository in this run was evaluated.' : 'This scan is incomplete; do not treat it as a completed portfolio inventory.',
+      ],
+      warnings,
+    },
+    private: {
+      dry_run: Boolean(isDryRun),
+      token_present: Boolean(token),
+      candidates: candidateCount,
+      evaluated: evaluatedCount,
+      probe_counts: probeCounts,
+    },
+  })];
+
+  if (actions) {
+    events.push(makeEvent({
+      ...common,
+      measurement_id: `${measurementId}:actions`.slice(0, 120),
+      event_type: 'github-actions',
+      occurred_at: actions.started_at || startedAt,
+      duration_ms: actions.workflow_elapsed_ms,
+      activity: 'github-actions',
+      tool: 'github-actions',
+      outcome: actionsOutcome(actions.conclusion),
+      source: {
+        adapter: 'github-actions-metadata',
+        method: actions.api_available ? 'run and job metadata plus environment' : 'environment metadata only',
+        confidence: actions.api_available ? 'provider-reported' : 'unavailable',
+        reference: null,
+      },
+      measurements: {
+        github: {
+          workflow: actions.workflow,
+          job: actions.job,
+          event: actions.event,
+          runner: actions.runner,
+          attempt: actions.attempt,
+          potentially_superseded: actions.potentially_superseded,
+          billable_minutes: actions.billable_minutes,
+          queue_seconds: actions.queue_seconds,
+          run_id: actions.run_id,
+          job_id: actions.job_id,
+          conclusion: actions.conclusion,
+          started_at: actions.started_at,
+          completed_at: actions.completed_at,
+          artifact_retention_days: actions.artifact_retention_days,
+          cache_bytes: actions.cache_bytes,
+          job_elapsed_ms: actions.job_elapsed_ms,
+        },
+        cpu: { measurement: 'unavailable' },
+        memory: { measurement: 'unavailable' },
+        network: { rx_bytes: null, tx_bytes: null, measurement: 'unavailable' },
+        measurement: {
+          id: `${measurementId}:actions`.slice(0, 120),
+          tool: 'github-actions',
+          tool_version: null,
+          exit_status: null,
+          signal: null,
+          timed_out: false,
+          wall_ms: actions.workflow_elapsed_ms,
+          inner_wall_ms: actions.job_elapsed_ms,
+          overhead_ms: null,
+          sampling_interval_ms: null,
+          lock_wait_ms: null,
+          overlap: false,
+          concurrent_measurements: 0,
+          cache_state: null,
+          repeats: 1,
+        },
+      },
+      quality: {
+        completeness: 'partial',
+        missing: ['energy', 'emissions', 'cpu', 'memory', 'tokens', 'cost', 'network', 'billable_minutes', 'cache_bytes'],
+        notes: [
+          'Workflow elapsed time is not CPU time or electricity consumption.',
+          'Job elapsed time is summed job execution time; it is not electricity.',
+          actions.note,
+          actions.requested ? (actions.api_available ? 'Actions API metadata collected for this run.' : 'Actions API collection was requested but unavailable; only environment metadata is recorded.') : 'Actions API collection was not requested; only environment metadata is recorded.',
+          actions.api_available && !actions.completed_at ? 'Workflow/job duration is a lower bound collected while the job was still running.' : '',
+        ].filter(Boolean),
+        warnings: actions.requested && !actions.api_available ? ['github-actions-api-unavailable'] : [],
+      },
+      private: { api_available: actions.api_available },
+    }));
+  }
+  return events;
+}
+
 async function main() {
+  resetApiMetrics();
+  const runStartedAt = new Date().toISOString();
+  const runStartedMs = Date.now();
   const policy = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'maintenance-policy.json'), 'utf8'));
   const mismatch = ownerMismatchWarning(policy, process.env.GITHUB_REPOSITORY_OWNER);
   // ::warning:: surfaces on the Actions run summary, not just in the log
@@ -838,6 +1244,8 @@ async function main() {
   }
 
   const pushedAtByRepo = await resolveCandidateRepos(policy);
+  const candidateCount = pushedAtByRepo.size;
+  apiMetrics.repositories_discovered = candidateCount;
   // Drop state for repositories that are no longer public candidates. Skipped
   // when discovery returned nothing (likely an API failure), so one bad run
   // does not wipe the rotation history.
@@ -852,6 +1260,7 @@ async function main() {
   const reposThisRun = orderedRepos.slice(0, maxRepos);
 
   const repositories = [];
+  const probeCounts = { not_modified: 0, modified: 0, unknown: 0 };
   for (const repoFullName of reposThisRun) {
     // Repo metadata is fetched once here (rather than inside
     // buildRepositoryEntry) because its pushed_at is needed up front to
@@ -869,9 +1278,21 @@ async function main() {
     // Only skip when there is real PR data to carry forward: an entry
     // without pr_data_as_of was published before carry-forward existed (or
     // never had PRs read), so skipping would publish an empty PR list.
-    const skipPrWork = knownPushedAt !== null
+    const unchangedByPush = knownPushedAt !== null
       && hasCarryablePrData(previousEntries.get(repoFullName))
       && canSkipPrWork(scanState, repoFullName, knownPushedAt, policy.discovery.rescan_prs_after_days);
+
+    // pushed_at does not move for what does not push here: a pull request
+    // from a fork, or any issue. So a repository that looks unchanged is
+    // confirmed with one conditional request for its open issue/PR list: 304
+    // (free, not counted against the rate limit) keeps the skip; anything
+    // else does the work. A repository not already skippable is read without
+    // an ETag, to record one for next time.
+    const storedEtag = unchangedByPush ? getIssuesEtag(scanState, repoFullName) : null;
+    const probe = await probeOpenIssues(repoFullName, storedEtag);
+    const skipPrWork = canSkipAfterProbe(unchangedByPush && Boolean(storedEtag), probe.outcome);
+    probeCounts[probe.outcome] += 1;
+    if (skipPrWork) apiMetrics.carried_forward += 1;
 
     const entry = await buildRepositoryEntry(policy, repoFullName, {
       skipPrWork,
@@ -881,10 +1302,23 @@ async function main() {
     const pushedAtForState = knownPushedAt ?? entry._pushed_at;
     delete entry._pushed_at;
     repositories.push(entry);
+    apiMetrics.repositories_evaluated += 1;
     if (pushedAtForState) {
       scanState = recordScan(scanState, repoFullName, pushedAtForState);
+      scanState = recordIssuesEtag(scanState, repoFullName, probe.etag);
     }
   }
+
+  // Counts only, so the line is safe in a public log. A high not_modified
+  // share is the saving; many "unknown" means the issues list is unreadable.
+  console.log(`Issue/PR list probes: ${probeCounts.not_modified} not modified, ${probeCounts.modified} modified or first read, ${probeCounts.unknown} unreadable`);
+
+  apiMetrics.repositories_skipped = Math.max(0, candidateCount - repositories.length);
+  apiMetrics.completeness = candidateCount > 0
+    && reposThisRun.length === candidateCount
+    && repositories.length === reposThisRun.length
+    && apiMetrics.rate_limited === 0;
+  apiMetrics.freshness = new Date().toISOString();
 
   if (!dryRun) {
     fs.writeFileSync(scanStatePath, JSON.stringify(scanState, null, 2) + '\n');
@@ -906,6 +1340,28 @@ async function main() {
     for (const e of errors) console.error(`  - ${e}`);
     process.exit(1);
   }
+
+  // Resource evidence is separate from the maintenance rollup. It contains
+  // counts and timings only; no repository names or alert details.
+  const actions = resourceOutPath ? await collectActionsMetrics() : null;
+  const runEndedAt = new Date().toISOString();
+  if (resourceOutPath) {
+    const resourceEvents = buildInventoryResourceEvents({
+      startedAt: runStartedAt,
+      endedAt: runEndedAt,
+      actions,
+      candidateCount,
+      evaluatedCount: repositories.length,
+      carriedForward: apiMetrics.carried_forward,
+      probeCounts,
+      dryRun,
+    });
+    fs.mkdirSync(path.dirname(resourceOutPath), { recursive: true });
+    fs.writeFileSync(resourceOutPath, `${resourceEvents.map((event) => JSON.stringify(event)).join('\n')}\n`);
+    console.log(`Wrote ${resourceEvents.length} resource event(s) to ${resourceOutPath}`);
+  }
+  const requestsPerRepo = repositories.length > 0 ? apiMetrics.requests / repositories.length : null;
+  console.log(`GitHub API counters: ${apiMetrics.requests} requests, ${apiMetrics.status_304} not modified, ${apiMetrics.failed} failed, ${apiMetrics.rate_limited} rate-limited; ${repositories.length}/${candidateCount} repositories evaluated${requestsPerRepo === null ? '' : `, ${requestsPerRepo.toFixed(2)} requests/evaluated repository`}; scan ${apiMetrics.completeness ? 'complete' : 'incomplete'}; ${Date.now() - runStartedMs} ms wall clock`);
 
   const outPath = path.join(__dirname, '..', 'maintenance-rollup.json');
   // The full rollup (exact alert counts) is for the private 90-day
@@ -931,6 +1387,14 @@ async function main() {
 }
 
 module.exports = {
+  githubFetch,
+  resetApiMetrics,
+  getApiMetrics: () => apiMetrics,
+  collectActionsMetrics,
+  buildInventoryResourceEvents,
+  actionsOutcome,
+  openIssuesEndpoint,
+  probeOpenIssues,
   redact,
   cap,
   parseDependabotTitle,
