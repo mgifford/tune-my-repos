@@ -291,6 +291,11 @@ local command / CodeCarbon CSV / AI usage record
   records, token-category normalization, model matching, a versioned per-token
   factor interface, uncertainty preservation, synthetic fixtures, and an
   accessible static dashboard.
+- **Monthly resource cycle:** `.github/workflows/resource-cycle.yml` runs on
+  the first day of each month at 08:00 UTC (and on demand). It dry-runs the
+  inventory, aggregates API/Actions evidence, validates it, and publishes the
+  sanitized report to the private data repository. It does **not** use
+  CodeCarbon and does not publish to Pages.
 - **Not implemented:** live AI-assisted maintenance, actual CLEER per-token
   coefficients, portfolio-wide CI consumption beyond the current inventory
   run, portfolio-wide evidence import, and a published production resource
@@ -379,6 +384,23 @@ python3 -m http.server 8000
   privacy-gated publication plan.
 - [docs/DRUPAL-CORE-LAB-ALIGNMENT.md](docs/DRUPAL-CORE-LAB-ALIGNMENT.md) —
   shared evidence format.
+
+### Publishing the sanitized Pages aggregate
+
+The public page currently shows the tracked synthetic sample. Publishing the
+real aggregate requires:
+
+1. a second clean monthly private cycle;
+2. a reviewed PR that adds the sanitized aggregate at a tracked path and
+   switches `resources.html`/`resources.js` from the sample to that file;
+3. passing `npm test`, the site check and the privacy scanner;
+4. a human review and merge; Pages then deploys automatically.
+
+Do not commit the raw ledger, task records, raw CSVs or a report containing
+repository names. A CI-generated report covers GitHub API/Actions evidence; it
+will show local CodeCarbon energy as unavailable unless local evidence is also
+imported before aggregation. See
+[docs/RESOURCE-PUBLICATION-PLAN.md](docs/RESOURCE-PUBLICATION-PLAN.md).
 
 The existing accessibility, security, governance and verification
 requirements are unchanged. Resource accounting cannot bypass private

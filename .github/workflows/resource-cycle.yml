@@ -1,0 +1,119 @@
+name: Monthly Resource Cycle
+
+# Monthly, deterministic resource measurement for the portfolio inventory.
+#
+# This workflow intentionally does NOT use CodeCarbon: it measures the GitHub
+# API and Actions boundary, not the laptop or a hosted runner's electricity.
+# It runs the inventory in dry-run mode so it cannot change scan state, the
+# maintenance rollup, or any repository it scans.
+#
+# Outputs:
+#   - sanitized aggregate report (JSON/Markdown/CSV), private artifact
+#   - the same aggregate report published to the private data repository
+#
+# Public Pages publication is a separate, reviewed step. This workflow never
+# writes to the public repository.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # First day of each month at 08:00 UTC. Monthly, not daily: resource
+    # measurement is occasional, while the maintenance inventory remains on
+    # its own daily schedule.
+    - cron: '0 8 1 * *'
+
+permissions:
+  contents: read
+  actions: read # read the current run/jobs for Actions evidence
+
+concurrency:
+  group: resource-cycle
+  cancel-in-progress: false
+
+jobs:
+  resource-cycle:
+    name: Measure monthly resource cycle
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      RESOURCE_CACHE_DIR: ${{ runner.temp }}/resource-cache
+      RESOURCE_REPORTS_DIR: ${{ runner.temp }}/resource-report
+      # Measurement focus: do not spend time on npm registry lookups.
+      LIBRARY_ADVICE_REGISTRY: 'off'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Run tests
+        run: npm test
+
+      - name: Generate inventory resource evidence
+        env:
+          MAINTENANCE_RO_TOKEN: ${{ secrets.MAINTENANCE_RO_TOKEN }}
+          # The run/jobs calls use GITHUB_TOKEN, not the scanning token.
+          RESOURCE_COLLECT_ACTIONS: '1'
+        run: |
+          mkdir -p "$RESOURCE_CACHE_DIR" "$RESOURCE_REPORTS_DIR"
+          node scripts/generate-maintenance-rollup.cjs \
+            --dry-run \
+            --resource-out="$RUNNER_TEMP/maintenance-inventory.resource.jsonl"
+
+      - name: Import evidence and aggregate
+        run: |
+          node scripts/import-resource-evidence.cjs \
+            --events="$RUNNER_TEMP/maintenance-inventory.resource.jsonl"
+          node scripts/generate-resource-rollup.cjs \
+            --out="$RESOURCE_REPORTS_DIR" \
+            --quiet
+
+      - name: Validate evidence and aggregate
+        run: |
+          node scripts/validate-resource.cjs \
+            "$RUNNER_TEMP/maintenance-inventory.resource.jsonl" \
+            "$RESOURCE_REPORTS_DIR/resource-rollup.public.json"
+
+      - name: Publish aggregate to the private data repository
+        env:
+          DATA_TOKEN: ${{ secrets.MAINTENANCE_DATA_TOKEN }}
+        run: |
+          if [ -z "$DATA_TOKEN" ]; then
+            echo "::warning::MAINTENANCE_DATA_TOKEN is not set; the private resource report was not published."
+            exit 0
+          fi
+          rm -rf "$RUNNER_TEMP/data"
+          git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
+          cp "$RESOURCE_REPORTS_DIR/resource-rollup.public.json" "$RUNNER_TEMP/data/"
+          cp "$RESOURCE_REPORTS_DIR/RESOURCE-SUMMARY.md" "$RUNNER_TEMP/data/"
+          cp "$RESOURCE_REPORTS_DIR/resource-summary.csv" "$RUNNER_TEMP/data/"
+          cd "$RUNNER_TEMP/data"
+          git add resource-rollup.public.json RESOURCE-SUMMARY.md resource-summary.csv
+          if git diff --cached --quiet; then
+            echo "Resource report unchanged; nothing to push."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update resource rollup (run ${{ github.run_id }})"
+          git push origin HEAD
+
+      - name: Upload aggregate resource evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: resource-cycle-evidence
+          path: |
+            ${{ runner.temp }}/maintenance-inventory.resource.jsonl
+            ${{ runner.temp }}/resource-report/
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Summarize resource cycle
+        if: always()
+        run: |
+          node scripts/summarize-resource-cycle.cjs "$RESOURCE_REPORTS_DIR/resource-rollup.public.json"
