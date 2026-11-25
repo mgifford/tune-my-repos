@@ -16,12 +16,16 @@ then consider a public Pages view.
   in 3m 1s: 142/142 repositories evaluated, 1,044 API requests, 7.35
   requests/evaluated repository, 0 rate limits, workflow elapsed 174,947 ms,
   summed job execution 172,277 ms.
-- Stage 3 is implemented: the monthly workflow now fetches
-  `local-resource-evidence.jsonl` from the private data repository, rejects it
-  when older than 45 days, and includes local CodeCarbon energy with the GitHub
-  API/Actions evidence. The combined report was verified in CI (run
-  `45522225909`) and published at `resource-data/` with the dashboard default
-  switched to it.
+- Stage 3 is implemented for the first public aggregate: the monthly workflow
+  fetches `local-resource-evidence.jsonl` from the private data repository,
+  rejects it when older than 45 days, and combines local CodeCarbon energy with
+  GitHub API/Actions evidence. The combined report was verified in CI (run
+  `45522225909`) and published in PR #145 (commit `ab325e7`) under
+  `resource-data/`; the dashboard default now points to it.
+- Ongoing public refresh is still manual: the monthly workflow updates the
+  private report, and a reviewed PR copies the reviewed aggregate into
+  `resource-data/`. A dedicated public-sync workflow that opens that PR is the
+  next automation step.
 - No 304s/cache hits were observed because the workflow still has no previous
   rollup/ETag state in its temporary ledger. Do not repeat runs solely to
   benchmark that.
