@@ -229,8 +229,10 @@ time or electricity.
 - **Every inventory run:** in-process GitHub API counters. These add no API
   requests.
 - **Monthly:** `.github/workflows/resource-cycle.yml` runs on the first of the
-  month, collects API/Actions evidence and publishes the sanitized aggregate
-  privately. It does not use CodeCarbon.
+  month, collects API/Actions evidence, imports sanitized local energy evidence
+  and publishes the aggregate privately. It does not use CodeCarbon.
+- **After the monthly cycle:** `.github/workflows/publish-resource-pages.yml`
+  proposes the public `resource-data/` update as a PR; it never auto-merges.
 - **Monthly or quarterly (local):** optional CodeCarbon measurement on this
   machine, imported manually before aggregation.
 - **Before or after a specific change:** an optional CodeCarbon run is fine

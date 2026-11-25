@@ -80,6 +80,14 @@ test('the validate-resource CLI succeeds on fixtures and fails on a broken file'
   assert.equal(bad.status, 1);
 });
 
+test('the validator applies the privacy scanner to rollups', () => {
+  const published = read(path.join(root, 'resource-data', 'resource-rollup.public.json'));
+  const leaky = { ...published, limitations: ['owner/private-repo'] };
+  const result = validateValue(leaky);
+  assert.equal(result.kind, 'rollup');
+  assert.ok(result.problems.some((problem) => problem.includes('repository-shaped')));
+});
+
 test('the rollup schema rejects a raw repository name and a single score field', () => {
   const rollup = read(path.join(fixtures, 'resource-rollup.sample.json'));
   const schema = read(path.join(root, 'policy', 'resource-rollup.schema.json'));

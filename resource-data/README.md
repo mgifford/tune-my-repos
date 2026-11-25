@@ -23,5 +23,6 @@ energy. See [RESOURCE-METHODOLOGY.md](../docs/RESOURCE-METHODOLOGY.md),
 [CODECARBON.md](../docs/CODECARBON.md) and
 [RESOURCE-PUBLICATION-PLAN.md](../docs/RESOURCE-PUBLICATION-PLAN.md).
 
-Do not edit these files by hand. They are refreshed by the monthly workflow and
-published through a reviewed pull request.
+Do not edit these files by hand. After each successful monthly cycle, the
+`Publish Resource Pages` workflow proposes an update as a pull request and a
+person reviews and merges it. It never auto-merges.

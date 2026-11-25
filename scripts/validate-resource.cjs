@@ -12,6 +12,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { validatePolicySchema } = require('../policy/policy-validator.cjs');
+const { publicProblems } = require('../policy/resource-redaction.cjs');
 
 const SCHEMAS = {
   event: path.join(__dirname, '..', 'policy', 'resource-evidence.schema.json'),
@@ -38,7 +39,12 @@ function detect(value) {
 function validateValue(value) {
   const kind = detect(value);
   if (!kind) return { kind: null, problems: ['unknown resource document shape'] };
-  return { kind, problems: validatePolicySchema(value, loadSchema(kind)) };
+  const problems = validatePolicySchema(value, loadSchema(kind));
+  // A rollup is intended for publication; always apply the fail-closed privacy
+  // scan in addition to schema validation. Local event files are not scanned
+  // here because they legitimately contain local task labels and evidence paths.
+  if (kind === 'rollup') problems.push(...publicProblems(value));
+  return { kind, problems };
 }
 
 function validateFile(file) {

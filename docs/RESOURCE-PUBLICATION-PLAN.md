@@ -22,10 +22,11 @@ then consider a public Pages view.
   GitHub API/Actions evidence. The combined report was verified in CI (run
   `45522225909`) and published in PR #145 (commit `ab325e7`) under
   `resource-data/`; the dashboard default now points to it.
-- Ongoing public refresh is still manual: the monthly workflow updates the
-  private report, and a reviewed PR copies the reviewed aggregate into
-  `resource-data/`. A dedicated public-sync workflow that opens that PR is the
-  next automation step.
+- Ongoing public refresh is automated through
+  `.github/workflows/publish-resource-pages.yml`: after a successful monthly
+  cycle it copies the aggregate into `resource-data/` and opens a PR. It never
+  auto-merges; a person reviews the aggregate and the normal CI/site checks
+  before merge.
 - No 304s/cache hits were observed because the workflow still has no previous
   rollup/ETag state in its temporary ledger. Do not repeat runs solely to
   benchmark that.
