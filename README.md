@@ -353,6 +353,18 @@ npm run resource:report
 npm run resource:sample
 npm run resource:validate -- fixtures/resource/resource-events.synthetic.jsonl
 
+# Monthly local energy evidence (Option B)
+# 1. Measure locally with CodeCarbon
+CODECARBON_BIN="$HOME/.venvs/codecarbon/bin/codecarbon" \
+  node scripts/resource-run.cjs \
+    --activity=test-suite --task=monthly-local-baseline \
+    --label="Monthly local CodeCarbon baseline" --codecarbon -- npm test
+# 2. Export only sanitized local evidence
+node scripts/export-local-resource-evidence.cjs \
+  --out=local-resource-evidence.jsonl --activity=test-suite --latest=1
+# 3. Commit local-resource-evidence.jsonl to the PRIVATE data repository
+#    (never this public repository). The monthly workflow fetches it there.
+
 # Static dashboard (defaults to the sample fixture until a real report is published)
 python3 -m http.server 8000
 # http://localhost:8000/resources.html
@@ -386,6 +398,11 @@ python3 -m http.server 8000
   shared evidence format.
 
 ### Publishing the sanitized Pages aggregate
+
+The monthly workflow now fetches `local-resource-evidence.jsonl` from the
+private data repository and rejects it when it is older than 45 days. This is
+the Option B path: local CodeCarbon energy plus GitHub API/Actions evidence in
+one sanitized report.
 
 The public page currently shows the tracked synthetic sample. Publishing the
 real aggregate requires:

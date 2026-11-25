@@ -40,6 +40,7 @@ Options:
   --factors-out=<file>       Output path for an imported factor dataset.
   --allow-synthetic          Allow a synthetic factor dataset (test fixtures only).
   --cache-creation-policy=<unavailable|sensitivity_as_uncached_input>
+  --max-age-days=<n>         Refuse imported events older than n days (freshness guard).
   --activity=<id>            Activity for CSV events (default: unknown).
   --task=<id>                Task id for imported events.
   --project=<owner/name>     Project override.
@@ -172,6 +173,7 @@ async function main(argv) {
   const taskId = value('task') || `import:${new Date().toISOString().slice(0, 10)}`;
   const activity = value('activity') || 'unknown';
   const noRecord = has('no-record');
+  const maxAgeDays = Number(value('max-age-days') || 0);
   const summary = { imported: 0, problems: [], source: null };
 
   if (value('cleer-models')) {
@@ -229,6 +231,16 @@ async function main(argv) {
     return 2;
   }
 
+  if (maxAgeDays > 0) {
+    const cutoff = Date.now() - maxAgeDays * 24 * 60 * 60 * 1000;
+    const stale = events.filter((event) => {
+      const at = Date.parse(event.occurred_at);
+      return !Number.isFinite(at) || at < cutoff;
+    });
+    if (stale.length) {
+      throw new Error(`refusing stale evidence: ${stale.length} event(s) are older than ${maxAgeDays} day(s); refresh the local measurement`);
+    }
+  }
   summary.imported = events.length;
   if (!noRecord && events.length) {
     const written = await appendEvents(events);

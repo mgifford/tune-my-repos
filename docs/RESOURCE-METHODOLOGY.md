@@ -242,6 +242,30 @@ time or electricity.
 - **Not continuous:** resource reports are refreshed after an occasional
   measurement, not on every maintenance scan.
 
+## Monthly local energy evidence
+
+The monthly workflow combines two evidence sources:
+
+- GitHub API/Actions evidence generated in the workflow;
+- one or more sanitized local `process` events exported from the local ledger.
+
+Prepare the local evidence monthly:
+
+```bash
+CODECARBON_BIN="$HOME/.venvs/codecarbon/bin/codecarbon" \
+  node scripts/resource-run.cjs \
+    --activity=test-suite --task=monthly-local-baseline \
+    --codecarbon -- npm test
+node scripts/export-local-resource-evidence.cjs \
+  --out=local-resource-evidence.jsonl --activity=test-suite --latest=1
+```
+
+Commit that file to the **private** data repository. The exporter replaces the
+project/task identity with a generic one, removes the private object, command,
+paths and task labels, and keeps only energy/CPU/memory evidence. The monthly
+workflow imports it with `--max-age-days=45`, so a stale local measurement
+fails the cycle instead of silently presenting old energy as current.
+
 ## GitHub API and Actions counters
 
 The inventory generator records what it actually requested:

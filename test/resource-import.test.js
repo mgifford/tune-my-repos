@@ -130,3 +130,10 @@ test('the import CLI refuses an invalid AI JSONL line but keeps valid ones', () 
   assert.equal(result.status, 0);
   assert.match(result.stderr, /skipped line 2/);
 });
+
+test('the import CLI refuses stale local evidence when a freshness limit is set', () => {
+  const cache = temp();
+  const result = cli(['--events', path.join(fixtures, 'resource-events.synthetic.jsonl'), '--no-record', '--max-age-days=1'], cache);
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /refusing stale evidence/);
+});
