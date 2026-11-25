@@ -11,6 +11,15 @@ const root = path.join(__dirname, '..');
 const fixtures = path.join(root, 'fixtures', 'resource');
 const read = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 
+test('the published sanitized aggregate validates and passes the privacy scanner', () => {
+  const published = read(path.join(root, 'resource-data', 'resource-rollup.public.json'));
+  const schema = read(path.join(root, 'policy', 'resource-rollup.schema.json'));
+  assert.deepEqual(validatePolicySchema(published, schema), []);
+  const { publicProblems } = require('../policy/resource-redaction.cjs');
+  assert.deepEqual(publicProblems(published), []);
+  assert.equal(Object.prototype.hasOwnProperty.call(published, 'project_name'), false);
+});
+
 test('every committed resource fixture validates against its schema', () => {
   const files = [
     'resource-events.synthetic.jsonl',

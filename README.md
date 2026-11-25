@@ -365,7 +365,7 @@ node scripts/export-local-resource-evidence.cjs \
 # 3. Commit local-resource-evidence.jsonl to the PRIVATE data repository
 #    (never this public repository). The monthly workflow fetches it there.
 
-# Static dashboard (defaults to the sample fixture until a real report is published)
+# Static dashboard (defaults to the published sanitized aggregate)
 python3 -m http.server 8000
 # http://localhost:8000/resources.html
 ```
@@ -394,6 +394,8 @@ python3 -m http.server 8000
 - [docs/RESOURCE-PRIVACY.md](docs/RESOURCE-PRIVACY.md) — privacy review.
 - [docs/RESOURCE-PUBLICATION-PLAN.md](docs/RESOURCE-PUBLICATION-PLAN.md) — staged,
   privacy-gated publication plan.
+- [`resource-data/`](resource-data/README.md) — the published sanitized
+  aggregate and its provenance.
 - [docs/DRUPAL-CORE-LAB-ALIGNMENT.md](docs/DRUPAL-CORE-LAB-ALIGNMENT.md) —
   shared evidence format.
 
@@ -404,19 +406,14 @@ private data repository and rejects it when it is older than 45 days. This is
 the Option B path: local CodeCarbon energy plus GitHub API/Actions evidence in
 one sanitized report.
 
-The public page currently shows the tracked synthetic sample. Publishing the
-real aggregate requires:
+The public page now reads the sanitized aggregate in
+[`resource-data/`](resource-data/README.md), which combines GitHub API/Actions
+evidence with the monthly sanitized local CodeCarbon evidence. The synthetic
+sample remains available as a comparison source.
 
-1. a second clean monthly private cycle;
-2. a reviewed PR that adds the sanitized aggregate at a tracked path and
-   switches `resources.html`/`resources.js` from the sample to that file;
-3. passing `npm test`, the site check and the privacy scanner;
-4. a human review and merge; Pages then deploys automatically.
-
-Do not commit the raw ledger, task records, raw CSVs or a report containing
-repository names. A CI-generated report covers GitHub API/Actions evidence; it
-will show local CodeCarbon energy as unavailable unless local evidence is also
-imported before aggregation. See
+The aggregate is refreshed by the monthly workflow and published through a
+reviewed pull request. Do not commit the raw ledger, task records, raw CSVs or
+any report containing repository names. See
 [docs/RESOURCE-PUBLICATION-PLAN.md](docs/RESOURCE-PUBLICATION-PLAN.md).
 
 The existing accessibility, security, governance and verification

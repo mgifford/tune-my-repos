@@ -1,0 +1,15 @@
+section,metric,unit,value,coverage
+local,wall_clock,ms,9600,
+local,cpu_time,CPU-seconds,9.51,
+local,peak_rss,bytes,222281728,
+local,energy,Wh,0.01566747485813892,partial
+local,operational_emissions,gCO2e,0.0000407354346311612,partial
+activity,test-suite,Wh,0.01566747485813892,partial
+remote_ai,requests,count,0,
+remote_ai,uncached_input_tokens,tokens,,provider-reported where available
+remote_ai,output_tokens,tokens,,provider-reported where available
+maintenance,api_requests_per_evaluated_repository,requests/repository,7.352112676056338,
+maintenance,ci_workflow_elapsed,ms,177139,
+maintenance,ci_job_elapsed,ms,174452,
+monitoring,collection_time,ms,0,
+monitoring,ledger_size,bytes,24411,

@@ -16,11 +16,12 @@ then consider a public Pages view.
   in 3m 1s: 142/142 repositories evaluated, 1,044 API requests, 7.35
   requests/evaluated repository, 0 rate limits, workflow elapsed 174,947 ms,
   summed job execution 172,277 ms.
-- Stage 3 is not started. Option B is selected: the monthly workflow now
-  fetches `local-resource-evidence.jsonl` from the private data repository,
-  rejects it when older than 45 days, and includes local CodeCarbon energy with
-  the GitHub API/Actions evidence. A combined report has been verified locally;
-  the next monthly run must confirm it in CI before public publication.
+- Stage 3 is implemented: the monthly workflow now fetches
+  `local-resource-evidence.jsonl` from the private data repository, rejects it
+  when older than 45 days, and includes local CodeCarbon energy with the GitHub
+  API/Actions evidence. The combined report was verified in CI (run
+  `45522225909`) and published at `resource-data/` with the dashboard default
+  switched to it.
 - No 304s/cache hits were observed because the workflow still has no previous
   rollup/ETag state in its temporary ledger. Do not repeat runs solely to
   benchmark that.
@@ -118,8 +119,8 @@ second public copy of the maintenance rollup.
 
 ## Publishing the sanitized Pages aggregate
 
-The public Pages page currently defaults to the committed synthetic sample. To
-publish the real aggregate:
+The public Pages page now defaults to the tracked sanitized aggregate. The
+remaining refresh process is:
 
 1. **Complete a second clean private cycle.** The monthly
    `resource-cycle.yml` workflow runs on the first of each month and publishes
