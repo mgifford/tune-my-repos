@@ -65,10 +65,32 @@ jobs:
             --dry-run \
             --resource-out="$GITHUB_WORKSPACE/maintenance-inventory.resource.jsonl"
 
+      - name: Fetch sanitized local resource evidence
+        env:
+          DATA_TOKEN: ${{ secrets.MAINTENANCE_DATA_TOKEN }}
+        run: |
+          if [ -z "$DATA_TOKEN" ]; then
+            echo "::warning::MAINTENANCE_DATA_TOKEN is not set; local energy evidence cannot be fetched."
+            exit 0
+          fi
+          rm -rf "$RUNNER_TEMP/data"
+          git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
+          if [ -f "$RUNNER_TEMP/data/local-resource-evidence.jsonl" ]; then
+            cp "$RUNNER_TEMP/data/local-resource-evidence.jsonl" "$GITHUB_WORKSPACE/local-resource-evidence.jsonl"
+            echo "Fetched sanitized local resource evidence."
+          else
+            echo "::warning::No local-resource-evidence.jsonl in the private data repository; local energy will be unavailable."
+          fi
+
       - name: Import evidence and aggregate
         run: |
           node scripts/import-resource-evidence.cjs \
             --events="$GITHUB_WORKSPACE/maintenance-inventory.resource.jsonl"
+          if [ -f "$GITHUB_WORKSPACE/local-resource-evidence.jsonl" ]; then
+            node scripts/import-resource-evidence.cjs \
+              --events="$GITHUB_WORKSPACE/local-resource-evidence.jsonl" \
+              --max-age-days=45
+          fi
           node scripts/generate-resource-rollup.cjs \
             --out="$RESOURCE_REPORTS_DIR" \
             --quiet
@@ -87,8 +109,10 @@ jobs:
             echo "::warning::MAINTENANCE_DATA_TOKEN is not set; the private resource report was not published."
             exit 0
           fi
-          rm -rf "$RUNNER_TEMP/data"
-          git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
+          if [ ! -d "$RUNNER_TEMP/data/.git" ]; then
+            rm -rf "$RUNNER_TEMP/data"
+            git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
+          fi
           cp "$RESOURCE_REPORTS_DIR/resource-rollup.public.json" "$RUNNER_TEMP/data/"
           cp "$RESOURCE_REPORTS_DIR/RESOURCE-SUMMARY.md" "$RUNNER_TEMP/data/"
           cp "$RESOURCE_REPORTS_DIR/resource-summary.csv" "$RUNNER_TEMP/data/"

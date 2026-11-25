@@ -28,7 +28,7 @@ benchmarks. Raw measurements and the full ledger remain in the gitignored
 The repository test suite contained **362 tests** at the time of this
 measurement (the original 260 plus resource-accounting tests). All passed. A
 later dashboard regression and inventory-instrumentation tests bring the current
-total to **373**, also all passing. The numbers below are from the 362-test run.
+total to **379**, also all passing. The numbers below are from the 362-test run.
 
 ```bash
 node scripts/resource-run.cjs \

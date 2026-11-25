@@ -16,10 +16,11 @@ then consider a public Pages view.
   in 3m 1s: 142/142 repositories evaluated, 1,044 API requests, 7.35
   requests/evaluated repository, 0 rate limits, workflow elapsed 174,947 ms,
   summed job execution 172,277 ms.
-- Stage 3 is not started. The remaining decision is whether to publish an
-  API/Actions-only aggregate (local CodeCarbon energy will show as unavailable)
-  or add a sanitized local energy evidence file to the monthly aggregation
-  first.
+- Stage 3 is not started. Option B is selected: the monthly workflow now
+  fetches `local-resource-evidence.jsonl` from the private data repository,
+  rejects it when older than 45 days, and includes local CodeCarbon energy with
+  the GitHub API/Actions evidence. A combined report has been verified locally;
+  the next monthly run must confirm it in CI before public publication.
 - No 304s/cache hits were observed because the workflow still has no previous
   rollup/ETag state in its temporary ledger. Do not repeat runs solely to
   benchmark that.
@@ -123,11 +124,11 @@ publish the real aggregate:
 1. **Complete a second clean private cycle.** The monthly
    `resource-cycle.yml` workflow runs on the first of each month and publishes
    only to the private data repository.
-2. **Generate the aggregate from the evidence set you intend to publish.** A
-   CI-generated report contains GitHub API/Actions evidence only; local
-   CodeCarbon energy is `unavailable` unless a local measurement was imported
-   into the ledger before aggregation. Do not present the CI report as if it
-   included laptop energy.
+2. **Generate the aggregate from the evidence set you intend to publish.** The
+   monthly workflow imports both the inventory evidence and the sanitized
+   local `local-resource-evidence.jsonl`. Verify the local energy and coverage
+   in the private report before publishing. If the local file is missing or
+   stale, the report is API/Actions-only and should be labelled accordingly.
 3. **Add the sanitized files at a tracked public path.** GitHub Pages cannot
    read the private data repository, so the aggregate must be committed to this
    public repository (for example `resource-rollup.public.json` at the root) or

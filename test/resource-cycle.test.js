@@ -22,6 +22,8 @@ test('resource cycle summary reports API efficiency and scan completeness', () =
   assert.equal(result.status, 0, result.stderr);
   const text = fs.readFileSync(summary, 'utf8');
   assert.match(text, /Monthly resource cycle/);
+  assert.match(text, /Local energy: 0.039 Wh \(partial\)/);
+  assert.match(text, /Local CPU time: 4 CPU-seconds/);
   assert.match(text, /API requests: 42/);
   assert.match(text, /Repositories evaluated: 8/);
   assert.match(text, /Requests per evaluated repository: 5.25/);

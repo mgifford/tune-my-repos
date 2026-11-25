@@ -16,9 +16,13 @@ if (!file || !fs.existsSync(file)) {
   const report = JSON.parse(fs.readFileSync(file, 'utf8'));
   const api = report.maintenance?.api || {};
   const ci = report.maintenance?.ci || {};
+  const local = report.local_computing || {};
+  const energy = local.energy || {};
   const lines = [
     '## Monthly resource cycle',
     '',
+    `- Local energy: ${energy.estimated_wh ?? energy.measured_wh ?? 'unavailable'} Wh (${energy.coverage ?? 'unavailable'})`,
+    `- Local CPU time: ${local.cpu_seconds ?? 'unavailable'} CPU-seconds`,
     `- API requests: ${api.requests ?? 'unavailable'}`,
     `- Repositories evaluated: ${api.repositories_evaluated ?? 'unavailable'}`,
     `- Requests per evaluated repository: ${api.requests_per_evaluated_repository ?? 'unavailable'}`,
