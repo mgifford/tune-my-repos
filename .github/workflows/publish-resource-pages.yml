@@ -1,0 +1,106 @@
+name: Publish Resource Pages
+
+# After a successful Monthly Resource Cycle, or on demand, copy the reviewed
+# sanitized aggregate from the private data repository into the public
+# resource-data/ directory and open a pull request. This workflow NEVER merges:
+# a person reviews the aggregate and the normal CI/site checks before it goes
+# live on GitHub Pages.
+#
+# It deliberately does not read the local ledger, raw CodeCarbon files or task
+# records. Only the three aggregate files are copied.
+
+on:
+  workflow_run:
+    workflows: ["Monthly Resource Cycle"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: publish-resource-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Propose published aggregate update
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Fetch reviewed aggregate from the private data repository
+        env:
+          DATA_TOKEN: ${{ secrets.MAINTENANCE_DATA_TOKEN }}
+        run: |
+          if [ -z "$DATA_TOKEN" ]; then
+            echo "::error::MAINTENANCE_DATA_TOKEN is not set; cannot fetch the reviewed aggregate."
+            exit 1
+          fi
+          rm -rf "$RUNNER_TEMP/data"
+          git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
+          for FILE in resource-rollup.public.json RESOURCE-SUMMARY.md resource-summary.csv; do
+            if [ ! -f "$RUNNER_TEMP/data/$FILE" ]; then
+              echo "::error::Private data repository is missing $FILE."
+              exit 1
+            fi
+            cp "$RUNNER_TEMP/data/$FILE" "resource-data/$FILE"
+          done
+
+      - name: Validate schema and privacy gate
+        run: |
+          node scripts/validate-resource.cjs resource-data/resource-rollup.public.json
+          npm test
+
+      - name: Detect aggregate changes
+        id: changes
+        run: |
+          if git diff --quiet -- resource-data; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Published aggregate is unchanged."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Published aggregate has changes."
+          fi
+
+      - name: Commit and push the proposed aggregate
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          BRANCH="automated/resource-data"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add resource-data/resource-rollup.public.json resource-data/RESOURCE-SUMMARY.md resource-data/resource-summary.csv
+          git commit -m "Update published resource aggregate"
+          git push --force origin "$BRANCH"
+
+      - name: Open or update the review PR
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="automated/resource-data"
+          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            echo "Updated existing review PR #$EXISTING."
+            exit 0
+          fi
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "Update published resource aggregate" \
+            --body "Automated sanitized resource aggregate update from the monthly cycle. Aggregate-only: no repository names, task labels, commands, paths, session ids, prompts, transcripts or private findings. Schema and privacy gates passed. A person must review and merge; this workflow never auto-merges."

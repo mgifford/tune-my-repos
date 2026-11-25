@@ -411,9 +411,11 @@ The public page now reads the sanitized aggregate in
 evidence with the monthly sanitized local CodeCarbon evidence. The synthetic
 sample remains available as a comparison source.
 
-The aggregate is refreshed by the monthly workflow and published through a
-reviewed pull request. Do not commit the raw ledger, task records, raw CSVs or
-any report containing repository names. See
+After each successful monthly cycle, `.github/workflows/publish-resource-pages.yml`
+copies the reviewed aggregate into `resource-data/` and opens a pull request.
+It never auto-merges; the normal CI/site checks and a person must approve it.
+Do not commit the raw ledger, task records, raw CSVs or any report containing
+repository names. See
 [docs/RESOURCE-PUBLICATION-PLAN.md](docs/RESOURCE-PUBLICATION-PLAN.md).
 
 The existing accessibility, security, governance and verification
