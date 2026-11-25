@@ -165,6 +165,8 @@ repository names, prompts, transcripts or evidence paths.
 - **CodeCarbon local measurement:** monthly or quarterly, or before/after a
   specific change. Not in the daily inventory job and not during the GitHub
   inventory benchmark.
+- **Quarterly:** an inventory cache/304 check using the current scan state and
+  previous rollup; its aggregate history is private-only.
 - **Resource report refresh:** after an occasional measurement, not on every
   maintenance run.
 
