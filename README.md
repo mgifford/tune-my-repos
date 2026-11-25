@@ -296,6 +296,11 @@ local command / CodeCarbon CSV / AI usage record
   inventory, aggregates API/Actions evidence, validates it, and publishes the
   sanitized report to the private data repository. It does **not** use
   CodeCarbon and does not publish to Pages.
+- **Quarterly cache check:** `.github/workflows/inventory-cache-check.yml` runs
+  on the first day of January, April, July and October (and on demand). It uses
+  the current scan state and previous public rollup to measure conditional
+  request/304 reuse, then records aggregate cache history privately. It does
+  not use CodeCarbon and does not publish to Pages.
 - **Not implemented:** live AI-assisted maintenance, actual CLEER per-token
   coefficients, portfolio-wide CI consumption beyond the current inventory
   run, portfolio-wide evidence import, and a published production resource
@@ -352,6 +357,9 @@ node scripts/import-resource-evidence.cjs \
 npm run resource:report
 npm run resource:sample
 npm run resource:validate -- fixtures/resource/resource-events.synthetic.jsonl
+
+# Quarterly cache/304 measurement (manual trigger; scheduled quarterly)
+gh workflow run inventory-cache-check.yml --ref main
 
 # Monthly local energy evidence (Option B)
 # 1. Measure locally with CodeCarbon

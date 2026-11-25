@@ -1,0 +1,130 @@
+name: Quarterly Inventory Cache Check
+
+# Quarterly measurement of conditional-request/cache efficiency, using the
+# current maintenance-scan-state.json and the previous public rollup from the
+# private data repository. This is the only place that intentionally exercises
+# 304 reuse; do not run it repeatedly just to benchmark the cache.
+#
+# It runs the inventory in dry-run mode, so it cannot change scan state, the
+# maintenance rollup or any scanned repository. It publishes aggregate cache
+# history to the private data repository only.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Quarterly: first day of January, April, July and October at 08:00 UTC.
+    - cron: '0 8 1 1,4,7,10 *'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: inventory-cache-check
+  cancel-in-progress: false
+
+jobs:
+  cache-check:
+    name: Measure inventory cache efficiency
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      RESOURCE_CACHE_DIR: ${{ github.workspace }}/.resource-cache
+      RESOURCE_REPORTS_DIR: ${{ github.workspace }}/cache-report
+      LIBRARY_ADVICE_REGISTRY: 'off'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Run tests
+        run: npm test
+
+      - name: Fetch previous rollup and cache history
+        env:
+          DATA_TOKEN: ${{ secrets.MAINTENANCE_DATA_TOKEN }}
+        run: |
+          if [ -z "$DATA_TOKEN" ]; then
+            echo "::error::MAINTENANCE_DATA_TOKEN is not set; the cache check needs the previous rollup."
+            exit 1
+          fi
+          rm -rf "$RUNNER_TEMP/data"
+          git clone --depth 1 "https://x-access-token:${DATA_TOKEN}@github.com/mgifford/tune-my-repos-data.git" "$RUNNER_TEMP/data"
+          if [ ! -f "$RUNNER_TEMP/data/maintenance-rollup.public.json" ]; then
+            echo "::error::Private data repository is missing maintenance-rollup.public.json; a cache check requires previous rollup data."
+            exit 1
+          fi
+          cp "$RUNNER_TEMP/data/maintenance-rollup.public.json" "$GITHUB_WORKSPACE/maintenance-rollup.public.json"
+          mkdir -p "$RESOURCE_CACHE_DIR" "$RESOURCE_REPORTS_DIR"
+
+      - name: Generate inventory cache evidence
+        env:
+          MAINTENANCE_RO_TOKEN: ${{ secrets.MAINTENANCE_RO_TOKEN }}
+          RESOURCE_COLLECT_ACTIONS: '1'
+        run: |
+          node scripts/generate-maintenance-rollup.cjs \
+            --dry-run \
+            --resource-out="$GITHUB_WORKSPACE/maintenance-inventory-cache.resource.jsonl"
+
+      - name: Import and aggregate cache evidence
+        run: |
+          node scripts/import-resource-evidence.cjs \
+            --events="$GITHUB_WORKSPACE/maintenance-inventory-cache.resource.jsonl"
+          node scripts/generate-resource-rollup.cjs \
+            --out="$RESOURCE_REPORTS_DIR" \
+            --quiet
+
+      - name: Validate cache report
+        run: |
+          node scripts/validate-resource.cjs \
+            "$GITHUB_WORKSPACE/maintenance-inventory-cache.resource.jsonl" \
+            "$RESOURCE_REPORTS_DIR/resource-rollup.public.json"
+
+      - name: Record cache history
+        run: |
+          node scripts/record-inventory-cache.cjs \
+            --report="$RESOURCE_REPORTS_DIR/resource-rollup.public.json" \
+            --history="$RUNNER_TEMP/data/resource-cache-history.json" \
+            --out-dir="$RESOURCE_REPORTS_DIR"
+
+      - name: Publish cache history privately
+        env:
+          DATA_TOKEN: ${{ secrets.MAINTENANCE_DATA_TOKEN }}
+        run: |
+          cp "$RESOURCE_REPORTS_DIR/resource-rollup.public.json" "$RUNNER_TEMP/data/cache-efficiency.resource.json"
+          cp "$RESOURCE_REPORTS_DIR/CACHE-EFFICIENCY.md" "$RUNNER_TEMP/data/CACHE-EFFICIENCY.md"
+          cd "$RUNNER_TEMP/data"
+          git add cache-efficiency.resource.json CACHE-EFFICIENCY.md resource-cache-history.json
+          if git diff --cached --quiet; then
+            echo "Cache history unchanged; nothing to push."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update inventory cache efficiency (run ${{ github.run_id }})"
+          git push origin HEAD
+
+      - name: Upload cache evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: inventory-cache-evidence
+          path: |
+            ${{ github.workspace }}/maintenance-inventory-cache.resource.jsonl
+            ${{ github.workspace }}/cache-report/
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Summarize cache check
+        if: always()
+        run: |
+          if [ -f "$RESOURCE_REPORTS_DIR/CACHE-EFFICIENCY.md" ]; then
+            cat "$RESOURCE_REPORTS_DIR/CACHE-EFFICIENCY.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No cache report was generated." >> "$GITHUB_STEP_SUMMARY"
+          fi

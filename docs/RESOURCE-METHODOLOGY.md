@@ -233,6 +233,9 @@ time or electricity.
   and publishes the aggregate privately. It does not use CodeCarbon.
 - **After the monthly cycle:** `.github/workflows/publish-resource-pages.yml`
   proposes the public `resource-data/` update as a PR; it never auto-merges.
+- **Quarterly:** `.github/workflows/inventory-cache-check.yml` measures 304/cache
+  reuse using the current scan state and previous rollup, and records private
+  cache history. It does not use CodeCarbon.
 - **Monthly or quarterly (local):** optional CodeCarbon measurement on this
   machine, imported manually before aggregation.
 - **Before or after a specific change:** an optional CodeCarbon run is fine
